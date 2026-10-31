@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Mars_Survival_Hanbook")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59a9411ee9db680e17b8e0b6800eca34849966aa")]
 [assembly: System.Reflection.AssemblyProductAttribute("Mars_Survival_Hanbook")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Mars_Survival_Hanbook")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
