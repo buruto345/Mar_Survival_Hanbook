@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Mars_Survival_Hanbook.csproj" />
+  <Project Path="../Mars_Survival_Hanbook.Tests/Mars_Survival_Hanbook.Tests.csproj" />
 </Solution>

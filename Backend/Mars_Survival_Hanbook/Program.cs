@@ -1,6 +1,13 @@
+using Mars_Survival_Hanbook.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var connectionString = builder.Configuration.GetConnectionString("MarsDatabase")
+    ?? throw new InvalidOperationException("Connection string 'MarsDatabase' is not configured.");
+builder.Services.AddDbContext<MarsDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4yqKj7i9Vcw=",
+  "dgSpecHash": "uja4k1GKsBQ=",
   "success": true,
   "projectFilePath": "D:\\Mar_Survival\\Backend\\Mars_Survival_Hanbook\\Mars_Survival_Hanbook.csproj",
   "expectedPackageFiles": [
@@ -25,6 +25,7 @@
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.entityframeworkcore.design\\8.0.33\\microsoft.entityframeworkcore.design.8.0.33.nupkg.sha512",
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.33\\microsoft.entityframeworkcore.relational.8.0.33.nupkg.sha512",
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\8.0.33\\microsoft.entityframeworkcore.sqlserver.8.0.33.nupkg.sha512",
+    "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\8.0.33\\microsoft.entityframeworkcore.tools.8.0.33.nupkg.sha512",
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\8.0.0\\microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\Anh Kiet\\.nuget\\packages\\microsoft.extensions.caching.memory\\8.0.1\\microsoft.extensions.caching.memory.8.0.1.nupkg.sha512",
