@@ -1,0 +1,6 @@
+@Mars_Survival_Hanbook_HostAddress = http://localhost:5206
+
+GET {{Mars_Survival_Hanbook_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
