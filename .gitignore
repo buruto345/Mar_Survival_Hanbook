@@ -1,3 +1,9 @@
+# .NET build output and test results
 **/bin/
 **/obj/
 **/TestResults/
+
+# Visual Studio cache and per-user settings
+.vs/
+*.user
+*.suo
