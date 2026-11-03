@@ -7,6 +7,7 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Named Mars location. Longitude uses the -180 to 180 convention.</summary>
 public class MarsLocation : Entity
 {
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(200)]
     public required string Name { get; set; }
 

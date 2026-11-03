@@ -1,0 +1,29 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/missions
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/missions"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "agency": "string",
+      "missionType": "<string>",
+      "name": "string",
+      "nasaIdentifier": "string",
+      "sourceRevisionId": "e253f1bb-d70a-7e38-6009-eaae306c3e3b",
+      "status": "<string>",
+      "description": "string",
+      "launchDate": "1959-08-31T08:07:28.603Z",
+      "endDate": "1987-06-09T23:46:52.929Z",
+      "statusVerifiedAt": "1971-10-17T11:20:45.634Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

@@ -1,0 +1,50 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/content/measurements/{id}
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/measurements/:id"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "context": "string",
+      "evidenceType": "<string>",
+      "factId": "1075d947-a31c-896c-c251-0b152327cc2a",
+      "instrument": "string",
+      "measurementKind": "Estimate",
+      "observedAt": "1952-12-24T06:21:47.698Z",
+      "originalUnit": "string",
+      "originalValue": 3517.951264511794,
+      "qualityFlag": "string",
+      "sourceRevisionId": "8cc2507e-f26d-b787-edd8-e7108c0d8088",
+      "testEnvironment": "Simulation",
+      "unitId": "1accd9ba-9833-8532-d01e-bf0f4792cf47",
+      "value": 649.9236403033137,
+      "upperValue": 7284.042572136968,
+      "observationEndAt": "2014-01-16T04:01:50.463Z",
+      "uncertainty": "string",
+      "missionId": "5515151d-e648-0a52-81d4-cd9cf374b828",
+      "locationId": "b4ba6349-0097-ed9b-a96f-cd3c630f0f9f",
+      "qualityNotes": "string",
+      "externalObservationKey": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 4000

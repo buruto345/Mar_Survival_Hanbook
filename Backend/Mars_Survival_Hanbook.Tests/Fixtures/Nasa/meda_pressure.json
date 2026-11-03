@@ -1,0 +1,459 @@
+﻿{
+    "id":  "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0",
+    "type":  "Product_Observational",
+    "title":  "Mars 2020 MEDA Pressure Sensor Calibrated Data",
+    "start_date_time":  "2021-03-05T14:18:05.298Z",
+    "stop_date_time":  "2021-03-06T14:00:26.971Z",
+    "investigations":  [
+                           {
+                               "id":  "urn:nasa:pds:context:investigation:mission.mars2020",
+                               "href":  "https://pds.mcp.nasa.gov/api/search/1/products/urn:nasa:pds:context:investigation:mission.mars2020"
+                           }
+                       ],
+    "observing_system_components":  [
+                                        {
+                                            "id":  "urn:nasa:pds:context:instrument_host:spacecraft.mars2020",
+                                            "href":  "https://pds.mcp.nasa.gov/api/search/1/products/urn:nasa:pds:context:instrument_host:spacecraft.mars2020"
+                                        },
+                                        {
+                                            "id":  "urn:nasa:pds:context:instrument:mars2020.meda",
+                                            "href":  "https://pds.mcp.nasa.gov/api/search/1/products/urn:nasa:pds:context:instrument:mars2020.meda"
+                                        }
+                                    ],
+    "targets":  [
+                    {
+                        "id":  "urn:nasa:pds:context:target:planet.mars",
+                        "href":  "https://pds.mcp.nasa.gov/api/search/1/products/urn:nasa:pds:context:target:planet.mars"
+                    }
+                ],
+    "metadata":  {
+                     "creation_date_time":  "2021-10-29T08:26:53.193Z",
+                     "label_url":  "https://pds-atmospheres.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_calibrated_env/sol_0000_0089/sol_0015/WE__0015___________CAL_PS__________________P02.xml",
+                     "update_date_time":  "2021-08-04T00:00:00Z",
+                     "version":  "2.0"
+                 },
+    "properties":  {
+                       "mars2020:Observation_Information.mars2020:start_sol_number":  [
+                                                                                          "00015"
+                                                                                      ],
+                       "pds:Modification_Detail.pds:description":  [
+                                                                       "First release",
+                                                                       "Reprocessed for barocap drift compensation"
+                                                                   ],
+                       "pds:File.pds:file_size":  [
+                                                      "2512699"
+                                                  ],
+                       "pds:Modification_Detail.pds:modification_date":  [
+                                                                             "2021-08-04T00:00:00Z",
+                                                                             "2021-10-29T00:00:00Z"
+                                                                         ],
+                       "mars2020:Observation_Information.mars2020:release_number":  [
+                                                                                        "1"
+                                                                                    ],
+                       "ops:Tracking_Meta.ops:archive_status":  [
+                                                                    "archived"
+                                                                ],
+                       "ops:Label_File_Info.ops:md5_checksum":  [
+                                                                    "4d76c357c8002190d3707f86b2f6df9d"
+                                                                ],
+                       "vid":  [
+                                   "2.0"
+                               ],
+                       "ops:Provenance.ops:superseded_by":  [
+                                                                "null"
+                                                            ],
+                       "mars2020:Observation_Information.mars2020:stop_sol_number":  [
+                                                                                         "00015"
+                                                                                     ],
+                       "ops:Provenance.ops:registry_sweepers_ancestry_version":  [
+                                                                                     "7"
+                                                                                 ],
+                       "pds:Observing_System_Component.pds:type":  [
+                                                                       "Instrument",
+                                                                       "Host"
+                                                                   ],
+                       "ops:Provenance.ops:registry_sweepers_provenance_hotfixed_version":  [
+                                                                                                "2"
+                                                                                            ],
+                       "mars2020:Observation_Information.mars2020:stop_local_true_solar_time":  [
+                                                                                                    "0015 22:31:42"
+                                                                                                ],
+                       "alternate_ids":  [
+                                             "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0",
+                                             "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p"
+                                         ],
+                       "mars2020:Observation_Information.mars2020:stop_solar_longitude":  [
+                                                                                              "13.266"
+                                                                                          ],
+                       "ops:Data_File_Info.ops:md5_checksum":  [
+                                                                   "55e2f2a1884c160f8e446ce2c1cd4bf5"
+                                                               ],
+                       "pds:Identification_Area.pds:title":  [
+                                                                 "Mars 2020 MEDA Pressure Sensor Calibrated Data"
+                                                             ],
+                       "pds:Investigation_Area.pds:name":  [
+                                                               "Mars 2020"
+                                                           ],
+                       "ops:Label_File_Info.ops:creation_date_time":  [
+                                                                          "2024-12-02T18:30:53Z"
+                                                                      ],
+                       "mars2020:Observation_Information.mars2020:mission_phase_name":  [
+                                                                                            "Surface Mission"
+                                                                                        ],
+                       "pds:Field_Delimited.pds:unit":  [
+                                                            "second",
+                                                            "pascal",
+                                                            "pascal",
+                                                            "pascal",
+                                                            "pascal",
+                                                            "pascal",
+                                                            "pascal",
+                                                            "kelvin",
+                                                            "kelvin",
+                                                            "kelvin",
+                                                            "kelvin"
+                                                        ],
+                       "pds:Internal_Reference.pds:comment":  [
+                                                                  "This is the PDS4 logical identifier for the Mars 2020 Perseverance Rover Mission.",
+                                                                  "This is the PDS4 logical identifier for the Mars 2020 Perseverance Rover.",
+                                                                  "This is the PDS4 logical identifier for them MEDA instrument onboard the Mars 2020 Perseverance Rover.",
+                                                                  "Reference to the Planet - Mars target"
+                                                              ],
+                       "ref_lid_document":  [
+                                                "urn:nasa:pds:mars2020_meda:document:meda_env_rdr_sis"
+                                            ],
+                       "ops:Harvest_Info.ops:node_name":  [
+                                                              "PDS_ATM"
+                                                          ],
+                       "ops:Provenance.ops:ancestor_refs":  [
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env",
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env::10.0",
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env::11.0",
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env::12.0",
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env::15.0",
+                                                                "urn:nasa:pds:mars2020_meda:data_calibrated_env::9.0"
+                                                            ],
+                       "pds:Field_Delimited.pds:name":  [
+                                                            "SCLK",
+                                                            "LMST",
+                                                            "LTST",
+                                                            "BAROCAP1_PRESSURE",
+                                                            "BAROCAP1_PRESSURE_UNCERTAINTY",
+                                                            "BAROCAP2_PRESSURE",
+                                                            "BAROCAP2_PRESSURE_UNCERTAINTY",
+                                                            "BAROCAP3_PRESSURE",
+                                                            "BAROCAP3_PRESSURE_UNCERTAINTY",
+                                                            "THERMOCAP1_TEMP",
+                                                            "THERMOCAP1_TEMP_UNCERTAINTY",
+                                                            "THERMOCAP2_TEMP",
+                                                            "THERMOCAP2_TEMP_UNCERTAINTY",
+                                                            "PRESSURE_MEASUREMENT_MODE",
+                                                            "TRANSDUCER"
+                                                        ],
+                       "pds:File.pds:creation_date_time":  [
+                                                               "2021-10-29T08:26:53.193Z"
+                                                           ],
+                       "pds:Field_Delimited.pds:maximum_field_length":  [
+                                                                            "15",
+                                                                            "18",
+                                                                            "18",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10",
+                                                                            "10"
+                                                                        ],
+                       "ops:Data_File_Info.ops:creation_date_time":  [
+                                                                         "2024-12-02T18:30:53Z"
+                                                                     ],
+                       "pds:Internal_Reference.pds:reference_type":  [
+                                                                         "data_to_investigation",
+                                                                         "is_instrument",
+                                                                         "is_instrument_host",
+                                                                         "data_to_target",
+                                                                         "data_to_document"
+                                                                     ],
+                       "pds:Primary_Result_Summary.pds:purpose":  [
+                                                                      "Science"
+                                                                  ],
+                       "pds:Table_Delimited.pds:local_identifier":  [
+                                                                        "TABLE"
+                                                                    ],
+                       "pds:Identification_Area.pds:information_model_version":  [
+                                                                                     "1.16.0.0"
+                                                                                 ],
+                       "pds:Table_Delimited.pds:records":  [
+                                                               "26818"
+                                                           ],
+                       "pds:Time_Coordinates.pds:start_date_time":  [
+                                                                        "2021-03-05T14:18:05.298Z"
+                                                                    ],
+                       "pds:Observing_System.pds:name":  [
+                                                             "Mars 2020"
+                                                         ],
+                       "pds:Header.pds:object_length":  [
+                                                            "285"
+                                                        ],
+                       "lidvid":  [
+                                      "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0"
+                                  ],
+                       "pds:Modification_Detail.pds:version_id":  [
+                                                                      "1.0",
+                                                                      "2.0"
+                                                                  ],
+                       "ops:Label_File_Info.ops:file_size":  [
+                                                                 "12585"
+                                                             ],
+                       "ops:Provenance.ops:parent_bundle_identifier":  [
+                                                                           "urn:nasa:pds:mars2020_meda::6.0"
+                                                                       ],
+                       "pds:Table_Delimited.pds:field_delimiter":  [
+                                                                       "Comma"
+                                                                   ],
+                       "ops:Data_File_Info.ops:file_name":  [
+                                                                "WE__0015___________CAL_PS__________________P02.CSV"
+                                                            ],
+                       "mars2020:Observation_Information.mars2020:spacecraft_clock_stop":  [
+                                                                                               "668311126"
+                                                                                           ],
+                       "pds:File.pds:local_identifier":  [
+                                                             "WE__0015___________CAL_PS__________________P02_file"
+                                                         ],
+                       "ref_lid_target":  [
+                                              "urn:nasa:pds:context:target:planet.mars"
+                                          ],
+                       "ops:Provenance.ops:reindexed_at":  [
+                                                               "2025-01-24T20:28:04.545492"
+                                                           ],
+                       "lid":  [
+                                   "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p"
+                               ],
+                       "pds:Header.pds:parsing_standard_id":  [
+                                                                  "PDS DSV 1"
+                                                              ],
+                       "pds:Header.pds:offset":  [
+                                                     "0"
+                                                 ],
+                       "mars2020:Observation_Information.mars2020:stop_local_mean_solar_time":  [
+                                                                                                    "00015M23:04:19.106"
+                                                                                                ],
+                       "pds:Table_Delimited.pds:record_delimiter":  [
+                                                                        "Carriage-Return Line-Feed"
+                                                                    ],
+                       "mars2020:Observation_Information.mars2020:start_solar_longitude":  [
+                                                                                               "12.792"
+                                                                                           ],
+                       "ref_lid_instrument":  [
+                                                  "urn:nasa:pds:context:instrument:mars2020.meda"
+                                              ],
+                       "pds:File.pds:file_name":  [
+                                                      "WE__0015___________CAL_PS__________________P02.CSV"
+                                                  ],
+                       "product_class":  [
+                                             "Product_Observational"
+                                         ],
+                       "pds:Time_Coordinates.pds:stop_date_time":  [
+                                                                       "2021-03-06T14:00:26.971Z"
+                                                                   ],
+                       "pds:Primary_Result_Summary.pds:processing_level":  [
+                                                                               "Calibrated"
+                                                                           ],
+                       "ops:Harvest_Info.ops:harvest_date_time":  [
+                                                                      "2024-12-06T15:48:29.775476Z"
+                                                                  ],
+                       "ops:Label_File_Info.ops:file_ref":  [
+                                                                "https://pds-atmospheres.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_calibrated_env/sol_0000_0089/sol_0015/WE__0015___________CAL_PS__________________P02.xml"
+                                                            ],
+                       "pds:Table_Delimited.pds:parsing_standard_id":  [
+                                                                           "PDS DSV 1"
+                                                                       ],
+                       "ops:Data_File_Info.ops:mime_type":  [
+                                                                "text/plain"
+                                                            ],
+                       "pds:Field_Delimited.pds:data_type":  [
+                                                                 "ASCII_Real",
+                                                                 "ASCII_String",
+                                                                 "ASCII_String",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_Real",
+                                                                 "ASCII_String",
+                                                                 "ASCII_Integer"
+                                                             ],
+                       "pds:Target_Identification.pds:name":  [
+                                                                  "Mars"
+                                                              ],
+                       "pds:Record_Delimited.pds:groups":  [
+                                                               "0"
+                                                           ],
+                       "pds:Table_Delimited.pds:offset":  [
+                                                              "285"
+                                                          ],
+                       "pds:Observing_System_Component.pds:name":  [
+                                                                       "Mars Environmental Dynamics Analyzer",
+                                                                       "Mars 2020"
+                                                                   ],
+                       "ops:Provenance.ops:registry_sweepers_repairkit_version":  [
+                                                                                      "4"
+                                                                                  ],
+                       "pds:Header.pds:name":  [
+                                                   "Column headings for TABLE"
+                                               ],
+                       "pds:Identification_Area.pds:product_class":  [
+                                                                         "Product_Observational"
+                                                                     ],
+                       "ops:Provenance.ops:parent_collection_identifier":  [
+                                                                               "urn:nasa:pds:mars2020_meda:data_calibrated_env::11.0",
+                                                                               "urn:nasa:pds:mars2020_meda:data_calibrated_env::12.0",
+                                                                               "urn:nasa:pds:mars2020_meda:data_calibrated_env::9.0",
+                                                                               "urn:nasa:pds:mars2020_meda:data_calibrated_env::10.0"
+                                                                           ],
+                       "ref_lid_instrument_host":  [
+                                                       "urn:nasa:pds:context:instrument_host:spacecraft.mars2020"
+                                                   ],
+                       "description":  [
+                                           "First release",
+                                           "Reprocessed for barocap drift compensation",
+                                           "Spacecraft Clock, as approximated by MEDA internal clock, at the time of the observation, without partition and including decimal thousandths of a second",
+                                           "Local Mean Solar Time",
+                                           "Local True Solar Time",
+                                           "NGM type Barocap (transducer 1) / RSP2M type Barocap (transducer 2) pressure",
+                                           "Barocap 1 pressure uncertainty",
+                                           "RSP2M type Barocap pressure",
+                                           "Barocap 2 pressure uncertainty",
+                                           "NGM type Barocap (transducer 1) pressure",
+                                           "Barocap 3 pressure uncertainty",
+                                           "Thermocap 1 temperature",
+                                           "Thermocap 1 uncertainty",
+                                           "Thermocap 2 temperature",
+                                           "Thermocap 2 uncertainty",
+                                           "Pressure measurement mode: nominal / high resolution",
+                                           "Transducer used: 1 / 2"
+                                       ],
+                       "pds:Record_Delimited.pds:fields":  [
+                                                               "15"
+                                                           ],
+                       "title":  [
+                                     "Mars 2020 MEDA Pressure Sensor Calibrated Data"
+                                 ],
+                       "ops:Data_File_Info.ops:file_ref":  [
+                                                               "https://pds-atmospheres.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_calibrated_env/sol_0000_0089/sol_0015/WE__0015___________CAL_PS__________________P02.CSV"
+                                                           ],
+                       "_package_id":  [
+                                           "83400305-e3e1-449f-bd83-2bcc40fe4b1b"
+                                       ],
+                       "mars2020:Observation_Information.mars2020:start_local_true_solar_time":  [
+                                                                                                     "0014 23:27:03"
+                                                                                                 ],
+                       "pds:Identification_Area.pds:version_id":  [
+                                                                      "2.0"
+                                                                  ],
+                       "pds:Science_Facets.pds:facet1":  [
+                                                             "Meteorology"
+                                                         ],
+                       "pds:Header.pds:local_identifier":  [
+                                                               "HEADER"
+                                                           ],
+                       "pds:File.pds:md5_checksum":  [
+                                                         "55e2f2a1884c160f8e446ce2c1cd4bf5"
+                                                     ],
+                       "ops:Harvest_Info.ops:harvest_version":  [
+                                                                    "4.0.4"
+                                                                ],
+                       "pds:Internal_Reference.pds:lid_reference":  [
+                                                                        "urn:nasa:pds:context:investigation:mission.mars2020",
+                                                                        "urn:nasa:pds:context:instrument:mars2020.meda",
+                                                                        "urn:nasa:pds:context:instrument_host:spacecraft.mars2020",
+                                                                        "urn:nasa:pds:context:target:planet.mars",
+                                                                        "urn:nasa:pds:mars2020_meda:document:meda_env_rdr_sis"
+                                                                    ],
+                       "pds:Science_Facets.pds:domain":  [
+                                                             "Atmosphere"
+                                                         ],
+                       "pds:Field_Delimited.pds:description":  [
+                                                                   "Spacecraft Clock, as approximated by MEDA internal clock, at the time of the observation, without partition and including decimal thousandths of a second",
+                                                                   "Local Mean Solar Time",
+                                                                   "Local True Solar Time",
+                                                                   "NGM type Barocap (transducer 1) / RSP2M type Barocap (transducer 2) pressure",
+                                                                   "Barocap 1 pressure uncertainty",
+                                                                   "RSP2M type Barocap pressure",
+                                                                   "Barocap 2 pressure uncertainty",
+                                                                   "NGM type Barocap (transducer 1) pressure",
+                                                                   "Barocap 3 pressure uncertainty",
+                                                                   "Thermocap 1 temperature",
+                                                                   "Thermocap 1 uncertainty",
+                                                                   "Thermocap 2 temperature",
+                                                                   "Thermocap 2 uncertainty",
+                                                                   "Pressure measurement mode: nominal / high resolution",
+                                                                   "Transducer used: 1 / 2"
+                                                               ],
+                       "pds:Field_Delimited.pds:field_number":  [
+                                                                    "1",
+                                                                    "2",
+                                                                    "3",
+                                                                    "4",
+                                                                    "5",
+                                                                    "6",
+                                                                    "7",
+                                                                    "8",
+                                                                    "9",
+                                                                    "10",
+                                                                    "11",
+                                                                    "12",
+                                                                    "13",
+                                                                    "14",
+                                                                    "15"
+                                                                ],
+                       "pds:Identification_Area.pds:logical_identifier":  [
+                                                                              "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p"
+                                                                          ],
+                       "ops:Data_File_Info.ops:file_size":  [
+                                                                "2512699"
+                                                            ],
+                       "ops:Provenance.ops:registry_sweepers_provenance_version":  [
+                                                                                       "null"
+                                                                                   ],
+                       "pds:File.pds:records":  [
+                                                    "26819"
+                                                ],
+                       "mars2020:Observation_Information.mars2020:start_local_mean_solar_time":  [
+                                                                                                     "00015M00:00:00.810"
+                                                                                                 ],
+                       "ref_lid_investigation":  [
+                                                     "urn:nasa:pds:context:investigation:mission.mars2020"
+                                                 ],
+                       "pds:Table_Delimited.pds:name":  [
+                                                            "MEDA Pressure Sensor Calibrated Data"
+                                                        ],
+                       "mars2020:Observation_Information.mars2020:spacecraft_clock_partition":  [
+                                                                                                    "1"
+                                                                                                ],
+                       "ops:Label_File_Info.ops:file_name":  [
+                                                                 "WE__0015___________CAL_PS__________________P02.xml"
+                                                             ],
+                       "pds:Target_Identification.pds:type":  [
+                                                                  "Planet"
+                                                              ],
+                       "pds:Science_Facets.pds:discipline_name":  [
+                                                                      "Atmospheres"
+                                                                  ],
+                       "pds:Investigation_Area.pds:type":  [
+                                                               "Mission"
+                                                           ],
+                       "mars2020:Observation_Information.mars2020:spacecraft_clock_start":  [
+                                                                                                "668225785"
+                                                                                            ]
+                   }
+}

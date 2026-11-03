@@ -7,3 +7,10 @@
 .vs/
 *.user
 *.suo
+
+# Local raw evidence, credentials and ephemeral tool reports
+**/App_Data/
+postman/.dependencies/
+.postman/
+*.ndjson
+*.err

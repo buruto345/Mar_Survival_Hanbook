@@ -48,6 +48,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CurrentDraftVersionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("EstimatedReadingMinutes")
                         .HasColumnType("int");
 
@@ -68,6 +71,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.Property<Guid?>("PublishedById")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PublishedVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("RequiresReview")
+                        .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("ReviewedAt")
                         .HasColumnType("datetimeoffset");
@@ -129,6 +138,10 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("CategoryId", "Status");
 
+                    b.HasIndex("CurrentDraftVersionId", "Id");
+
+                    b.HasIndex("PublishedVersionId", "Id");
+
                     b.HasIndex("Status", "NextReviewAt");
 
                     b.HasIndex("TranslationGroupId", "LanguageCode")
@@ -141,12 +154,29 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                             t.HasCheckConstraint("CK_Articles_PublicationMetadata", "[Status] <> N'Published' OR ([ReviewedAt] IS NOT NULL AND [ReviewedById] IS NOT NULL AND [PublishedAt] IS NOT NULL AND [PublishedById] IS NOT NULL)");
 
+                            t.HasCheckConstraint("CK_Articles_PublicationPointer", "[Status] <> N'Published' OR [PublishedVersionId] IS NOT NULL");
+
                             t.HasCheckConstraint("CK_Articles_ReadingTime", "[EstimatedReadingMinutes] IS NULL OR [EstimatedReadingMinutes] > 0");
 
                             t.HasCheckConstraint("CK_Articles_ReviewSchedule", "[NextReviewAt] IS NULL OR ([ReviewedAt] IS NOT NULL AND [NextReviewAt] >= [ReviewedAt])");
 
                             t.HasCheckConstraint("CK_Articles_Status", "[Status] IN (N'Draft', N'InReview', N'Approved', N'Published', N'Rejected', N'Archived')");
                         });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleExplorationEvent", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ExplorationEventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "ExplorationEventId");
+
+                    b.HasIndex("ExplorationEventId");
+
+                    b.ToTable("ArticleExplorationEvents", (string)null);
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleFact", b =>
@@ -201,6 +231,51 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.ToTable("ArticleHazards", (string)null);
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleLocation", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "LocationId");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("ArticleLocations", (string)null);
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMapLayer", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MapLayerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "MapLayerId");
+
+                    b.HasIndex("MapLayerId");
+
+                    b.ToTable("ArticleMapLayers", (string)null);
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMeasurement", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MeasurementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "MeasurementId");
+
+                    b.HasIndex("MeasurementId");
+
+                    b.ToTable("ArticleMeasurements", (string)null);
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMedia", b =>
                 {
                     b.Property<Guid>("ArticleId")
@@ -223,6 +298,21 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.HasIndex("ArticleId", "DisplayOrder");
 
                     b.ToTable("ArticleMedia", (string)null);
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMission", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "MissionId");
+
+                    b.HasIndex("MissionId");
+
+                    b.ToTable("ArticleMissions", (string)null);
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleRelation", b =>
@@ -338,6 +428,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(48)
                         .HasColumnType("nvarchar(48)");
 
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TestEnvironment")
                         .IsRequired()
                         .HasMaxLength(48)
@@ -346,6 +439,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.HasKey("ArticleId", "SourceId");
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.ToTable("ArticleSources", null, t =>
                         {
@@ -396,6 +491,11 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("ArticleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CategorySlug")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("nvarchar(180)");
+
                     b.Property<string>("ChangeSummary")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
@@ -409,15 +509,53 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("ReviewState")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ReviewedById")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<string>("SearchText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Snapshot")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SnapshotHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int>("SnapshotSchemaVersion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -431,15 +569,39 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("ChangedById");
 
+                    b.HasIndex("ReviewedById");
+
                     b.HasIndex("ArticleId", "Version")
                         .IsUnique();
+
+                    b.HasIndex("CategorySlug", "LanguageCode");
 
                     b.ToTable("ArticleVersions", null, t =>
                         {
                             t.HasCheckConstraint("CK_ArticleVersions_PositiveVersion", "[Version] > 0");
 
+                            t.HasCheckConstraint("CK_ArticleVersions_ReviewState", "[ReviewState] IN (N'Draft', N'InReview', N'Approved', N'ChangesRequested', N'Rejected', N'Superseded')");
+
                             t.HasCheckConstraint("CK_ArticleVersions_ValidSnapshot", "ISJSON([Snapshot]) = 1");
                         });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleVersionSource", b =>
+                {
+                    b.Property<Guid>("ArticleVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleVersionId", "SourceRevisionId");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
+
+                    b.ToTable("ArticleVersionSources", (string)null);
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.AuditLog", b =>
@@ -641,6 +803,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -658,6 +823,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.HasIndex("SourceId");
 
                     b.HasIndex("EventDate", "IsPlanned");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.ToTable("ExplorationEvents", null, t =>
                         {
@@ -897,6 +1064,110 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.IngestionItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ErrorCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("IdentityKey")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemKey")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizationVersion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NormalizedPayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<string>("RawChecksum")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("RawPayload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RawStoragePath")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArchivedAt");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("JobId", "ItemKey")
+                        .IsUnique();
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
+
+                    b.ToTable("IngestionItems", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_IngestionItems_Provider", "[Provider] IN (N'ManualLegacy', N'Ntrs', N'Images', N'Pds', N'NasaWeb', N'MarsTrek')");
+
+                            t.HasCheckConstraint("CK_IngestionItems_Status", "[Status] IN (N'Queued', N'Processing', N'Unchanged', N'RevisionCreated', N'Rejected', N'Failed')");
+                        });
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.IngestionJob", b =>
                 {
                     b.Property<Guid>("Id")
@@ -907,6 +1178,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.Property<int>("AttemptCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("CheckpointJson")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Checksum")
                         .HasMaxLength(128)
@@ -930,6 +1204,16 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
+                    b.Property<DateTimeOffset?>("LeaseExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LeaseOwner")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("ParserVersion")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -945,11 +1229,28 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<int>("RecordsAccepted")
                         .HasColumnType("int");
 
+                    b.Property<int>("RecordsFailed")
+                        .HasColumnType("int");
+
                     b.Property<int>("RecordsFetched")
                         .HasColumnType("int");
 
                     b.Property<int>("RecordsRejected")
                         .HasColumnType("int");
+
+                    b.Property<int>("RecordsUnchanged")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("RequestJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid?>("RequestedById")
                         .HasColumnType("uniqueidentifier");
@@ -978,13 +1279,19 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("ArchivedAt");
 
-                    b.HasIndex("RequestedById");
-
                     b.HasIndex("ConnectorId", "Status", "CreatedAt");
+
+                    b.HasIndex("RequestedById", "ConnectorId", "RequestKey")
+                        .IsUnique()
+                        .HasFilter("[RequestKey] IS NOT NULL AND [RequestedById] IS NOT NULL");
+
+                    b.HasIndex("Status", "NextAttemptAt", "LeaseExpiresAt");
 
                     b.ToTable("IngestionJobs", null, t =>
                         {
                             t.HasCheckConstraint("CK_IngestionJobs_Counts", "[AttemptCount] >= 0 AND [RecordsFetched] >= 0 AND [RecordsAccepted] >= 0 AND [RecordsRejected] >= 0 AND [RecordsAccepted] + [RecordsRejected] <= [RecordsFetched]");
+
+                            t.HasCheckConstraint("CK_IngestionJobs_DetailedCounts", "[RecordsUnchanged] >= 0 AND [RecordsFailed] >= 0 AND [RecordsAccepted] + [RecordsRejected] + [RecordsUnchanged] + [RecordsFailed] <= [RecordsFetched]");
 
                             t.HasCheckConstraint("CK_IngestionJobs_Status", "[Status] IN (N'Queued', N'Running', N'Succeeded', N'PartiallySucceeded', N'Failed', N'Cancelled')");
 
@@ -1005,6 +1312,17 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("BoundingBoxJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CapabilitiesStoragePath")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<string>("CoordinateSystem")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -1022,10 +1340,17 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<Guid?>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ResourceUrlTemplate")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1040,6 +1365,13 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Style")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("TileMatrixSet")
                         .IsRequired()
@@ -1057,6 +1389,10 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArchivedAt");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.HasIndex("SourceId", "LayerIdentifier", "TileMatrixSet")
                         .IsUnique();
@@ -1114,6 +1450,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -1125,6 +1464,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.ToTable("MarsLocations", null, t =>
                         {
@@ -1154,6 +1495,11 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(48)
                         .HasColumnType("nvarchar(48)");
+
+                    b.Property<string>("ExternalObservationKey")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<Guid>("FactId")
                         .HasColumnType("uniqueidentifier");
@@ -1188,6 +1534,14 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasPrecision(28, 12)
                         .HasColumnType("decimal(28,12)");
 
+                    b.Property<string>("QualityFlag")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("QualityNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -1195,6 +1549,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRevisionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TestEnvironment")
@@ -1235,6 +1592,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("FactId", "ObservedAt");
 
+                    b.HasIndex("SourceRevisionId", "ExternalObservationKey")
+                        .IsUnique()
+                        .HasFilter("[SourceRevisionId] IS NOT NULL AND [ExternalObservationKey] IS NOT NULL");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
+
                     b.HasIndex("MissionId", "LocationId", "ObservedAt");
 
                     b.ToTable("Measurements", null, t =>
@@ -1274,6 +1637,10 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("FileChecksum")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<long?>("FileSizeBytes")
                         .HasColumnType("bigint");
 
@@ -1305,6 +1672,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SourceRevisionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
@@ -1352,6 +1722,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.HasIndex("VerifiedById");
 
                     b.HasIndex("MediaType", "VerificationStatus");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.ToTable("MediaAssets", null, t =>
                         {
@@ -1416,6 +1788,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(48)
@@ -1435,6 +1810,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("SourceRevisionId", "SourceId");
 
                     b.HasIndex("Status", "MissionType");
 
@@ -1571,6 +1948,78 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                             t.HasCheckConstraint("CK_NasaConnectors_ConnectorType", "[ConnectorType] IN (N'Images', N'Ntrs', N'Pds', N'Osdr', N'MarsTrek', N'TechPort', N'ManualArchive')");
 
                             t.HasCheckConstraint("CK_NasaConnectors_RateLimit", "[RateLimitPerMinute] IS NULL OR [RateLimitPerMinute] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.PublicationResource", b =>
+                {
+                    b.Property<Guid>("ArticleVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Kind")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("Date")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("EvidenceType")
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<Guid?>("FactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsPlanned")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasPrecision(10, 7)
+                        .HasColumnType("decimal(10,7)");
+
+                    b.Property<Guid?>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasPrecision(10, 7)
+                        .HasColumnType("decimal(10,7)");
+
+                    b.Property<Guid?>("MissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuantityKind")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ArticleVersionId", "Kind", "ResourceId");
+
+                    b.HasIndex("Kind", "Date");
+
+                    b.HasIndex("Kind", "ResourceId");
+
+                    b.ToTable("PublicationResources", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PublicationResources_Json", "ISJSON([Payload]) = 1");
                         });
                 });
 
@@ -1831,6 +2280,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TestEnvironment")
                         .IsRequired()
                         .HasMaxLength(48)
@@ -1877,6 +2329,8 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("Name", "EvidenceType");
 
+                    b.HasIndex("SourceRevisionId", "SourceId");
+
                     b.ToTable("ScientificFacts", null, t =>
                         {
                             t.HasCheckConstraint("CK_ScientificFacts_EvidenceType", "[EvidenceType] IN (N'Unspecified', N'Observed', N'Tested', N'Modeled', N'Proposed')");
@@ -1918,6 +2372,9 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid?>("CurrentAcceptedRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Doi")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
@@ -1926,8 +2383,17 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("IdentityKey")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
                     b.Property<Guid?>("IngestionJobId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("LastCheckedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("MissionOwnership")
                         .HasMaxLength(500)
@@ -1940,6 +2406,11 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.Property<DateTimeOffset?>("NextReviewAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
 
                     b.Property<DateTimeOffset?>("PublishedAt")
                         .HasColumnType("datetimeoffset");
@@ -1998,15 +2469,135 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                     b.HasIndex("VerifiedById");
 
+                    b.HasIndex("CurrentAcceptedRevisionId", "Id");
+
+                    b.HasIndex("Provider", "IdentityKey")
+                        .IsUnique();
+
                     b.HasIndex("VerificationStatus", "NextReviewAt");
 
                     b.ToTable("ScientificSources", null, t =>
                         {
+                            t.HasCheckConstraint("CK_ScientificSources_Provider", "[Provider] IN (N'ManualLegacy', N'Ntrs', N'Images', N'Pds', N'NasaWeb', N'MarsTrek')");
+
                             t.HasCheckConstraint("CK_ScientificSources_SourceType", "[SourceType] IN (N'WebPage', N'TechnicalReport', N'ResearchPaper', N'Dataset', N'Api', N'Media', N'MapLayer')");
 
                             t.HasCheckConstraint("CK_ScientificSources_Verification", "[VerificationStatus] <> N'Accepted' OR ([VerifiedAt] IS NOT NULL AND [VerifiedById] IS NOT NULL)");
 
                             t.HasCheckConstraint("CK_ScientificSources_VerificationStatus", "[VerificationStatus] IN (N'Pending', N'Accepted', N'Rejected')");
+                        });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.SourceRevision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("IngestionJobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MetadataSnapshot")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizationVersion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProviderVersion")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("RawChecksum")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("RawStoragePath")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<DateTimeOffset>("RetrievedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("RevisionNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RevocationReason")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("VerificationNotes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("VerifiedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArchivedAt");
+
+                    b.HasIndex("IngestionJobId");
+
+                    b.HasIndex("VerifiedById");
+
+                    b.HasIndex("SourceId", "Fingerprint")
+                        .IsUnique();
+
+                    b.HasIndex("SourceId", "RevisionNumber")
+                        .IsUnique();
+
+                    b.ToTable("SourceRevisions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SourceRevisions_Metadata", "ISJSON([MetadataSnapshot]) = 1");
+
+                            t.HasCheckConstraint("CK_SourceRevisions_Number", "[RevisionNumber] > 0");
+
+                            t.HasCheckConstraint("CK_SourceRevisions_Revocation", "[RevokedAt] IS NULL OR [RevocationReason] IS NOT NULL");
+
+                            t.HasCheckConstraint("CK_SourceRevisions_Verification", "[VerificationStatus] <> N'Accepted' OR ([VerifiedAt] IS NOT NULL AND [VerifiedById] IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_SourceRevisions_VerificationStatus", "[VerificationStatus] IN (N'Pending', N'Accepted', N'Rejected')");
                         });
                 });
 
@@ -2385,6 +2976,18 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.ArticleVersion", null)
+                        .WithMany()
+                        .HasForeignKey("CurrentDraftVersionId", "Id")
+                        .HasPrincipalKey("Id", "ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.ArticleVersion", null)
+                        .WithMany()
+                        .HasForeignKey("PublishedVersionId", "Id")
+                        .HasPrincipalKey("Id", "ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
@@ -2394,6 +2997,21 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("ReviewedBy");
 
                     b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleExplorationEvent", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.ExplorationEvent", null)
+                        .WithMany()
+                        .HasForeignKey("ExplorationEventId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleFact", b =>
@@ -2453,6 +3071,51 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Hazard");
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleLocation", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.MarsLocation", null)
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMapLayer", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.MapLayer", null)
+                        .WithMany()
+                        .HasForeignKey("MapLayerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMeasurement", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.Measurement", null)
+                        .WithMany()
+                        .HasForeignKey("MeasurementId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMedia", b =>
                 {
                     b.HasOne("Mars_Survival_Hanbook.Models.Article", "Article")
@@ -2470,6 +3133,21 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Article");
 
                     b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleMission", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.Mission", null)
+                        .WithMany()
+                        .HasForeignKey("MissionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleRelation", b =>
@@ -2535,6 +3213,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Article");
 
                     b.Navigation("Source");
@@ -2592,9 +3276,32 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReviewedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Article");
 
                     b.Navigation("ChangedBy");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ArticleVersionSource", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.ArticleVersion", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", "SourceRevision")
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("SourceRevision");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.AuditLog", b =>
@@ -2672,6 +3379,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Mission");
 
                     b.Navigation("Source");
@@ -2735,6 +3448,26 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Source");
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.IngestionItem", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.IngestionJob", null)
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.ScientificSource", null)
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.IngestionJob", b =>
                 {
                     b.HasOne("Mars_Survival_Hanbook.Models.NasaConnector", "Connector")
@@ -2755,11 +3488,22 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.MapLayer", b =>
                 {
+                    b.HasOne("Mars_Survival_Hanbook.Models.MarsLocation", null)
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Mars_Survival_Hanbook.Models.ScientificSource", "Source")
                         .WithMany("MapLayers")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Source");
                 });
@@ -2771,6 +3515,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Source");
                 });
@@ -2805,6 +3555,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Fact");
 
                     b.Navigation("Location");
@@ -2829,6 +3585,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasForeignKey("VerifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Source");
 
                     b.Navigation("VerifiedBy");
@@ -2842,7 +3604,22 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.PublicationResource", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.ArticleVersion", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ResearchPaper", b =>
@@ -2910,6 +3687,12 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasForeignKey("VerifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId", "SourceId")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Source");
 
                     b.Navigation("Unit");
@@ -2929,9 +3712,36 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         .HasForeignKey("VerifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("CurrentAcceptedRevisionId", "Id")
+                        .HasPrincipalKey("Id", "SourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("IngestionJob");
 
                     b.Navigation("VerifiedBy");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.SourceRevision", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.IngestionJob", null)
+                        .WithMany()
+                        .HasForeignKey("IngestionJobId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.ScientificSource", "Source")
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("VerifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Source");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.Technology", b =>

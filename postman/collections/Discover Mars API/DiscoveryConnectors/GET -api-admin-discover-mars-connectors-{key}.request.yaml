@@ -1,0 +1,18 @@
+$kind: http-request
+name: GET /api/admin/discover-mars/connectors/{key}
+description: "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/connectors/:key"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: key
+    value: string
+    disabled: false
+    description: "(Required) "
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

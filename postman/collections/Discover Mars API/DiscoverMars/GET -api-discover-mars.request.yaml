@@ -1,0 +1,14 @@
+$kind: http-request
+name: GET /api/discover-mars
+description: ""
+url: "{{baseUrl}}/api/discover-mars?page=1&pageSize=20&q=string&language=vi"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+settings: {}
+order: 1000

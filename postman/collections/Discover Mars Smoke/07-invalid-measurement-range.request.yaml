@@ -1,0 +1,12 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/discover-mars/measurements'
+order: 7000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 400', () => pm.response.to.have.status(400));
+      
+      pm.test('Public response cannot be cached across revocation', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));
+examples: './.resources/07-invalid-measurement-range.resources/examples'

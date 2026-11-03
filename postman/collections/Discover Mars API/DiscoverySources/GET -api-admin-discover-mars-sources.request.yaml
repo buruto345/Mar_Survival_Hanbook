@@ -1,0 +1,20 @@
+$kind: http-request
+name: GET /api/admin/discover-mars/sources
+description: "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/sources?page=1&pageSize=20&q=string&language=vi&provider=NasaWeb&verificationStatus=Rejected"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+  provider: NasaWeb
+  verificationStatus: Rejected
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 1000

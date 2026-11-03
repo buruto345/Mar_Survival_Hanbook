@@ -1,0 +1,15 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/discover-mars/articles?q=__no_such_discovery_article_9728'
+order: 3000
+queryParams:
+  - key: q
+    value: '__no_such_discovery_article_9728'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 200', () => pm.response.to.have.status(200));
+      pm.test('Empty results retain pagination', () => { const b = pm.response.json(); pm.expect(b.items).to.eql([]); pm.expect(b.total).to.eql(0); pm.expect(b.page).to.eql(1); });
+      pm.test('Public response cannot be cached across revocation', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));
+examples: './.resources/03-empty-search.resources/examples'

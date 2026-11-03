@@ -1,0 +1,22 @@
+$kind: http-request
+name: GET /api/admin/discover-mars/articles
+description: "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/articles?page=1&pageSize=20&q=string&language=vi&category=string&publicationStatus=Archived&reviewState=InReview&requiresReview=true"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+  category: string
+  publicationStatus: Archived
+  reviewState: InReview
+  requiresReview: "true"
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 1000

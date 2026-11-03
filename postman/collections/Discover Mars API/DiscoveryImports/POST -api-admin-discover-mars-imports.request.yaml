@@ -1,0 +1,38 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/imports
+description: "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/imports"
+method: POST
+headers:
+  - key: Idempotency-Key
+    value: string
+    disabled: false
+    description: "(Required) "
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "connectorKey": "string",
+      "query": "string",
+      "recordIds": [
+        "string",
+        "string"
+      ],
+      "maxItems": 476,
+      "pageSize": 32,
+      "layerKey": "string",
+      "includeMembers": true,
+      "pdsCollection": "string",
+      "from": "1992-01-19T20:27:44.671Z",
+      "to": "1951-06-13T19:52:45.036Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 1000

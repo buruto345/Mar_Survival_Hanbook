@@ -1,0 +1,27 @@
+$kind: http-request
+name: GET /api/discover-mars/facts
+description: ""
+url: "{{baseUrl}}/api/discover-mars/facts?category=string&sort=publishedAtDesc&missionId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&locationId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&factId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&from=1982-04-09T18:02:26.441Z&to=1982-04-09T18:02:26.441Z&includePlanned=false&bbox=string&status=<string>&type=<string>&quantityKind=string&evidenceType=<string>&page=1&pageSize=20&q=string&language=vi"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  category: string
+  sort: publishedAtDesc
+  missionId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+  locationId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+  factId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+  from: 1982-04-09T18:02:26.441Z
+  to: 1982-04-09T18:02:26.441Z
+  includePlanned: "false"
+  bbox: string
+  status: <string>
+  type: <string>
+  quantityKind: string
+  evidenceType: <string>
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+settings: {}
+order: 9000

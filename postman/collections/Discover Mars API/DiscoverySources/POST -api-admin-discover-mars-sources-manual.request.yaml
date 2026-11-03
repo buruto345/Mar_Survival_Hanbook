@@ -1,0 +1,37 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/sources/manual
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/sources/manual"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "url": "string",
+      "title": "string",
+      "authors": [
+        {
+          "name": "string",
+          "organization": "string"
+        },
+        {
+          "name": "string",
+          "organization": "string"
+        }
+      ],
+      "organization": "string",
+      "sourceType": "Dataset",
+      "excerpt": "string",
+      "usageNote": "string",
+      "retrievedAt": "1948-11-12T05:03:47.504Z",
+      "credit": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 6000

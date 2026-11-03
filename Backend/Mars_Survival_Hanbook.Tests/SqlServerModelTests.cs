@@ -12,7 +12,7 @@ public class SqlServerModelTests(SqlServerFixture fixture) : IClassFixture<SqlSe
     {
         await using var context = fixture.CreateContext();
         var applied = (await context.Database.GetAppliedMigrationsAsync()).ToArray();
-        Assert.Single(applied);
+        Assert.Equal(context.Database.GetMigrations(), applied);
         Assert.EndsWith("_InitialCreate", applied[0]);
         Assert.Empty(await context.Database.GetPendingMigrationsAsync());
 

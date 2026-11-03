@@ -1,0 +1,40 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/content/missions/{id}
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/missions/:id"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "agency": "string",
+      "missionType": "<string>",
+      "name": "string",
+      "nasaIdentifier": "string",
+      "sourceRevisionId": "e253f1bb-d70a-7e38-6009-eaae306c3e3b",
+      "status": "<string>",
+      "description": "string",
+      "launchDate": "1959-08-31T08:07:28.603Z",
+      "endDate": "1987-06-09T23:46:52.929Z",
+      "statusVerifiedAt": "1971-10-17T11:20:45.634Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 4000

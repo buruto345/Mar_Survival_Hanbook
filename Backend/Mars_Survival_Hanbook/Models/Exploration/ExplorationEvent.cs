@@ -6,6 +6,7 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>A sourced exploration timeline event, distinguishing plans from historical events.</summary>
 public class ExplorationEvent : Entity
 {
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(300)]
     public required string Title { get; set; }
 

@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "400 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/discover-mars/measurements"
+  },
+  "response": {
+    "statusCode": 400,
+    "statusText": "Bad Request",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/problem+json"
+      }
+    ],
+    "body": {
+      "type": "json",
+      "content": "{\"type\":\"about:blank\",\"title\":\"Measurement c\\u1EA7n factId/missionId v\\u00E0 from/to trong kho\\u1EA3ng cho ph\\u00E9p.\",\"status\":400,\"code\":\"invalid_request\",\"traceId\":\"0HNPPCFB7CIE8:00000001\"}"
+    }
+  },
+  "order": 1000
+}

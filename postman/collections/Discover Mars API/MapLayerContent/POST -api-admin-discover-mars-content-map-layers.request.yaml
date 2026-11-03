@@ -1,0 +1,32 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/map-layers
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/map-layers"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "attribution": "st",
+      "boundingBoxJson": "string",
+      "coordinateSystem": "string",
+      "format": "string",
+      "layerIdentifier": "string",
+      "name": "string",
+      "resourceUrlTemplate": "string",
+      "serviceUrl": "string",
+      "sourceRevisionId": "8aea3cac-8b82-e9a5-495b-be0ccc997a97",
+      "style": "string",
+      "tileMatrixSet": "string",
+      "description": "string",
+      "locationId": "bd1b673e-2aa7-95dd-a132-6ea31f276675"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

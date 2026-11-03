@@ -1,0 +1,27 @@
+purpose:
+  stands_in_for: NASA NTRS, Images, PDS MEDA pressure and Mars Trek HTTP responses and upstream failures.
+  unblocks: Local tests of the real Discover Mars worker and SQL persistence.
+assumptions:
+  - id: ntrs-wire-contract
+    status: supported
+    claim: NTRS citation search exposes results and stats, and citation detail exposes affiliations and relative PDF links.
+    reason: The supplied implementation guide and a saved official citation response describe these fields.
+    verification: Official NTRS OpenAPI was inspected on 2026-11-02. The local mock uses synthetic identities and text.
+    source: https://ntrs.nasa.gov/api/openapi/; Backend/Mars_Survival_Hanbook.Tests/Fixtures/Nasa/ntrs_record.json
+    updated_at: "2026-11-02"
+  - id: live-service-availability
+    status: unknown
+    claim: NASA endpoints remain available in production at all times.
+    reason: Neither the provider contract nor local simulation guarantees uptime.
+    verification: Local fault scenarios do not establish real provider availability.
+    source: postman/mocks/nasa/default.js
+    updated_at: "2026-11-02"
+fingerprints:
+  - id: initial
+    date: "2026-11-02"
+    commit: uncommitted implementation
+    cli: "1.75.0"
+  - id: sql-http-worker-verification
+    date: "2026-11-03"
+    commit: uncommitted implementation
+    cli: "1.75.0"

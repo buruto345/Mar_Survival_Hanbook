@@ -1,0 +1,11 @@
+name: Discover Mars Local
+values:
+  - key: baseUrl
+    value: 'http://127.0.0.1:5086'
+    enabled: true
+    type: default
+  - key: bearerToken
+    value: ''
+    enabled: false
+    type: secret
+

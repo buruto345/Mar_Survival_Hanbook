@@ -7,6 +7,15 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Import execution and raw staging metadata; successful ingestion does not publish content.</summary>
 public class IngestionJob : Entity
 {
+    [MaxLength(200)] public string? RequestKey { get; set; }
+    [MaxLength(64)] public string? RequestHash { get; set; }
+    public string? RequestJson { get; set; }
+    public string? CheckpointJson { get; set; }
+    [MaxLength(100)] public string? LeaseOwner { get; set; }
+    public DateTimeOffset? LeaseExpiresAt { get; set; }
+    public DateTimeOffset? NextAttemptAt { get; set; }
+    public int RecordsUnchanged { get; set; }
+    public int RecordsFailed { get; set; }
     [MaxLength(2048)]
     public required string Endpoint { get; set; }
 

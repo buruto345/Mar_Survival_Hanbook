@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "200 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/discover-mars/categories"
+  },
+  "response": {
+    "statusCode": 200,
+    "statusText": "OK",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/json; charset=utf-8"
+      }
+    ],
+    "body": {
+      "type": "json",
+      "content": "[{\"id\":\"a5c04874-c6eb-47e9-8c44-2741b7235ad9\",\"slug\":\"exploration-history\",\"name\":\"Lịch sử khám phá Sao Hỏa\",\"description\":null,\"publishedArticleCount\":0},{\"id\":\"4777b24a-8998-4278-a862-8884ca08e7f2\",\"slug\":\"structure-and-terrain\",\"name\":\"Cấu tạo và địa hình\",\"description\":null,\"publishedArticleCount\":0},{\"id\":\"2ab3cd8d-1706-474b-b704-44ea11fc68e4\",\"slug\":\"atmosphere-temperature-gravity\",\"name\":\"Khí quyển, nhiệt độ, trọng lực\",\"description\":null,\"publishedArticleCount\":0},{\"id\":\"926e9b4e-2441-47c1-95f0-3d14b9af3b79\",\"slug\":\"water-and-life\",\"name\":\"Nước và dấu hiệu sự sống\",\"description\":null,\"publishedArticleCount\":0},{\"id\":\"93c7949d-6d23-4979-bbed-70050adbca01\",\"slug\":\"missions-and-rovers\",\"name\":\"Sứ mệnh NASA và tàu thăm dò\",\"description\":null,\"publishedArticleCount\":0}]"
+    }
+  },
+  "order": 1000
+}

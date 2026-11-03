@@ -1,0 +1,44 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/content/facts/{id}
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/facts/:id"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "context": "string",
+      "evidenceType": "<string>",
+      "measurementKind": "Unspecified",
+      "name": "string",
+      "originalUnit": "string",
+      "originalValue": 5268.240126315504,
+      "sourceRevisionId": "d7daf9a4-81e5-7d15-466c-6cb7763c4c22",
+      "testEnvironment": "Unspecified",
+      "unitId": "bd0a1d26-be2a-bd68-3905-acbe29be8c66",
+      "value": 1727.0125192590058,
+      "upperValue": 4852.630635723472,
+      "assumptions": "string",
+      "uncertainty": "string",
+      "observedAt": "1966-11-03T02:58:41.007Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 4000

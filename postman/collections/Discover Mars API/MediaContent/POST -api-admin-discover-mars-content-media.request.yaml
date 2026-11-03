@@ -1,0 +1,33 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/media
+description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+url: "{{baseUrl}}/api/admin/discover-mars/content/media"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "altText": "string",
+      "credit": "string",
+      "mediaType": "Document",
+      "originalUrl": "string",
+      "sourceRevisionId": "840c7fb8-5da0-3827-a8ec-ddfd36ccd0d7",
+      "title": "string",
+      "url": "string",
+      "usageNote": "string",
+      "nasaId": "string",
+      "mimeType": "string",
+      "width": 8161,
+      "height": 7516,
+      "fileSizeBytes": 1742,
+      "fileChecksum": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

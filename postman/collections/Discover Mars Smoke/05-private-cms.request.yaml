@@ -1,0 +1,10 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/admin/discover-mars/articles'
+order: 5000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 401', () => pm.response.to.have.status(401));
+examples: './.resources/05-private-cms.resources/examples'

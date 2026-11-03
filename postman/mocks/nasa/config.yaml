@@ -1,0 +1,15 @@
+version: 1
+name: nasa
+slug: nasa
+protocol: http
+description: Local NASA contract fixtures and fault injection for Discover Mars.
+port: 4510
+interceptRequests: true
+origin:
+  - ntrs.nasa.gov
+  - images-api.nasa.gov
+  - pds.nasa.gov
+scenarios:
+  - name: default
+    default: true
+    path: ./default.js

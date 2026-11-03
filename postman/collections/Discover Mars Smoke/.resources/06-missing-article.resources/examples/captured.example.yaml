@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "404 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/discover-mars/articles/__missing_smoke_article"
+  },
+  "response": {
+    "statusCode": 404,
+    "statusText": "Not Found",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/problem+json"
+      }
+    ],
+    "body": {
+      "type": "json",
+      "content": "{\"type\":\"about:blank\",\"title\":\"Kh\\u00F4ng t\\u00ECm th\\u1EA5y t\\u00E0i nguy\\u00EAn.\",\"status\":404,\"code\":\"not_found\",\"traceId\":\"0HNPPCFB7CIE7:00000001\"}"
+    }
+  },
+  "order": 1000
+}
