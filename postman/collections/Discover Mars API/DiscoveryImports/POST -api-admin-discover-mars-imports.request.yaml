@@ -1,0 +1,38 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/imports
+description: "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/imports"
+method: POST
+headers:
+  - key: Idempotency-Key
+    value: string
+    disabled: false
+    description: "(Required) "
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "connectorKey": "string",
+      "query": "string",
+      "recordIds": [
+        "string",
+        "string"
+      ],
+      "maxItems": 27,
+      "pageSize": 59,
+      "layerKey": "string",
+      "includeMembers": false,
+      "pdsCollection": "string",
+      "from": "1964-05-31T07:36:46.950Z",
+      "to": "1951-12-28T12:18:30.547Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 1000

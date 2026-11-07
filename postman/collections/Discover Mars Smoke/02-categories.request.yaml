@@ -1,0 +1,12 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/discover-mars/categories'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 200', () => pm.response.to.have.status(200));
+      pm.test('Five categories', () => pm.expect(pm.response.json()).to.have.lengthOf(5));
+      pm.test('Public response cannot be cached across revocation', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));
+examples: './.resources/02-categories.resources/examples'

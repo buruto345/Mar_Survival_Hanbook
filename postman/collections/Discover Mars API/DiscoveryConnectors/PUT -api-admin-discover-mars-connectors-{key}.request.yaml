@@ -1,0 +1,34 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/connectors/{key}
+description: "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/connectors/:key"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: key
+    value: string
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "isEnabled": true,
+      "baseUrl": "string",
+      "accessPolicy": "string",
+      "rateLimitPerMinute": 256
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 3000

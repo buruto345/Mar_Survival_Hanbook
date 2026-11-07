@@ -7,6 +7,7 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>NASA mission metadata with explicitly dated status verification.</summary>
 public class Mission : Entity
 {
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(150)]
     public required string NASAIdentifier { get; set; }
 

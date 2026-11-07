@@ -7,6 +7,13 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>An optional Mars Trek WMTS layer with independently reviewed NASA provenance.</summary>
 public class MapLayer : Entity
 {
+    [MaxLength(200)] public string? Style { get; set; }
+    [MaxLength(2048)] public string? ResourceUrlTemplate { get; set; }
+    public string? BoundingBoxJson { get; set; }
+    [MaxLength(150)] public string? CoordinateSystem { get; set; }
+    [MaxLength(2048)] public string? CapabilitiesStoragePath { get; set; }
+    public Guid? LocationId { get; set; }
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(200)]
     public required string Name { get; set; }
 

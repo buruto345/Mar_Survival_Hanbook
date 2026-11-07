@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "400 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/discover-mars/articles?pageSize=101"
+  },
+  "response": {
+    "statusCode": 400,
+    "statusText": "Bad Request",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/problem+json; charset=utf-8"
+      }
+    ],
+    "body": {
+      "type": "json",
+      "content": "{\"title\":\"Dữ liệu không hợp lệ.\",\"status\":400,\"errors\":{\"PageSize\":[\"The field PageSize must be between 1 and 100.\"]},\"code\":\"invalid_request\",\"traceId\":\"0HNPPCFB7CIE5:00000001\"}"
+    }
+  },
+  "order": 1000
+}

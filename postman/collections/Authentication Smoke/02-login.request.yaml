@@ -1,0 +1,24 @@
+$kind: http-request
+method: POST
+url: '{{baseUrl}}/api/auth/login'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {"email":"{{email}}","password":"{{registrationPassword}}"}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Login succeeds', () => pm.response.to.have.status(200));
+      pm.test('Token and matching Viewer profile returned', () => {
+        const p = pm.response.json();
+        pm.expect(p.tokenType).to.equal('Bearer');
+        pm.expect(p.accessToken).to.be.a('string').and.not.empty;
+        pm.expect(p.profile.id).to.equal(pm.variables.get('userId'));
+        pm.expect(p.profile.role).to.equal('Viewer');
+      });
+      pm.variables.set('accessToken', pm.response.json().accessToken);

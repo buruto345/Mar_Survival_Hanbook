@@ -4,18 +4,18 @@ Bộ model bám theo [đặc tả dự án](../../../Docs/Mars_Survival_Handbook
 
 ## Danh mục
 
-Có 41 entity, 21 enum và lớp cơ sở `Entity`.
+Có 50 entity, 24 enum và lớp cơ sở `Entity`, bao gồm các model Discover Mars bổ sung ngày 03/11/2026.
 
 | Thư mục | Entity |
 | --- | --- |
-| Content | Module, Category, Article, ArticleSection, Tag, ArticleTag, ArticleRelation, GlossaryTerm, GlossaryAlias, ArticleGlossaryTerm |
-| Science | ScientificSource, ArticleSource, ScientificFact, ArticleFact, Measurement, Unit, ResearchPaper |
+| Content | Module, Category, Article, ArticleSection, Tag, ArticleTag, ArticleRelation, GlossaryTerm, GlossaryAlias, ArticleGlossaryTerm, ArticleMission, ArticleLocation, ArticleExplorationEvent, ArticleMapLayer, ArticleMeasurement |
+| Science | ScientificSource, SourceRevision, ArticleSource, ScientificFact, ArticleFact, Measurement, Unit, ResearchPaper |
 | Technology | Technology, Resource, Hazard, ArticleTechnology, TechnologySource, TechnologyFact, TechnologyResource, ArticleResource, ArticleHazard, TechnologyHazard |
 | Exploration | Mission, MarsLocation, ExplorationEvent |
 | Media | MediaAsset, ArticleMedia, MapLayer |
 | Identity | User, Bookmark |
-| Editorial | ArticleVersion, ReviewTask, AuditLog, FeedbackReport |
-| Ingestion | NasaConnector, IngestionJob |
+| Editorial | ArticleVersion, ArticleVersionSource, PublicationResource, ReviewTask, AuditLog, FeedbackReport |
+| Ingestion | NasaConnector, IngestionJob, IngestionItem |
 
 Các bảng liên kết bổ sung giúp sử dụng lại fact, nguồn, công nghệ, tài nguyên và glossary giữa nhiều bài. `ExplorationEvent` phục vụ timeline; `MapLayer` phục vụ bản đồ ở giai đoạn sau. Module thứ 6, nếu được chấp thuận, là một bản ghi `Module`, không cần thêm class.
 
@@ -32,7 +32,7 @@ Các bảng liên kết bổ sung giúp sử dụng lại fact, nguồn, công n
 - `TechnologyFact` gắn thông số với tiêu chí so sánh và bối cảnh. Service phải kiểm tra sự tương thích đơn vị, điều kiện, loại số liệu và môi trường trước khi so sánh.
 - Source có URL, DOI, tác giả, tổ chức NASA, quyền sở hữu nhiệm vụ, ngày truy xuất và trạng thái xác minh. `ResearchPaper` dùng metadata thư mục từ Source, bổ sung mã tài liệu, abstract và thông tin nghiên cứu.
 - Ảnh/media có nguồn, credit, usage note và alt text. `NasaConnector.AuthenticationSecretReference` chỉ lưu tên/tham chiếu secret; không lưu API key thật trong model/configuration JSON.
-- `User.PasswordHash` được loại khỏi JSON. Service cần hash mật khẩu bằng password hasher và chuẩn hóa `NormalizedEmail` trước khi lưu. API nên dùng DTO để tránh trả navigation graph hoặc nhận trực tiếp các trường quyền/trạng thái từ client.
+- User dùng `Username`, `FullName`, `Email`, `PasswordHash`, role `Admin`/`Viewer`. `NormalizedUsername` và `NormalizedEmail` có unique index. Hai field chuẩn hóa và password hash được loại khỏi JSON. Đăng ký dùng DTO bốn field, luôn cấp Viewer; đăng nhập/profile trả cùng cấu trúc tài khoản.
 
 ## EF Core
 
@@ -40,7 +40,7 @@ Các bảng liên kết bổ sung giúp sử dụng lại fact, nguồn, công n
 
 Tất cả quan hệ dùng `DeleteBehavior.NoAction` để tránh cascade-delete bài, nguồn, lịch sử và citation. Dùng archive cho nội dung đã công khai; việc xóa vật lý phải xử lý rõ các bản ghi liên quan.
 
-Không dùng global query filter: CMS cần thấy draft/archive và các citation cũ vẫn cần được truy nguyên. Khi xây truy vấn công khai, bắt buộc lọc `Status == ArticleStatus.Published` và `ArchivedAt == null` cho bài.
+Không dùng global query filter: CMS cần thấy draft/archive và các citation cũ vẫn cần được truy nguyên. Discover Mars dùng `DiscoveryService.Publications`: ngoài trạng thái Published và archive, phải join đúng PublishedVersionId, kiểm tra schema và loại nguồn bị thu hồi. Không truy vấn working resource để trả nội dung công khai.
 
 `Program.cs` đã đăng ký context bằng connection string cấu hình của môi trường:
 
@@ -51,11 +51,11 @@ builder.Services.AddDbContext<MarsDbContext>(options =>
 
 Connection string mặc định dùng LocalDB và database `MarsSurvivalHandbook`; migration đầu tiên nằm trong `Data/Migrations`. Xem [hướng dẫn chạy Update-Database](../Data/README.md). Full-text catalog/index sẽ được bổ sung bằng migration sau khi xác định ngôn ngữ và cách tìm kiếm.
 
-## Phần phải thực hiện tại service
+## Workflow tại service
 
-Model và constraint bảo vệ tính toàn vẹn dữ liệu, nhưng chưa triển khai workflow nghiệp vụ. Tầng service cần:
+Discover Mars đã triển khai các yêu cầu dưới đây trong `Services`, `Integrations/Nasa`, `BackgroundJobs` và controllers. Các module khác chưa tự động có workflow này. Xem [runbook và bằng chứng kiểm thử](../../../Docs/Discover_Mars_Implementation_Status.md).
 
-1. Kiểm tra quyền của Editor/Reviewer/Admin và các bước chuyển trạng thái; chỉ xuất bản phiên bản hiện tại đã được duyệt.
+1. Kiểm tra quyền Admin/Viewer và các bước chuyển trạng thái; Admin được tự duyệt nhưng chỉ xuất bản phiên bản hiện tại đã được duyệt.
 2. Kiểm tra NASA ownership, claim, nguồn, credit và quyền media trước khi publish; không coi domain NASA hoặc một cờ Accepted là bằng chứng tự động.
 3. Vô hiệu hóa yêu cầu duyệt cũ khi nội dung/fact liên quan thay đổi, ghi snapshot và audit trong cùng transaction. Chặn sửa/xóa `ArticleVersion` và `AuditLog` qua API thông thường.
 4. Đảm bảo bài published có đủ nguồn được chấp nhận, nội dung, ngày review và các trường bắt buộc theo loại bài; không tự publish kết quả import.

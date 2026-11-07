@@ -8,21 +8,27 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Application account. PasswordHash is never a plaintext password and is excluded from JSON.</summary>
 public class User : Entity
 {
-    [MaxLength(254)]
-    public required string Email { get; set; }
+    [MaxLength(50)]
+    public required string Username { get; set; }
+
+    [JsonIgnore, Required, MaxLength(50)]
+    public string NormalizedUsername { get; set; } = null!;
 
     [MaxLength(254)]
-    public required string NormalizedEmail { get; set; }
+    public string? Email { get; set; }
+
+    [JsonIgnore, MaxLength(254)]
+    public string? NormalizedEmail { get; set; }
 
     [MaxLength(150)]
-    public required string DisplayName { get; set; }
+    public string? FullName { get; set; }
 
     [JsonIgnore]
     [Required]
     [MaxLength(1000)]
     public string PasswordHash { get; set; } = null!;
 
-    public UserRole Role { get; set; } = UserRole.RegisteredReader;
+    public UserRole Role { get; set; } = UserRole.Viewer;
 
     public UserState State { get; set; } = UserState.Active;
 

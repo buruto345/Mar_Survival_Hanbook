@@ -7,6 +7,10 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>NASA provenance registry. A NASA domain alone does not establish accepted ownership.</summary>
 public class ScientificSource : Entity
 {
+    public SourceProvider Provider { get; set; } = SourceProvider.ManualLegacy;
+    [MaxLength(450)] public string IdentityKey { get; set; } = "legacy:" + Guid.NewGuid().ToString("D");
+    public DateTimeOffset? LastCheckedAt { get; set; }
+    public Guid? CurrentAcceptedRevisionId { get; set; }
     [MaxLength(500)]
     public required string Title { get; set; }
 

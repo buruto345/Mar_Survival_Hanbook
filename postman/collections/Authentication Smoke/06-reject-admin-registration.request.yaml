@@ -1,0 +1,16 @@
+$kind: http-request
+method: POST
+url: '{{baseUrl}}/api/auth/register'
+order: 6000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {"username":"{{username}}","fullName":"Registration Smoke Test","email":"{{email}}","password":"{{registrationPassword}}","role":"Admin"}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Public registration cannot request Admin', () => pm.response.to.have.status(400));

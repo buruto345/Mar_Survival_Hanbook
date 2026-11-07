@@ -1,0 +1,26 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/locations
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/locations"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "coordinateSystem": "string",
+      "latitude": 559.9317234009504,
+      "longitude": 4687.449426855892,
+      "name": "string",
+      "slug": "string",
+      "sourceRevisionId": "2d9af816-d92c-e6ee-5cd5-2dce3a540d25",
+      "description": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

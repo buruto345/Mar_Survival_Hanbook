@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "401 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/admin/discover-mars/articles"
+  },
+  "response": {
+    "statusCode": 401,
+    "statusText": "Unauthorized",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": ""
+      }
+    ],
+    "body": {
+      "type": "text",
+      "content": ""
+    }
+  },
+  "order": 1000
+}

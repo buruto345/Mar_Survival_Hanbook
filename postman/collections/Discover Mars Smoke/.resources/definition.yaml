@@ -1,0 +1,9 @@
+$kind: collection
+name: Discover Mars Smoke
+description: Read-only HTTP checks against a seeded backend. Does not approve or publish content.
+variables:
+  - key: baseUrl
+    value: 'http://127.0.0.1:5086'
+auth:
+  type: noauth
+

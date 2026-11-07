@@ -59,8 +59,8 @@ public sealed class SqlServerFixture : IAsyncLifetime
         var user = new User
         {
             Email = "reviewer@example.test", NormalizedEmail = "REVIEWER@EXAMPLE.TEST",
-            DisplayName = "Test reviewer", PasswordHash = "test-placeholder-not-a-real-password",
-            Role = UserRole.ScientificReviewer
+            Username = "fixtureadmin", NormalizedUsername = "FIXTUREADMIN", FullName = "Test admin", PasswordHash = "test-placeholder-not-a-real-password",
+            Role = UserRole.Admin
         };
         var module = new Module { Name = "Test module", Slug = "test-module" };
         var category = new Category { Name = "Test category", Slug = "test-category", Module = module };

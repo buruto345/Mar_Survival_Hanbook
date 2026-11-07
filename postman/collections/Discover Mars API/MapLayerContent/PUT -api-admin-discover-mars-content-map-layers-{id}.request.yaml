@@ -1,0 +1,43 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/content/map-layers/{id}
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/map-layers/:id"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: 782db424-aac5-8763-3211-065257b84b58
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "attribution": "string",
+      "boundingBoxJson": "string",
+      "coordinateSystem": "string",
+      "format": "string",
+      "layerIdentifier": "string",
+      "name": "string",
+      "resourceUrlTemplate": "string",
+      "serviceUrl": "string",
+      "sourceRevisionId": "8bc039a1-762c-d40a-528b-07f3f2bd8793",
+      "style": "string",
+      "tileMatrixSet": "string",
+      "description": "string",
+      "locationId": "3b9d9096-8aa8-a283-f7b5-e47a121384fb"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 4000

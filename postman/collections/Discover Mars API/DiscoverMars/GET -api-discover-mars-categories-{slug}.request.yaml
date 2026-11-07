@@ -1,0 +1,19 @@
+$kind: http-request
+name: GET /api/discover-mars/categories/{slug}
+description: ""
+url: "{{baseUrl}}/api/discover-mars/categories/:slug?page=1&pageSize=20&q=string&language=vi"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+pathVariables:
+  - key: slug
+    value: string
+    disabled: false
+    description: "(Required) "
+settings: {}
+order: 3000

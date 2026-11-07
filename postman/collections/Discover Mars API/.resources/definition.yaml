@@ -1,0 +1,5 @@
+$kind: collection
+description: Plain-text editorial content. Public reads use immutable published snapshots. Admin mutations require If-Match.
+variables:
+  baseUrl: 'http://127.0.0.1:5086'
+  bearerToken: ""

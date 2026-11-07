@@ -1,0 +1,19 @@
+$kind: http-request
+name: GET /api/admin/discover-mars/content/measurements
+description: "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/measurements?page=1&pageSize=20&q=string&language=vi&sourceId=782db424-aac5-8763-3211-065257b84b58"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+  sourceId: 782db424-aac5-8763-3211-065257b84b58
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 1000

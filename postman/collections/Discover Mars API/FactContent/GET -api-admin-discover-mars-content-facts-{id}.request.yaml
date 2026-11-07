@@ -1,0 +1,18 @@
+$kind: http-request
+name: GET /api/admin/discover-mars/content/facts/{id}
+description: "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/facts/:id"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: 782db424-aac5-8763-3211-065257b84b58
+    disabled: false
+    description: "(Required) "
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 3000

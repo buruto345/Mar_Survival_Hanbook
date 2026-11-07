@@ -8,6 +8,10 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>An individual observation linked to a fact, source, unit and optional mission/location.</summary>
 public class Measurement : Entity
 {
+    [MaxLength(450)] public string? ExternalObservationKey { get; set; }
+    [MaxLength(100)] public string? QualityFlag { get; set; }
+    [MaxLength(2000)] public string? QualityNotes { get; set; }
+    public Guid? SourceRevisionId { get; set; }
     [Precision(28, 12)]
     public decimal Value { get; set; }
 
