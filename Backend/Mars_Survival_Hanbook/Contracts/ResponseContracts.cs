@@ -8,7 +8,7 @@ public record CategoryResponse(Guid Id, string Slug, string Name, string? Descri
 public record ModuleResponse(Guid Id, string Name, string Slug, string? Description, CategoryResponse[] Categories,
     int PublishedArticleCount, string? CoverUrl);
 public record LoginResponse(string AccessToken, string TokenType, int ExpiresIn, UserProfile Profile);
-public record UserProfile(Guid Id, string DisplayName, UserRole Role);
+public record UserProfile(Guid Id, string Username, string? FullName, string? Email, UserRole Role);
 public record ArticleAdminResponse(Guid Id, string Title, string Slug, string Summary, Guid CategoryId, string LanguageCode,
     ArticleStatus Status, Guid? PublishedVersionId, Guid? CurrentDraftVersionId, bool RequiresReview, Guid CreatedById,
     DateTimeOffset? ReviewedAt, DateTimeOffset? PublishedAt);

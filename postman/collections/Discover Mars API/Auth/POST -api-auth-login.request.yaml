@@ -1,6 +1,6 @@
 $kind: http-request
 name: POST /api/auth/login
-description: ""
+description: Login with email and password, or replace email with username to sign in by username. Supply exactly one non-blank identifier. Identifiers are trimmed and case-insensitive. Returns a JWT and profile with username, fullName, email and Admin/Viewer role. Invalid/inactive accounts return 401.
 url: "{{baseUrl}}/api/auth/login"
 method: POST
 headers:
@@ -14,4 +14,4 @@ body:
       "password": "string"
     }
 settings: {}
-order: 1000
+order: 2000

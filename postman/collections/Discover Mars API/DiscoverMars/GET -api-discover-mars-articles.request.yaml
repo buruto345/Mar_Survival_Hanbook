@@ -1,22 +1,22 @@
 $kind: http-request
 name: GET /api/discover-mars/articles
 description: ""
-url: "{{baseUrl}}/api/discover-mars/articles?category=string&sort=publishedAtDesc&missionId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&locationId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&factId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&from=1982-04-09T18:02:26.441Z&to=1982-04-09T18:02:26.441Z&includePlanned=false&bbox=string&status=Active&type=Other&quantityKind=string&evidenceType=Proposed&page=1&pageSize=20&q=string&language=vi"
+url: "{{baseUrl}}/api/discover-mars/articles?category=string&sort=publishedAtDesc&missionId=782db424-aac5-8763-3211-065257b84b58&locationId=782db424-aac5-8763-3211-065257b84b58&factId=782db424-aac5-8763-3211-065257b84b58&from=1979-03-09T09:53:55.863Z&to=1979-03-09T09:53:55.863Z&includePlanned=false&bbox=string&status=Active&type=Lander&quantityKind=string&evidenceType=Proposed&page=1&pageSize=20&q=string&language=vi"
 method: GET
 headers:
   Accept: application/json
 queryParams:
   category: string
   sort: publishedAtDesc
-  missionId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
-  locationId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
-  factId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
-  from: 1982-04-09T18:02:26.441Z
-  to: 1982-04-09T18:02:26.441Z
+  missionId: 782db424-aac5-8763-3211-065257b84b58
+  locationId: 782db424-aac5-8763-3211-065257b84b58
+  factId: 782db424-aac5-8763-3211-065257b84b58
+  from: 1979-03-09T09:53:55.863Z
+  to: 1979-03-09T09:53:55.863Z
   includePlanned: "false"
   bbox: string
   status: Active
-  type: Other
+  type: Lander
   quantityKind: string
   evidenceType: Proposed
   page: "1"

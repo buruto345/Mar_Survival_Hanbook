@@ -53,9 +53,9 @@ Các file cần đọc trước: [Program.cs](../Backend/Mars_Survival_Hanbook/P
 ### 01.2. Kết quả cuối cùng
 
 - Guest xem module, 5 chủ đề, bài chi tiết, timeline, mission, địa danh, fact, phép đo và nguồn đã công bố.
-- Editor nhập nguồn hoặc khởi chạy import, biên tập bài và gửi reviewer.
-- Reviewer xác minh nguồn, dữ liệu khoa học và đúng phiên bản bài.
-- Administrator xuất bản/gỡ xuất bản và quản lý connector.
+- Admin nhập nguồn hoặc khởi chạy import, biên tập bài và gửi reviewer.
+- Admin xác minh nguồn, dữ liệu khoa học và đúng phiên bản bài.
+- Admin xuất bản/gỡ xuất bản và quản lý connector.
 - Import cùng dữ liệu nhiều lần không tạo nguồn trùng.
 - Nguồn cập nhật tạo revision mới; nội dung công khai giữ nguyên đến khi có quyết định xuất bản.
 - API công khai hoạt động bằng database nội bộ khi NASA không truy cập được.
@@ -399,11 +399,13 @@ Các endpoint NASA được khảo sát không cần API key cho các thao tác 
 <a id="step-07"></a>
 ## 07. Xác thực và phân quyền
 
+Cập nhật 04/11/2026: chỉ còn Admin/Viewer theo yêu cầu mới của chủ dự án.
+
 ### 07.1. Authentication cần hiện thực
 
 - Đăng ký authentication JWT bearer và authorization policies.
 - Thêm `UseAuthentication` trước `UseAuthorization` trong pipeline.
-- Hiện thực `POST /api/auth/login` cho tài khoản được cấp sẵn, dùng password hasher tương thích để kiểm tra PasswordHash.
+- Hiện thực `POST /api/auth/register` với `username`, `fullName`, `email`, `password`; tự cấp Viewer. `POST /api/auth/login` nhận email/password, `GET /api/auth/me` trả profile. Xem [hợp đồng tài khoản](User_Registration_And_Authorization.md).
 - JWT xác minh issuer, audience, chữ ký, hạn dùng; ký bằng key do môi trường cung cấp. Không hardcode secret hoặc seed mật khẩu mặc định vào Git.
 - Không cung cấp public registration có thể tự chọn role.
 - Tài khoản suspended/deactivated hoặc đã bị đổi role phải bị từ chối ở thao tác admin; không chỉ tin role của token cũ.
@@ -411,18 +413,16 @@ Các endpoint NASA được khảo sát không cần API key cho các thao tác 
 
 ### 07.2. Ma trận quyền
 
-| Thao tác | Guest/Reader | Editor | ScientificReviewer | Administrator |
-| --- | --- | --- | --- | --- |
-| Đọc API công khai | Có | Có | Có | Có |
-| Tạo import theo connector đã bật | Không | Có | Không | Có |
-| Cấu hình connector | Không | Không | Không | Có |
-| Tạo/chỉnh bản nháp | Không | Bài được phân công/sở hữu | Không | Có |
-| Xem raw và preview phục vụ duyệt | Không | Theo phạm vi được cấp | Có | Có |
-| Accepted/Rejected source revision | Không | Không | Có | Không tự vượt review |
-| Duyệt phiên bản bài | Không | Không | Có | Không tự vượt review |
-| Publish/unpublish | Không | Không | Không | Có |
+| Thao tác | Guest | Viewer | Admin |
+| --- | --- | --- | --- |
+| Đọc API công khai | Có | Có | Có |
+| Profile cá nhân `/api/auth/me` | Không | Có | Có |
+| CMS, raw, preview, nguồn và import jobs | Không | Không | Có |
+| Tạo/sửa nội dung, nguồn, connector | Không | Không | Có |
+| Duyệt nguồn và bài, kể cả bài do mình tạo | Không | Không | Có |
+| Publish/unpublish/restore/archive | Không | Không | Có |
 
-User.Role hiện là enum một vai trò. Không giả định admin có nhiều role; trong MVP dùng tài khoản reviewer riêng. Chặn tự duyệt bài do mình tạo nếu áp dụng quy tắc tách người biên tập/người duyệt. Không cho request body tự khai `ReviewedById` hoặc `PublishedById`.
+Theo yêu cầu cập nhật ngày 04/11/2026, User.Role chỉ có `Admin` và `Viewer`. Đăng ký public luôn cấp Viewer và không nhận role từ client. Admin được quản lý mọi nội dung và tự duyệt; các bước workflow, validation và ETag vẫn áp dụng. Không cho request body tự khai `ReviewedById` hoặc `PublishedById`.
 
 **Đầu ra bước 07:** Guest gọi admin nhận 401; tài khoản không đúng quyền nhận 403; phân quyền theo tài nguyên được kiểm tra ở service.
 
@@ -736,7 +736,7 @@ Một paper có thể chứa cả phép đo và mô hình. Gắn evidence ở t�
 
 ### 11.1. Revision được Accepted như thế nào
 
-Reviewer mở đúng SourceRevision, xem raw/metadata, kiểm tra danh tính, tác giả/mission, credit và điều kiện sử dụng. Request duyệt chứa decision, notes và revision ID; lấy VerifiedById từ tài khoản đăng nhập.
+Admin mở đúng SourceRevision, xem raw/metadata, kiểm tra danh tính, tác giả/mission, credit và điều kiện sử dụng. Request duyệt chứa decision, notes và revision ID; lấy VerifiedById từ tài khoản đăng nhập.
 
 Accepted chỉ khi đủ chứng cứ. Metadata/PDF bị thiếu mà ảnh hưởng đánh giá thì giữ Pending/yêu cầu bổ sung hoặc Rejected kèm lý do. Nguồn có bản mới Pending không làm revision Accepted cũ tự mất hiệu lực.
 
@@ -750,7 +750,7 @@ Khi có revision mới:
 2. Chỉ đánh dấu các version đang là PublishedVersionId hoặc bản nháp đang review; không tạo task cho mọi bản lưu trữ lịch sử.
 3. Đặt Article.RequiresReview và đưa vào hàng đợi rà soát; giữ nguyên PublishedVersionId.
 4. Lưu lý do trong audit và mã revision mới. Không tự tạo ReviewTask hợp lệ cho một bài chưa có snapshot mới; workflow yêu cầu biên tập viên chuẩn bị version cụ thể trước.
-5. Editor quyết định thay dữ liệu, giữ dữ liệu cũ có giải thích, hoặc gỡ bài qua admin nếu xác nhận nội dung không còn đúng.
+5. Admin quyết định thay dữ liệu, giữ dữ liệu cũ có giải thích, hoặc gỡ bài qua admin nếu xác nhận nội dung không còn đúng.
 
 ### 11.3. Thu hồi nguồn đã chấp nhận
 
@@ -763,7 +763,7 @@ Public query phải kiểm tra revision revoked ở thời điểm đọc hoặc
 
 ### 12.1. Tạo bản nháp
 
-1. Editor chọn một trong 5 category.
+1. Admin chọn một trong 5 category.
 2. Nhập title, summary, sections và gắn các working resource IDs cùng SourceRevisionIds.
 3. Service xác thực resource tồn tại, thuộc phạm vi được phép, provenance khớp và nội dung không rỗng.
 4. Service dựng snapshot từ dữ liệu server; client không được tự gửi trạng thái Accepted, reviewer hay snapshot hash đáng tin cậy.
@@ -842,7 +842,7 @@ Không lưu token, raw server paths, password hash hoặc thông tin nội bộ 
 
 1. Submit chỉ áp dụng CurrentDraftVersionId; service kiểm tra snapshot schema, các nguồn Accepted và chưa revoked, claim trọng yếu có citation, media đủ credit/usage.
 2. Tạo ReviewTask gắn đúng ArticleVersionId và ArticleId, trạng thái Pending; chuyển version sang InReview.
-3. Reviewer mở preview đọc chính snapshot. Checkboxes sources/claims/units/evidence/media chỉ được hoàn thành sau kiểm tra.
+3. Admin mở preview đọc chính snapshot. Checkboxes sources/claims/units/evidence/media chỉ được hoàn thành sau kiểm tra.
 4. Approve: set ReviewTask Approved, CompletedAt, reviewer; set version Approved và review metadata trong một transaction.
 5. ChangesRequested/Rejected: giữ snapshot để đối chiếu; sửa bài sẽ tạo version mới.
 6. Nếu editor tạo bản mới khi bản cũ đang InReview, hủy/supersede review chưa hoàn tất của bản cũ. Một quyết định duyệt cũ không tự chuyển sang bản mới.
@@ -855,7 +855,7 @@ Chỉ lưu ID fact/mission/media trong snapshot mà không đóng băng giá tr�
 
 ### 13.1. Publication gate
 
-Administrator gửi ArticleId, versionId và If-Match của Article. Service kiểm tra:
+Admin gửi ArticleId, versionId và If-Match của Article. Service kiểm tra:
 
 - Version thuộc đúng Article và là CurrentDraftVersionId được yêu cầu xuất bản; không chọn “bản mới nhất” sau khi đã kiểm tra một bản khác.
 - Version đã Approved; ReviewTask phê duyệt đúng version, đủ checklist, không cancelled/superseded.
@@ -891,7 +891,7 @@ MVP nên dùng DB làm nguồn tìm kiếm để tránh thêm độ trễ nhất
 
 Unpublish giữ PublishedVersionId và lịch sử phục vụ admin, nhưng đổi trạng thái khiến public trả 404. Draft/review sau đó không tự làm bài xuất hiện lại.
 
-Restore trong hướng dẫn này tạo draft mới từ snapshot cũ, giữ nguồn/credit gốc, rồi đi qua gate và review hiện tại. Không đưa version đã dùng nguồn revoked trở lại public bằng cách đổi một con trỏ. Reviewer cần kiểm tra tính phù hợp của nguồn cũ trước khi approve lại.
+Restore trong hướng dẫn này tạo draft mới từ snapshot cũ, giữ nguồn/credit gốc, rồi đi qua gate và review hiện tại. Không đưa version đã dùng nguồn revoked trở lại public bằng cách đổi một con trỏ. Admin cần kiểm tra tính phù hợp của nguồn cũ trước khi approve lại.
 
 <a id="step-14"></a>
 ## 14. Hợp đồng API công khai
@@ -1002,31 +1002,34 @@ Base path `/api/admin/discover-mars`. Tất cả route cần Bearer token và po
 
 GET detail admin trả ETag từ RowVersion, đặt trong dấu nháy kép theo cú pháp HTTP. Client gửi lại nguyên giá trị đó ở If-Match; sau mutation thành công, server trả ETag mới. Việc dùng RowVersion của Article, ReviewTask, SourceRevision hoặc IngestionJob phải khớp đúng tài nguyên bị thay đổi, không tái sử dụng ETag của bài cho quyết định review task.
 
-### 15.1. Đăng nhập
+### 15.1. Đăng ký, đăng nhập và profile
+
+Hợp đồng hiện hành: [User Registration and Authorization](User_Registration_And_Authorization.md). `POST /api/auth/register` trả 201 và tài khoản Viewer; `GET /api/auth/me` cần Bearer token. Username/email là duy nhất; profile dùng username/fullName/email và role Admin/Viewer.
+
 
 `POST /api/auth/login`: body gồm email và password; response 200 gồm accessToken, tokenType `Bearer`, expiresIn và profile tối thiểu. Sai email/password trả thông báo 401 chung. Tài khoản không Active bị từ chối. Có rate limiting; không log password/token.
 
-Không dùng endpoint đăng nhập để cho phép người dùng chọn role. Tài khoản editor/reviewer/admin được provision bằng tác vụ quản trị cần hiện thực, lấy mật khẩu từ môi trường an toàn, hash trước khi lưu.
+Không dùng endpoint đăng nhập để cho phép người dùng chọn role. Tài khoản Admin được provision bằng tác vụ quản trị; Viewer có thể tự đăng ký. Mọi mật khẩu đều được hash trước khi lưu.
 
 ### 15.2. Connectors, imports và nguồn
 
 | Method | Path sau base admin | Quyền | Thành công |
 | --- | --- | --- | --- |
-| GET | `/connectors` | Editor, Reviewer, Admin | 200; chỉ metadata, không secret |
+| GET | `/connectors` | Admin | 200; chỉ metadata, không secret |
 | PUT | `/connectors/{key}` | Admin | 200 + ETag; validate type/base URL/policy |
-| POST | `/imports` | Editor, Admin | 202 + jobId + Location; có Idempotency-Key |
-| GET | `/imports` | Editor, Admin | 200 paginated; editor chỉ thấy job mình tạo |
+| POST | `/imports` | Admin | 202 + jobId + Location; có Idempotency-Key |
+| GET | `/imports` | Admin | 200 paginated; Admin thấy mọi job |
 | GET | `/imports/{jobId}` | Owner hoặc Admin | 200 trạng thái và bộ đếm |
 | GET | `/imports/{jobId}/items` | Owner hoặc Admin | 200 paginated; filter status |
 | POST | `/imports/{jobId}/retry` | Owner hoặc Admin | 202; đưa các item Failed còn được retry vào cùng job |
-| GET | `/sources` | Editor, Reviewer, Admin | 200; filter provider, q, verificationStatus |
-| GET | `/sources/{id}` | Editor, Reviewer, Admin | 200 identity và accepted revision hiện hành |
-| GET | `/sources/{id}/revisions` | Editor, Reviewer, Admin | 200 lịch sử revision, paginated |
-| GET | `/source-revisions/{id}` | Editor, Reviewer, Admin | 200 metadata, decision, hash, ETag |
-| GET | `/source-revisions/{id}/raw` | Reviewer, Admin | Stream file đúng MIME; không trả filesystem path |
-| POST | `/sources/manual` | Editor, Admin | 201 Pending source/revision hoặc 200 nếu đã có cùng nội dung |
-| POST | `/source-revisions/{id}/decision` | Reviewer | 200; Accepted/Rejected và notes |
-| POST | `/source-revisions/{id}/revoke` | Reviewer | 200; bắt buộc lý do, kích hoạt ẩn publication liên quan |
+| GET | `/sources` | Admin | 200; filter provider, q, verificationStatus |
+| GET | `/sources/{id}` | Admin | 200 identity và accepted revision hiện hành |
+| GET | `/sources/{id}/revisions` | Admin | 200 lịch sử revision, paginated |
+| GET | `/source-revisions/{id}` | Admin | 200 metadata, decision, hash, ETag |
+| GET | `/source-revisions/{id}/raw` | Admin | Stream file đúng MIME; không trả filesystem path |
+| POST | `/sources/manual` | Admin | 201 Pending source/revision hoặc 200 nếu đã có cùng nội dung |
+| POST | `/source-revisions/{id}/decision` | Admin | 200; Accepted/Rejected và notes |
+| POST | `/source-revisions/{id}/revoke` | Admin | 200; bắt buộc lý do, kích hoạt ẩn publication liên quan |
 
 Retry không reset item đã thành công; không tạo lại revision. Nếu job còn Running với lease hợp lệ thì trả 409. Header If-Match dùng để tránh thao tác retry trên job đã chuyển trạng thái ngoài dự kiến.
 
@@ -1101,7 +1104,7 @@ POST            /api/admin/discover-mars/content/{kind}/{id}/archive
 | media | identity/file reference, title, credit, usageNote, altText, mediaType, sourceRevisionId |
 | map-layers | name, layerIdentifier, service, style, matrix, projection, bbox, attribution, sourceRevisionId |
 
-Editor và Admin được sửa working content dùng chung trong CMS; audit ghi người thực hiện. Quyền sửa bài vẫn theo CreatedById hoặc phân công thực sự được bổ sung; không giả định có bảng phân công hiện tại.
+Admin được sửa working content và mọi bài trong CMS; audit ghi người thực hiện. Viewer không được sửa nội dung.
 
 Tất cả public values của các resource này đã nằm trong snapshot. Sửa working resource phải cảnh báo các draft bị ảnh hưởng nhưng không thay đổi snapshot published. Khi sửa một fact khoa học đã Accepted, tạo candidate record/revision mới hoặc giữ thay đổi trong staging; không âm thầm sửa payload đã được đóng băng làm chứng cứ.
 
@@ -1111,8 +1114,8 @@ Archive working record không xóa tài nguyên khỏi snapshot lịch sử. N�
 
 | Method | Path sau base admin | Quyền | Thành công |
 | --- | --- | --- | --- |
-| GET | `/articles` | Editor, Reviewer, Admin | 200 list; filter category, publicationStatus, reviewState, requiresReview |
-| POST | `/articles` | Editor, Admin | 201 Article + version Draft đầu tiên |
+| GET | `/articles` | Admin | 200 list; filter category, publicationStatus, reviewState, requiresReview |
+| POST | `/articles` | Admin | 201 Article + version Draft đầu tiên |
 | GET | `/articles/{id}` | Người có quyền xem CMS | 200 draft/publication pointers + ETag |
 | PUT | `/articles/{id}/draft` | Owner hoặc Admin | 201 version mới + ETag của Article |
 | GET | `/articles/{id}/versions` | Người có quyền xem CMS | 200 lịch sử, paginated |
@@ -1168,10 +1171,10 @@ Body unpublish bắt buộc reason. Body restore gồm sourceVersionId và chang
 
 | Method | Path sau base admin | Input/kết quả |
 | --- | --- | --- |
-| GET | `/reviews` | Reviewer/Admin; filter state, reviewerId, articleId, dueBefore, page |
+| GET | `/reviews` | Admin/Admin; filter state, reviewerId, articleId, dueBefore, page |
 | GET | `/reviews/{id}` | Task + liên kết đúng snapshot |
-| POST | `/reviews/{id}/claim` | Reviewer nhận task chưa được nhận; xung đột trả 409 |
-| POST | `/reviews/{id}/decision` | Reviewer được giao; Approved/ChangesRequested/Rejected |
+| POST | `/reviews/{id}/claim` | Admin nhận task chưa được nhận; xung đột trả 409 |
+| POST | `/reviews/{id}/decision` | Admin được giao; Approved/ChangesRequested/Rejected |
 
 Decision body minh họa cấu trúc, chỉ gửi sau khi thực sự kiểm tra:
 
@@ -1279,10 +1282,10 @@ Một lệnh health nội bộ có thể kiểm tra DB và worker heartbeat; kh�
 | T12 | PDS placeholder date/quality invalid | Không ghi ngày mission giả hoặc công khai sample lỗi |
 | T13 | Đơn vị thiếu/giá trị thiếu | Staging báo lỗi, không biến thành 0 |
 | T14 | Guest gọi admin | 401 |
-| T15 | Editor duyệt hoặc publish | 403 |
-| T16 | Reviewer duyệt task không được giao | 403 hoặc conflict rõ ràng |
+| T15 | Viewer duyệt hoặc publish | 403; Admin được thực hiện đúng workflow |
+| T16 | Admin duyệt task không được giao | 403 hoặc conflict rõ ràng |
 | T17 | Public truy cập draft/version draft | 404; không lộ title qua search/count |
-| T18 | Editor sửa title/summary/fact/media | Bài public và search vẫn giữ bản đã duyệt |
+| T18 | Admin sửa title/summary/fact/media | Bài public và search vẫn giữ bản đã duyệt |
 | T19 | Bản 2 được duyệt, editor tạo bản 3 | Không dùng approval bản 2 để publish bản 3 |
 | T20 | Thay Snapshot hoặc links sau submit | Bị từ chối; version hash giữ nguyên |
 | T21 | Version thuộc bài khác | FK ghép/service từ chối |
@@ -1346,13 +1349,13 @@ Theo launchSettings hiện tại, HTTPS dùng `https://localhost:7283`, Swagger 
 ### 18.2. Kịch bản end-to-end cơ bản
 
 1. Chạy seed danh mục sau migration; xác nhận 5 categories.
-2. Provision editor, reviewer, administrator bằng công cụ quản trị đã hiện thực; đăng nhập để lấy token tương ứng.
-3. Editor tạo NTRS import bằng POST `/api/admin/discover-mars/imports`; giữ Idempotency-Key.
+2. Provision Admin và đăng ký Viewer; đăng nhập để lấy token tương ứng. Admin thực hiện toàn bộ luồng biên tập, duyệt và xuất bản.
+3. Admin tạo NTRS import bằng POST `/api/admin/discover-mars/imports`; giữ Idempotency-Key.
 4. Poll job và items; xác nhận Source và Pending SourceRevision xuất hiện.
-5. Reviewer kiểm tra raw/PDF/metadata, quyết định Accepted revision có đủ bằng chứng.
-6. Editor tạo working facts/mission/media cần thiết, gắn đúng revision; không nhập số liệu từ trí nhớ.
+5. Admin kiểm tra raw/PDF/metadata, quyết định Accepted revision có đủ bằng chứng.
+6. Admin tạo working facts/mission/media cần thiết, gắn đúng revision; không nhập số liệu từ trí nhớ.
 7. Tạo article, lưu snapshot draft, preview và submit.
-8. Reviewer nhận task, đọc đúng snapshot, kiểm tra checklist và approve.
+8. Admin nhận task, đọc đúng snapshot, kiểm tra checklist và approve.
 9. Admin publish version đã duyệt, dùng ETag mới nhất của Article.
 10. Guest gọi article list/detail, source revision detail và các resource endpoints. Tất cả phải đọc cùng publication.
 11. Lặp lại quy trình với 5 chủ đề; mỗi chủ đề có ít nhất một bài thật.
@@ -1401,7 +1404,7 @@ Không cần đợi mọi connector hoàn tất mới viết API đọc. Có th�
 - [ ] Import job có item status/checkpoint/lease, resume được sau restart.
 - [ ] Nguồn NASA được kiểm tra ownership/authorship/credit, không chỉ domain.
 - [ ] Snapshot chứa đầy đủ giá trị và metadata đã duyệt; dependencies được ghim revision.
-- [ ] Reviewer duyệt đúng ArticleVersion, thay đổi sau submit tạo version mới.
+- [ ] Admin duyệt đúng ArticleVersion, thay đổi sau submit tạo version mới.
 - [ ] Publish nguyên tử, có audit; các thao tác revoke/unpublish xử lý cache đúng.
 - [ ] Public list/detail/search/resource endpoints đều dùng publication hợp lệ.
 - [ ] Fact/measurement có đơn vị gốc, điều kiện, thời gian phù hợp và evidence.

@@ -2886,23 +2886,25 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTimeOffset?>("LastLoginAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
+
+                    b.Property<string>("NormalizedUsername")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -2932,18 +2934,29 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ArchivedAt");
 
                     b.HasIndex("NormalizedEmail")
+                        .IsUnique()
+                        .HasFilter("[NormalizedEmail] IS NOT NULL");
+
+                    b.HasIndex("NormalizedUsername")
                         .IsUnique();
 
                     b.ToTable("Users", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Users_Role", "[Role] IN (N'RegisteredReader', N'Editor', N'ScientificReviewer', N'Administrator')");
+                            t.HasCheckConstraint("CK_Users_Role", "[Role] IN (N'Viewer', N'Admin')");
 
                             t.HasCheckConstraint("CK_Users_State", "[State] IN (N'Active', N'Suspended', N'Deactivated')");
+
+                            t.HasCheckConstraint("CK_Users_ViewerProfile", "[Role] = N'Admin' OR ([Email] IS NOT NULL AND [NormalizedEmail] IS NOT NULL AND [FullName] IS NOT NULL)");
                         });
                 });
 

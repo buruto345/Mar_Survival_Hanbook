@@ -1,6 +1,6 @@
 $kind: http-request
 name: POST /api/admin/discover-mars/imports
-description: "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+description: "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
 url: "{{baseUrl}}/api/admin/discover-mars/imports"
 method: POST
 headers:
@@ -22,13 +22,13 @@ body:
         "string",
         "string"
       ],
-      "maxItems": 476,
-      "pageSize": 32,
+      "maxItems": 27,
+      "pageSize": 59,
       "layerKey": "string",
-      "includeMembers": true,
+      "includeMembers": false,
       "pdsCollection": "string",
-      "from": "1992-01-19T20:27:44.671Z",
-      "to": "1951-06-13T19:52:45.036Z"
+      "from": "1964-05-31T07:36:46.950Z",
+      "to": "1951-12-28T12:18:30.547Z"
     }
 auth:
   type: bearer

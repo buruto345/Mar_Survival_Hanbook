@@ -1,0 +1,13 @@
+$kind: http-request
+name: GET /api/auth/me
+description: Returns the current active account profile for either Admin or Viewer. Requires a valid Bearer token.
+url: "{{baseUrl}}/api/auth/me"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 3000

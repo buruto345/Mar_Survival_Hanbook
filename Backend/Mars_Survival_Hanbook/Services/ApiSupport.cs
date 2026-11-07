@@ -50,10 +50,9 @@ public sealed class CurrentActor(IHttpContextAccessor accessor)
 {
     public Guid Id => Guid.TryParse(accessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
         ? id : throw new ApiException(401, "unauthorized", "Yêu cầu đăng nhập.");
-    public bool IsAdmin => accessor.HttpContext?.User.IsInRole(nameof(UserRole.Administrator)) == true;
-    public bool IsReviewer => accessor.HttpContext?.User.IsInRole(nameof(UserRole.ScientificReviewer)) == true;
+    public bool IsAdmin => accessor.HttpContext?.User.IsInRole(nameof(UserRole.Admin)) == true;
     public void Own(Guid owner) { if (!IsAdmin && owner != Id) throw new ApiException(403, "forbidden", "Không có quyền sửa tài nguyên này."); }
-    public void ViewArticle(Article a) { if (!IsAdmin && !IsReviewer) Own(a.CreatedById); }
+    public void ViewArticle(Article a) { if (!IsAdmin) Own(a.CreatedById); }
     public string? TraceId => accessor.HttpContext?.TraceIdentifier;
 }
 public static class Concurrency

@@ -1,10 +1,10 @@
 # Discover Mars — triển khai và vận hành
 
-Cập nhật 03/11/2026. Backend đã hiện thực API trong [hướng dẫn](Discover_Mars_API_Implementation_Guide.md), giữ .NET 8, EF Core 8.0.33 và SQL Server. Không thay `InitialCreate`.
+Cập nhật 04/11/2026. Backend đã hiện thực API trong [hướng dẫn](Discover_Mars_API_Implementation_Guide.md), giữ .NET 8, EF Core 8.0.33 và SQL Server. Không thay `InitialCreate`. Đã bổ sung [đăng ký và hai role Admin/Viewer](User_Registration_And_Authorization.md).
 
 ## Phần đã hiện thực
 
-- JWT login, kiểm tra lại tài khoản/role trong database trên mỗi request; phân quyền Editor, ScientificReviewer, Administrator và quyền sở hữu bài/job. Administrator không duyệt khoa học thay reviewer.
+- JWT login, đăng ký Viewer và profile `/api/auth/me`; kiểm tra lại tài khoản/role trên mỗi request. Admin quản lý toàn bộ CMS, gồm tự duyệt và publish; Viewer chỉ đọc nội dung public và profile.
 - Identity nguồn phân biệt hoa/thường; revision bất biến; fingerprint gồm metadata chuẩn hóa và checksum attachment; nguồn Pending không ghi đè bản Accepted. Có amend metadata thành revision mới, decision, revoke và đọc raw được phân quyền.
 - Import NTRS, NASA Images, PDS và Mars Trek qua HTTP allowlist. Job/item/checkpoint/lease nằm trong SQL Server; idempotency, pagination, retry có giới hạn và resume sau restart. NASA Web dùng đăng ký nguồn thủ công có bằng chứng, không scrape URL tùy ý.
 - CRUD có DTO riêng cho fact, measurement, mission, location, timeline, media và map layer; kiểm tra provenance, đơn vị, ngày, tọa độ, bbox và quality.
@@ -48,36 +48,36 @@ Không ghi token/mật khẩu vào Git. `App_Data`, kết quả test và log sim
 
 ## Tạo tài khoản và sử dụng CMS
 
-Provision từng người với đúng role; lệnh từ chối ghi đè tài khoản đã tồn tại. Không có mật khẩu mặc định. Nhập mật khẩu cục bộ, không in ra console:
+Người dùng đăng ký bằng `POST /api/auth/register` với `username`, `fullName`, `email`, `password`, luôn nhận role Viewer. Tạo Admin bằng lệnh provision; lệnh từ chối ghi đè tài khoản đã tồn tại. Không có mật khẩu mặc định. Nhập mật khẩu cục bộ, không in ra console:
 
 ```powershell
 $secret = Read-Host 'Mật khẩu ít nhất 12 ký tự' -AsSecureString
 $credential = New-Object System.Management.Automation.PSCredential('bootstrap', $secret)
 $env:MARS_BOOTSTRAP_PASSWORD = $credential.GetNetworkCredential().Password
 try {
-    dotnet run --project Backend/Mars_Survival_Hanbook --no-launch-profile -- provision --email editor@example.org --role Editor --name Editor
+    dotnet run --project Backend/Mars_Survival_Hanbook --no-launch-profile -- provision --username localadmin --full-name "Local Admin" --email admin@example.org --role Admin
 } finally {
     Remove-Item Env:MARS_BOOTSTRAP_PASSWORD
 }
 ```
 
-Lặp lại với email riêng và `ScientificReviewer`, `Administrator`. Thay email mẫu bằng người phụ trách thực tế. Đăng nhập bằng `POST /api/auth/login` với `email`, `password`; dùng `accessToken` trong `Authorization: Bearer ...`. Không gửi role trong login.
+Chỉ có role `Admin` và `Viewer`. Thay email mẫu bằng người phụ trách thực tế. Đăng nhập bằng `POST /api/auth/login` với `email`, `password`; dùng `accessToken` trong `Authorization: Bearer ...`. Không gửi role trong login/register.
 
 Luồng làm việc:
 
-1. Editor tạo import hoặc `/api/admin/discover-mars/sources/manual`. Lưu `id` của revision và ETag.
-2. Reviewer đọc metadata/raw, xác minh tác giả, tổ chức, quyền dùng và bằng chứng. Nếu thiếu metadata, editor gọi `/source-revisions/{id}/amend`; kết quả là revision Pending mới. Reviewer gửi decision của revision đúng bằng chứng.
-3. Editor tạo working content và bài. `sourceRevisionIds` ở claim và resource đều được ghim vào snapshot. Đơn vị đã seed có thể tra bảng `Units`; không tự bịa GUID unit.
+1. Admin tạo import hoặc `/api/admin/discover-mars/sources/manual`. Lưu `id` của revision và ETag.
+2. Admin đọc metadata/raw, xác minh tác giả, tổ chức, quyền dùng và bằng chứng. Nếu thiếu metadata, gọi `/source-revisions/{id}/amend`; kết quả là revision Pending mới. Gửi decision của revision đúng bằng chứng.
+3. Admin tạo working content và bài. `sourceRevisionIds` ở claim và resource đều được ghim vào snapshot. Đơn vị đã seed có thể tra bảng `Units`; không tự bịa GUID unit.
 4. GET article lấy ETag mới nhất; submit `/articles/{id}/versions/{versionId}/submit` dùng **ETag article**.
-5. Reviewer GET task, claim bằng ETag task, kiểm tra snapshot/claim/units/rights, rồi decision bằng ETag mới sau claim. Checklist phải phản ánh việc đối chiếu thực tế.
-6. Administrator GET article rồi publish đúng `currentDraftVersionId` đã Approved, với ETag article. Bản nháp mới cần review mới.
-7. Restore tạo draft mới từ snapshot lịch sử. Unpublish cần reason. Revoke nguồn cần reviewer và reason; không dùng archive working content để thu hồi publication.
+5. Admin GET task, claim bằng ETag task, kiểm tra snapshot/claim/units/rights, rồi decision bằng ETag mới sau claim. Có thể duyệt bài do chính mình tạo; checklist phải phản ánh việc đối chiếu thực tế.
+6. Admin GET article rồi publish đúng `currentDraftVersionId` đã Approved, với ETag article. Bản nháp mới cần review mới.
+7. Restore tạo draft mới từ snapshot lịch sử. Unpublish và revoke nguồn cần Admin và reason; không dùng archive working content để thu hồi publication.
 
 GET resource/version trả ETag phù hợp. Các mutation có ID yêu cầu `If-Match`: thiếu trả 428, cũ trả 412. Tải lại resource và xem thay đổi trước khi thử lại. `409` là xung đột state/identity/idempotency; `422` là publication gate. Body lỗi nghiệp vụ có `code`, `traceId`; auth middleware có thể trả 401/403 không có body. Login bị giới hạn theo IP.
 
 ## Hợp đồng và request examples
 
-[OpenAPI đã xuất](../postman/specs/discover-mars.openapi.json) là hợp đồng chi tiết của 85 operations/68 paths. [Collection đầy đủ](../postman/collections/Discover%20Mars%20API) được sinh từ Swagger, chứa request mẫu cho tất cả route. Các GUID/body sinh tự động là chỗ để điền dữ liệu thực; không chạy cả collection này như một workflow. Chọn request cần dùng, đặt `baseUrl`, `bearerToken`, ID và ETag tương ứng.
+[OpenAPI đã xuất](../postman/specs/discover-mars.openapi.json) là hợp đồng chi tiết của 87 operations/70 paths. [Collection đầy đủ](../postman/collections/Discover%20Mars%20API) được sinh từ Swagger, chứa request mẫu cho tất cả route. Các GUID/body sinh tự động là chỗ để điền dữ liệu thực; không chạy cả collection này như một workflow. Chọn request cần dùng, đặt `baseUrl`, `bearerToken`, ID và ETag tương ứng.
 
 [Smoke collection](../postman/collections/Discover%20Mars%20Smoke) có 8 request chỉ đọc, 20 assertions và response examples ghi nhận từ backend thật. Environment local không chứa secret.
 

@@ -3,6 +3,7 @@ using Mars_Survival_Hanbook.Contracts;
 using Mars_Survival_Hanbook.Data;
 using Mars_Survival_Hanbook.Models;
 using Mars_Survival_Hanbook.Models.Enums;
+using Mars_Survival_Hanbook.Integrations.Nasa;
 using Microsoft.EntityFrameworkCore;
 namespace Mars_Survival_Hanbook.Services.Ingestion;
 
@@ -31,9 +32,11 @@ public static class ImportedContentMapper
                 .Select(x => Text(x, "href")).OfType<string>().ToArray();
             var original = files.FirstOrDefault(x => x.Contains("~orig.", StringComparison.OrdinalIgnoreCase));
             if (original == null || m.Title.Length > 300) return;
+            original = NasaConnectorClient.SecureImageAssetUrl(original);
             db.MediaAssets.Add(new() { NasaId = nasaId, SourceId = source.Id, SourceRevisionId = revision.Id,
                 Title = m.Title, Url = original, OriginalUrl = original, Credit = m.Credit ?? "", UsageNote = m.UsageNote ?? "",
-                AltText = "", FileChecksum = m.AttachmentHashes?.GetValueOrDefault("original"),
+                AltText = data.TryGetProperty("data", out var imageData) ? Text(imageData, "description_508") ?? m.Title : m.Title,
+                FileChecksum = m.AttachmentHashes?.GetValueOrDefault("original"),
                 MimeType = Text(data, "originalMimeType"), MediaType = MediaType.Image });
         }
         if (source.Provider == SourceProvider.MarsTrek && !await db.MapLayers.AnyAsync(x => x.SourceId == source.Id, ct) &&

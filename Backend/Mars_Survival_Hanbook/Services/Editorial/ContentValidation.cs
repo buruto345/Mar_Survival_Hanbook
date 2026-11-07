@@ -53,6 +53,7 @@ public static class ContentValidation
         if (from == to) return value;
         return (from, to) switch {
             ("hPa", "Pa") => value * 100, ("Pa", "hPa") => value / 100,
+            ("mb" or "mbar", "Pa") => value * 100,
             ("°C", "K") => value + 273.15m, ("K", "°C") => value - 273.15m,
             ("km", "m") => value * 1000, ("m", "km") => value / 1000,
             _ => throw ApiException.Invalid("Không hỗ trợ quy đổi đơn vị này.")

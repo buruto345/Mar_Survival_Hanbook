@@ -8,6 +8,21 @@ public sealed class DiscoverySchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
+        if (context.Type == typeof(LoginRequest))
+        {
+            schema.Description = "Provide password and exactly one non-blank identifier: email or username. Identifiers are trimmed and matched case-insensitively.";
+            schema.Required.Add("password");
+            schema.Properties["email"].MaxLength = 254;
+            schema.Properties["username"].MaxLength = 50;
+            schema.Properties["password"].MinLength = 1;
+            schema.Properties["password"].MaxLength = 1024;
+        }
+        if (context.Type == typeof(RegisterRequest))
+        {
+            schema.AdditionalPropertiesAllowed = false;
+            schema.Properties["password"].Format = "password";
+            schema.Properties["password"].WriteOnly = true;
+        }
         foreach (var p in context.Type.GetProperties().Where(x => x.IsDefined(typeof(JsonRequiredAttribute), true)))
             schema.Required.Add(System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(p.Name));
         if (context.Type == typeof(ArticleSnapshot) || context.Type == typeof(ArticleDetailResponse))

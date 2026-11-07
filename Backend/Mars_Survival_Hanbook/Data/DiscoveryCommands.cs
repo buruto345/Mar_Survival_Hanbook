@@ -12,6 +12,13 @@ public static class DiscoveryCommands
 {
     public static async Task<bool> RunAsync(string[] args, IServiceProvider services)
     {
+        if (args.Length > 0 && args[0] == "import-discovery-pack")
+        {
+            var index = Array.IndexOf(args, "--file");
+            if (index < 0 || index + 1 >= args.Length) throw new InvalidOperationException("Usage: import-discovery-pack --file <local-pack.json>");
+            await DiscoveryPackImporter.RunAsync(services, args[index + 1], args.Contains("--retry-failed"), args.Contains("--refresh-drafts"));
+            return true;
+        }
         if (args.Length == 0 || args[0] is not ("seed" or "provision" or "backfill")) return false;
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MarsDbContext>();
@@ -20,15 +27,15 @@ public static class DiscoveryCommands
         {
             string Arg(string key) { var n = Array.IndexOf(args, key); return n >= 0 && n + 1 < args.Length ? args[n + 1] : ""; }
             var email = Arg("--email").Trim();
-            if (!new EmailAddressAttribute().IsValid(email) || !Enum.TryParse<UserRole>(Arg("--role"), out var role) || !Enum.IsDefined(role))
-                throw new InvalidOperationException("Usage: provision --email <email> --role Editor|ScientificReviewer|Administrator --name <name>");
+            if (Arg("--role") is not ("Admin" or "Viewer") ||
+                !Enum.TryParse<UserRole>(Arg("--role"), out var role))
+                throw new InvalidOperationException("Usage: provision --username <username> --role Admin|Viewer [--full-name <full name>] [--email <email>] (name/email required for Viewer)");
             var password = Environment.GetEnvironmentVariable("MARS_BOOTSTRAP_PASSWORD");
-            if (password == null || password.Length < 12) throw new InvalidOperationException("Set MARS_BOOTSTRAP_PASSWORD (at least 12 characters).");
-            if (await db.Users.AnyAsync(x => x.NormalizedEmail == email.ToUpperInvariant()))
-                throw new InvalidOperationException("Account already exists; provisioning does not overwrite credentials or role.");
-            var user = new User { Email = email, NormalizedEmail = email.ToUpperInvariant(), DisplayName = Arg("--name") is { Length: > 0 } name ? name : email, Role = role };
-            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
-            db.Users.Add(user); await db.SaveChangesAsync();
+            if (string.IsNullOrWhiteSpace(password) || (role != UserRole.Admin && password.Length < 12))
+                throw new InvalidOperationException("Set MARS_BOOTSTRAP_PASSWORD (at least 12 characters for Viewer).");
+            var user = await scope.ServiceProvider.GetRequiredService<AuthenticationService>().ProvisionAsync(new RegisterRequest {
+                Username = Arg("--username"), FullName = Arg("--full-name"), Email = email, Password = password
+            }, role, default);
             Console.WriteLine("Provisioned account " + user.Id); return true;
         }
         var apply = args.Contains("--apply");

@@ -1,6 +1,6 @@
 $kind: http-request
 name: POST /api/admin/discover-mars/content/timeline-events
-description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
 url: "{{baseUrl}}/api/admin/discover-mars/content/timeline-events"
 method: POST
 headers:
@@ -12,12 +12,12 @@ body:
     {
       "agency": "string",
       "description": "string",
-      "eventDate": "1947-02-14T01:46:42.140Z",
+      "eventDate": "2021-03-20T00:19:00.399Z",
       "isPlanned": false,
-      "sourceRevisionId": "7d50e181-deec-2322-1781-d9fd7525d1e6",
+      "sourceRevisionId": "491c9297-c10d-8ef5-7605-772a6f25ed8a",
       "title": "string",
-      "endDate": "1979-02-10T11:45:50.750Z",
-      "missionId": "ea6279f2-f239-0d21-260c-9682a63bdabe"
+      "endDate": "2025-05-06T11:32:38.992Z",
+      "missionId": "65b1eff3-be5a-36a2-567d-3da93c9135c9"
     }
 auth:
   type: bearer

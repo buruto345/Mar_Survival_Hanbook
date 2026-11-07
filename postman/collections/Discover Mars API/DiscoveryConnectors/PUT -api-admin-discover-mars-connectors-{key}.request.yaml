@@ -1,6 +1,6 @@
 $kind: http-request
 name: PUT /api/admin/discover-mars/connectors/{key}
-description: "Requires a current active account. Policies: Cms, Admin. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+description: "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
 url: "{{baseUrl}}/api/admin/discover-mars/connectors/:key"
 method: PUT
 headers:
@@ -24,7 +24,7 @@ body:
       "isEnabled": true,
       "baseUrl": "string",
       "accessPolicy": "string",
-      "rateLimitPerMinute": 2886
+      "rateLimitPerMinute": 256
     }
 auth:
   type: bearer

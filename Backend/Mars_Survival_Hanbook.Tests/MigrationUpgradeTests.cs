@@ -31,6 +31,10 @@ public sealed class MigrationUpgradeTests
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT Users(Id,CreatedAt,Email,NormalizedEmail,DisplayName,PasswordHash,Role,State)
                 VALUES({user},SYSDATETIMEOFFSET(),'legacy@example.test','LEGACY@EXAMPLE.TEST','Legacy','placeholder','ScientificReviewer','Active');
+                INSERT Users(Id,CreatedAt,Email,NormalizedEmail,DisplayName,PasswordHash,Role,State)
+                VALUES(NEWID(),SYSDATETIMEOFFSET(),'reader@example.test','READER@EXAMPLE.TEST','Legacy','reader-hash','RegisteredReader','Active'),
+                      (NEWID(),SYSDATETIMEOFFSET(),'editor@example.test','EDITOR@EXAMPLE.TEST','Legacy','editor-hash','Editor','Deactivated'),
+                      (NEWID(),SYSDATETIMEOFFSET(),'admin@example.test','ADMIN@EXAMPLE.TEST','Legacy','admin-hash','Administrator','Active');
                 INSERT Modules(Id,CreatedAt,Name,Slug,DisplayOrder) VALUES({module},SYSDATETIMEOFFSET(),'Discover Mars','discover-mars',0);
                 INSERT Categories(Id,CreatedAt,Name,Slug,DisplayOrder,ModuleId) VALUES({category},SYSDATETIMEOFFSET(),'Legacy','legacy',0,{module});
                 INSERT ScientificSources(Id,CreatedAt,Title,NASAOrganization,Url,Authors,SourceType,VerificationStatus,RetrievedAt,VerifiedAt,VerifiedById)
@@ -61,6 +65,16 @@ public sealed class MigrationUpgradeTests
             Assert.Equal("Original content", saved.Content);
             Assert.Equal(ArticleStatus.Draft, saved.Status); Assert.True(saved.RequiresReview); Assert.Null(saved.PublishedVersionId);
             Assert.Equal(user, saved.ReviewedById);
+            var migratedUser = await db.Users.SingleAsync(x => x.Id == user);
+            Assert.Equal("Legacy", migratedUser.FullName);
+            Assert.Equal("placeholder", migratedUser.PasswordHash);
+            Assert.Equal("legacy_" + user.ToString("N"), migratedUser.Username);
+            Assert.Equal(migratedUser.Username.ToUpperInvariant(), migratedUser.NormalizedUsername);
+            Assert.Equal(UserRole.Admin, migratedUser.Role);
+            Assert.Equal(UserRole.Viewer, (await db.Users.SingleAsync(x => x.Email == "reader@example.test")).Role);
+            Assert.Equal(UserState.Deactivated, (await db.Users.SingleAsync(x => x.Email == "editor@example.test")).State);
+            Assert.Equal(4, await db.Users.Select(x => x.NormalizedUsername).Distinct().CountAsync());
+            Assert.Equal(3, await db.Users.CountAsync(x => x.Role == UserRole.Admin));
             Assert.Equal("""{"legacy":"Original text"}""", (await db.ArticleVersions.SingleAsync(x => x.Id == version)).Snapshot);
             Assert.Equal("Original citation", (await db.ArticleSources.SingleAsync(x => x.ArticleId == article)).ClaimNote);
             var revision = Assert.Single(await db.SourceRevisions.Where(x => x.SourceId == source).ToListAsync());

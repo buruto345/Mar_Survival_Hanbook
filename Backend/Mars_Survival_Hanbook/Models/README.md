@@ -32,7 +32,7 @@ Các bảng liên kết bổ sung giúp sử dụng lại fact, nguồn, công n
 - `TechnologyFact` gắn thông số với tiêu chí so sánh và bối cảnh. Service phải kiểm tra sự tương thích đơn vị, điều kiện, loại số liệu và môi trường trước khi so sánh.
 - Source có URL, DOI, tác giả, tổ chức NASA, quyền sở hữu nhiệm vụ, ngày truy xuất và trạng thái xác minh. `ResearchPaper` dùng metadata thư mục từ Source, bổ sung mã tài liệu, abstract và thông tin nghiên cứu.
 - Ảnh/media có nguồn, credit, usage note và alt text. `NasaConnector.AuthenticationSecretReference` chỉ lưu tên/tham chiếu secret; không lưu API key thật trong model/configuration JSON.
-- `User.PasswordHash` được loại khỏi JSON. Service cần hash mật khẩu bằng password hasher và chuẩn hóa `NormalizedEmail` trước khi lưu. API nên dùng DTO để tránh trả navigation graph hoặc nhận trực tiếp các trường quyền/trạng thái từ client.
+- User dùng `Username`, `FullName`, `Email`, `PasswordHash`, role `Admin`/`Viewer`. `NormalizedUsername` và `NormalizedEmail` có unique index. Hai field chuẩn hóa và password hash được loại khỏi JSON. Đăng ký dùng DTO bốn field, luôn cấp Viewer; đăng nhập/profile trả cùng cấu trúc tài khoản.
 
 ## EF Core
 
@@ -55,7 +55,7 @@ Connection string mặc định dùng LocalDB và database `MarsSurvivalHandbook
 
 Discover Mars đã triển khai các yêu cầu dưới đây trong `Services`, `Integrations/Nasa`, `BackgroundJobs` và controllers. Các module khác chưa tự động có workflow này. Xem [runbook và bằng chứng kiểm thử](../../../Docs/Discover_Mars_Implementation_Status.md).
 
-1. Kiểm tra quyền của Editor/Reviewer/Admin và các bước chuyển trạng thái; chỉ xuất bản phiên bản hiện tại đã được duyệt.
+1. Kiểm tra quyền Admin/Viewer và các bước chuyển trạng thái; Admin được tự duyệt nhưng chỉ xuất bản phiên bản hiện tại đã được duyệt.
 2. Kiểm tra NASA ownership, claim, nguồn, credit và quyền media trước khi publish; không coi domain NASA hoặc một cờ Accepted là bằng chứng tự động.
 3. Vô hiệu hóa yêu cầu duyệt cũ khi nội dung/fact liên quan thay đổi, ghi snapshot và audit trong cùng transaction. Chặn sửa/xóa `ArticleVersion` và `AuditLog` qua API thông thường.
 4. Đảm bảo bài published có đủ nguồn được chấp nhận, nội dung, ngày review và các trường bắt buộc theo loại bài; không tự publish kết quả import.

@@ -38,12 +38,15 @@ builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<IngestionProcessor>();
 builder.Services.AddSingleton<NasaUrlPolicy>();
 builder.Services.AddSingleton<WorkerHeartbeat>();
-builder.Services.AddHttpClient<SafeNasaHttp>(c => c.Timeout = Timeout.InfiniteTimeSpan)
+builder.Services.AddHttpClient<SafeNasaHttp>(c => {
+    c.Timeout = Timeout.InfiniteTimeSpan;
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("MarsSurvivalHandbook/1.0");
+})
     .ConfigurePrimaryHttpMessageHandler(sp => sp.GetRequiredService<NasaUrlPolicy>().CreateHandler());
 builder.Services.AddScoped<NasaConnectorClient>();
 builder.Services.AddHostedService<IngestionWorker>();
 var key = builder.Configuration["Jwt:SigningKey"];
-var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision";
+var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-discovery-pack";
 if (string.IsNullOrEmpty(key) && (builder.Environment.IsDevelopment() || commandMode))
     key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 if (key == null || Encoding.UTF8.GetByteCount(key) < 32)
@@ -71,17 +74,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("Cms", p => p.RequireRole("Editor", "ScientificReviewer", "Administrator"));
-    o.AddPolicy("Edit", p => p.RequireRole("Editor", "Administrator"));
-    o.AddPolicy("Review", p => p.RequireRole("ScientificReviewer"));
-    o.AddPolicy("ReviewRead", p => p.RequireRole("ScientificReviewer", "Administrator"));
-    o.AddPolicy("Admin", p => p.RequireRole("Administrator"));
+    foreach (var policy in new[] { "Cms", "Edit", "Review", "ReviewRead", "Admin" })
+        o.AddPolicy(policy, p => p.RequireRole(nameof(UserRole.Admin)));
 });
 builder.Services.AddRateLimiter(o =>
 {
     o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     o.AddPolicy("login", ctx => RateLimitPartition.GetFixedWindowLimiter(ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = Math.Clamp(builder.Configuration.GetValue("Auth:LoginPermitLimit", 10), 1, 1000),
+            Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    o.AddPolicy("register", ctx => RateLimitPartition.GetFixedWindowLimiter(ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = Math.Clamp(builder.Configuration.GetValue("Auth:RegistrationPermitLimit", 5), 1, 1000),
+            Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 builder.Services.AddControllers(o => o.ModelBinderProviders.Insert(0, new StrictEnumModelBinderProvider())).AddJsonOptions(o =>
 {

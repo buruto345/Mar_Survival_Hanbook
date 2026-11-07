@@ -12,8 +12,6 @@ public sealed class ReviewService(MarsDbContext db, CurrentActor actor, Snapshot
     {
         var task = await db.ReviewTasks.Include(x => x.Article).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
         Concurrency.Check(task, etag);
-        if (task.SubmittedById == actor.Id || task.Article.CreatedById == actor.Id)
-            throw new ApiException(403, "self_review", "Không tự duyệt bài do mình biên tập.");
         if (task.State != ReviewState.Pending || task.ReviewerId != null) throw ApiException.Conflict("Task đã được nhận hoặc hoàn tất.");
         task.ReviewerId = actor.Id; task.State = ReviewState.InProgress;
         Audit.Add(db, actor.Id, nameof(ReviewTask), id, AuditAction.Updated, "Review claimed", actor.TraceId);
@@ -28,7 +26,7 @@ public sealed class ReviewService(MarsDbContext db, CurrentActor actor, Snapshot
         var t = await db.ReviewTasks.Include(x => x.Article).Include(x => x.ArticleVersion).SingleOrDefaultAsync(x => x.Id == id, ct)
             ?? throw ApiException.Missing();
         Concurrency.Check(t, etag);
-        if (t.ReviewerId != actor.Id || t.SubmittedById == actor.Id || t.Article.CreatedById == actor.Id)
+        if (!actor.IsAdmin && t.ReviewerId != actor.Id)
             throw new ApiException(403, "review_not_assigned", "Task không được giao cho reviewer này.");
         if (t.State != ReviewState.InProgress || t.Article.CurrentDraftVersionId != t.ArticleVersionId ||
             t.ArticleVersion.ReviewState != ArticleVersionReviewState.InReview) throw ApiException.Conflict("Bản review đã được thay thế.");
@@ -37,6 +35,7 @@ public sealed class ReviewService(MarsDbContext db, CurrentActor actor, Snapshot
             if (!r.Checklist.Complete) throw ApiException.Gate("Cần hoàn thành checklist khoa học.");
             await snapshots.ValidateGateAsync(t.ArticleVersion, ct);
         }
+        t.ReviewerId = actor.Id;
         t.State = r.Decision; t.ReviewNotes = r.Notes; t.CompletedAt = DateTimeOffset.UtcNow;
         t.SourcesChecked = r.Checklist.SourcesChecked; t.ClaimsChecked = r.Checklist.ClaimsChecked;
         t.UnitsChecked = r.Checklist.UnitsChecked; t.EvidenceChecked = r.Checklist.EvidenceChecked; t.MediaRightsChecked = r.Checklist.MediaRightsChecked;

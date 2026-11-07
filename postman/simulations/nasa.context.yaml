@@ -2,6 +2,20 @@ purpose:
   stands_in_for: NASA NTRS, Images, PDS MEDA pressure and Mars Trek HTTP responses and upstream failures.
   unblocks: Local tests of the real Discover Mars worker and SQL persistence.
 assumptions:
+  - id: pds-current-registry-redirect
+    status: supported
+    claim: The public pds.nasa.gov API redirects product requests to pds.mcp.nasa.gov over HTTPS.
+    reason: A live MEDA product request followed this redirect. Both are explicit NASA hosts; partner data files remain separately allowlisted.
+    verification: The redirect target was inspected on 2026-11-03. Generic HTTP URLs and other hosts remain rejected.
+    source: https://pds.nasa.gov/api/search/1/products/urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0
+    updated_at: "2026-11-03"
+  - id: nasa-images-legacy-asset-links
+    status: supported
+    claim: The live Images asset endpoint can return HTTP URLs for images-assets.nasa.gov; that exact host serves the same assets over HTTPS.
+    reason: A live PIA00407 asset response used HTTP while search links used HTTPS. The strict HTTPS transport rejected the legacy link.
+    verification: Live import downloaded original assets over HTTPS. Unit cases restrict the upgrade to the exact host and default port; the existing local simulation retains its explicit loopback exception.
+    source: https://images-api.nasa.gov/asset/PIA00407; Backend/Mars_Survival_Hanbook.Tests/DiscoveryUnitTests.cs
+    updated_at: "2026-11-03"
   - id: ntrs-wire-contract
     status: supported
     claim: NTRS citation search exposes results and stats, and citation detail exposes affiliations and relative PDF links.

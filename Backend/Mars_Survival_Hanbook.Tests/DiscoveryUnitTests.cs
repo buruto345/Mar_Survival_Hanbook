@@ -6,12 +6,42 @@ using Mars_Survival_Hanbook.Models.Enums;
 using Mars_Survival_Hanbook.Services;
 using Mars_Survival_Hanbook.Services.Editorial;
 using Mars_Survival_Hanbook.Services.Sources;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Xunit;
 
 namespace Mars_Survival_Hanbook.Tests;
 
 public class DiscoveryUnitTests
 {
+    [Theory]
+    [InlineData("https://pds.mcp.nasa.gov/api/search/1/products/test", true)]
+    [InlineData("http://pds.mcp.nasa.gov/api/search/1/products/test", false)]
+    [InlineData("https://pds.mcp.nasa.gov.attacker.example/test", false)]
+    [InlineData("https://pds.mcp.nasa.gov:8443/test", false)]
+    public void RegistryRedirectRemainsInsideExactHttpsAllowlist(string url, bool allowed)
+    {
+        var policy = new NasaUrlPolicy(new ConfigurationBuilder().Build(), new ProductionHost());
+        if (allowed) policy.Validate(new Uri(url));
+        else Assert.Throws<ApiException>(() => policy.Validate(new Uri(url)));
+    }
+    private sealed class ProductionHost : IWebHostEnvironment
+    {
+        public string ApplicationName { get; set; } = "Tests";
+        public string EnvironmentName { get; set; } = "Production";
+        public string ContentRootPath { get; set; } = "";
+        public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
+        public string WebRootPath { get; set; } = "";
+        public IFileProvider WebRootFileProvider { get; set; } = new NullFileProvider();
+    }
+    [Theory]
+    [InlineData("http://images-assets.nasa.gov/image/PIA00407/PIA00407~orig.jpg", "https://images-assets.nasa.gov/image/PIA00407/PIA00407~orig.jpg")]
+    [InlineData("http://images-assets.nasa.gov.attacker.example/a", "http://images-assets.nasa.gov.attacker.example/a")]
+    [InlineData("http://images-assets.nasa.gov:8080/a", "http://images-assets.nasa.gov:8080/a")]
+    [InlineData("http://127.0.0.1:4010/nasa/image~orig.png", "http://127.0.0.1:4010/nasa/image~orig.png")]
+    public void LegacyImageLinksUpgradeOnlyTheOfficialDefaultPortHost(string input, string expected) =>
+        Assert.Equal(expected, NasaConnectorClient.SecureImageAssetUrl(input));
     [Fact] public void UnsupportedSnapshotSchemaRequiresControlledReconstruction()
     {
         var version = new Mars_Survival_Hanbook.Models.ArticleVersion { SnapshotSchemaVersion = 2, Snapshot = "{}" };
@@ -43,6 +73,7 @@ public class DiscoveryUnitTests
     {
         Assert.Equal(273.15m, ContentValidation.ConvertUnit(0, "°C", "K"));
         Assert.Equal(600m, ContentValidation.ConvertUnit(6, "hPa", "Pa"));
+        Assert.Equal(636m, ContentValidation.ConvertUnit(6.36m, "mb", "Pa"));
         Assert.Throws<ApiException>(() => ContentValidation.ConvertUnit(1, "K", "Pa"));
     }
     [Theory]

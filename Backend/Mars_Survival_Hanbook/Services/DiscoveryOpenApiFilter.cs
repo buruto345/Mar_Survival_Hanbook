@@ -27,7 +27,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 _ => parameter.Schema.Default
             };
         }
-        if (admin) operation.Security = [new() {
+        if (admin || path == "api/auth/me") operation.Security = [new() {
             [new OpenApiSecurityScheme { Reference = new() { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }] = []
         }];
         if (admin && context.ApiDescription.HttpMethod is "PUT" or "POST")
@@ -50,7 +50,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :
                 path.EndsWith("/draft") && method == "PUT" || method == "POST" &&
-                (path.EndsWith("/articles") || path.EndsWith("/submit") || path.EndsWith("/restore") ||
+                (path == "api/auth/register" || path.EndsWith("/articles") || path.EndsWith("/submit") || path.EndsWith("/restore") ||
                  path.Contains("/content/") && !path.Contains("{") || path.EndsWith("/sources/manual") || path.EndsWith("/amend")) ? "201" : "200";
             operation.Responses.Remove("200");
             var response = new OpenApiResponse { Description = status == "202" ? "Work persisted; poll Location for status." : "Success",
@@ -69,9 +69,16 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             var policies = context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AuthorizeAttribute>()
                 .Concat(context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>()).Select(x => x.Policy).Distinct();
             operation.Description = "Requires a current active account. Policies: " + string.Join(", ", policies) +
-                ". Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; " +
-                "ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.";
+                ". All CMS policies require Admin. Admin can edit, review (including own content), and publish. " +
+                "Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.";
         }
+        if (path == "api/auth/register") operation.Description = "Create an active Viewer account using username, fullName, email and password. " +
+            "Username is 3-50 ASCII letters/digits/dots/underscores/hyphens, starting with a letter or digit; fullName is required (up to 150 characters); " +
+            "password is 12-128 characters. Username and email are unique without case distinctions. " +
+            "Role and other unknown fields are rejected. Returns 201 with profile; use login for a token. " +
+            "Invalid input: 400; duplicate username/email: 409; more than 5 attempts per IP per minute: 429.";
+        if (path == "api/auth/login") operation.Description = "Login with email and password. Returns a JWT and profile with username, fullName, email and Admin/Viewer role. Invalid/inactive accounts return 401.";
+        if (path == "api/auth/me") operation.Description = "Returns the current active account profile for either Admin or Viewer. Requires a valid Bearer token.";
     }
     private static Type Page(Type type) => typeof(PageResult<>).MakeGenericType(type);
     private static readonly Dictionary<string, Type> Resources = new() {
@@ -82,6 +89,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
     private static Type? ResponseType(string path, string method)
     {
         if (path == "api/auth/login") return typeof(LoginResponse);
+        if (path is "api/auth/register" or "api/auth/me") return typeof(UserProfile);
         if (path == "api/discover-mars") return typeof(ModuleResponse);
         if (path.StartsWith("api/discover-mars/"))
         {

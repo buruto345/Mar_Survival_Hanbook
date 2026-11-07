@@ -1,6 +1,6 @@
 $kind: http-request
 name: POST /api/admin/discover-mars/sources/manual
-description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
 url: "{{baseUrl}}/api/admin/discover-mars/sources/manual"
 method: POST
 headers:
@@ -23,10 +23,10 @@ body:
         }
       ],
       "organization": "string",
-      "sourceType": "Dataset",
+      "sourceType": "Api",
       "excerpt": "string",
       "usageNote": "string",
-      "retrievedAt": "1948-11-12T05:03:47.504Z",
+      "retrievedAt": "2022-01-20T02:34:27.255Z",
       "credit": "string"
     }
 auth:

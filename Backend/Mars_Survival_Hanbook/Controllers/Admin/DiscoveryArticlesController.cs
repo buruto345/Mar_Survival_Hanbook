@@ -21,7 +21,7 @@ public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService
         ArticleStatus? publicationStatus, ArticleVersionReviewState? reviewState, bool? requiresReview, CancellationToken ct)
     {
         var query = db.Articles.AsNoTracking().Where(x => x.Category.Module.Slug == "discover-mars" &&
-            (actor.IsAdmin || actor.IsReviewer || x.CreatedById == actor.Id));
+            (actor.IsAdmin || x.CreatedById == actor.Id));
         if (category != null) query = query.Where(x => x.Category.Slug == category);
         if (publicationStatus.HasValue) query = query.Where(x => x.Status == publicationStatus);
         if (requiresReview.HasValue) query = query.Where(x => x.RequiresReview == requiresReview);

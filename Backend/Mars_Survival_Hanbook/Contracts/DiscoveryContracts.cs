@@ -42,7 +42,21 @@ public class DiscoveryQuery : PageQuery
     [MaxLength(100)] public string? QuantityKind { get; set; }
     public EvidenceType? EvidenceType { get; set; }
 }
-public record LoginRequest([Required, EmailAddress, MaxLength(254)] string Email, [Required, MaxLength(1024)] string Password);
+public record LoginRequest(
+    [MaxLength(254)] string? Email = null,
+    [Required, MaxLength(1024)] string Password = "",
+    [MaxLength(50)] string? Username = null) : IValidatableObject
+{
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var hasEmail = !string.IsNullOrWhiteSpace(Email);
+        var hasUsername = !string.IsNullOrWhiteSpace(Username);
+        if (hasEmail == hasUsername)
+            yield return new ValidationResult("Provide either email or username, but not both.", [nameof(Email), nameof(Username)]);
+        if (hasEmail && !new EmailAddressAttribute().IsValid(Email!.Trim()))
+            yield return new ValidationResult("Email is not valid.", [nameof(Email)]);
+    }
+}
 public record SourceAuthor([Required, MaxLength(200)] string Name, [Required, MaxLength(300)] string Organization);
 public record SourceMetadata(
     string Title, string Url, SourceAuthor[] Authors, string Organization, SourceType SourceType,

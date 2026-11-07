@@ -1,0 +1,8 @@
+$kind: collection
+name: Authentication Smoke
+description: Creates one Viewer account per run in the selected database. Tests registration, login, profile, duplicate handling and authorization. Use a disposable test database.
+variables:
+  - key: baseUrl
+    value: 'http://127.0.0.1:5086'
+auth:
+  type: noauth

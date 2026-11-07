@@ -21,6 +21,15 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
     };
     private static Uri Base(NasaConnector connector) => new(connector.BaseUrl.TrimEnd('/') + "/");
     private static string Esc(string value) => Uri.EscapeDataString(value);
+    // NASA's asset API still emits HTTP links although its asset host supports HTTPS.
+    // Upgrade only that exact legacy host; all other URLs still pass the normal allowlist.
+    public static string SecureImageAssetUrl(string value)
+    {
+        var uri = new Uri(value);
+        return uri.Scheme == "http" && uri.IdnHost.Equals("images-assets.nasa.gov", StringComparison.OrdinalIgnoreCase)
+            && uri.IsDefaultPort && string.IsNullOrEmpty(uri.UserInfo)
+            ? new UriBuilder(uri) { Scheme = "https", Port = -1 }.Uri.AbsoluteUri : value;
+    }
     private async Task<JsonElement> JsonAsync(Uri url, CancellationToken ct)
     {
         var response = await http.GetAsync(url, ct);
@@ -125,7 +134,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
                 if (!MarsRelevant(title + " " + S(d, "description") + " " + S(d, "keywords"))) throw new UpstreamException("policy_not_mars", false);
                 var assets = await FetchJson(new(Base(c), "asset/" + Esc(key)), "assets");
                 var location = await FetchJson(new(Base(c), "metadata/" + Esc(key)), "metadata-location");
-                var detail = await FetchJson(new Uri(S(location, "location") ?? throw new UpstreamException("missing_metadata", false)), "metadata");
+                var detail = await FetchJson(new Uri(SecureImageAssetUrl(S(location, "location") ?? throw new UpstreamException("missing_metadata", false))), "metadata");
                 var credit = S(detail, "XMP:Credit") ?? S(d, "secondary_creator") ?? "";
                 var files = Required(Required(assets, "collection", JsonValueKind.Object), "items", JsonValueKind.Array)
                     .EnumerateArray().Select(x => S(x, "href")).OfType<string>().ToArray();
@@ -133,7 +142,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
                 string? originalMimeType = null;
                 if (original != null)
                 {
-                    var response = await Fetch(new Uri(original), "original");
+                    var response = await Fetch(new Uri(SecureImageAssetUrl(original)), "original");
                     if (!response.MimeType.StartsWith("image/")) throw new UpstreamException("invalid_image", false);
                     originalMimeType = response.MimeType;
                 }

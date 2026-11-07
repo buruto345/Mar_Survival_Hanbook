@@ -1,19 +1,19 @@
 $kind: http-request
 name: GET /api/discover-mars/missions/{id}
 description: ""
-url: "{{baseUrl}}/api/discover-mars/missions/:id?articleVersionId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75&page=1&pageSize=20&q=string&language=vi"
+url: "{{baseUrl}}/api/discover-mars/missions/:id?articleVersionId=782db424-aac5-8763-3211-065257b84b58&page=1&pageSize=20&q=string&language=vi"
 method: GET
 headers:
   Accept: application/json
 queryParams:
-  articleVersionId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+  articleVersionId: 782db424-aac5-8763-3211-065257b84b58
   page: "1"
   pageSize: "20"
   q: string
   language: vi
 pathVariables:
   - key: id
-    value: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+    value: 782db424-aac5-8763-3211-065257b84b58
     disabled: false
     description: "(Required) "
 settings: {}

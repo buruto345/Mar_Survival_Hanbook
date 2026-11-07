@@ -1,7 +1,7 @@
 $kind: http-request
 name: GET /api/admin/discover-mars/content/locations
-description: "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
-url: "{{baseUrl}}/api/admin/discover-mars/content/locations?page=1&pageSize=20&q=string&language=vi&sourceId=dcc2ca62-23da-2927-5a3e-5cc12cb16b75"
+description: "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/locations?page=1&pageSize=20&q=string&language=vi&sourceId=782db424-aac5-8763-3211-065257b84b58"
 method: GET
 headers:
   Accept: application/json
@@ -10,7 +10,7 @@ queryParams:
   pageSize: "20"
   q: string
   language: vi
-  sourceId: dcc2ca62-23da-2927-5a3e-5cc12cb16b75
+  sourceId: 782db424-aac5-8763-3211-065257b84b58
 auth:
   type: bearer
   credentials:

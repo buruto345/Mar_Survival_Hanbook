@@ -19,10 +19,11 @@ public sealed class DiscoveryHttpFixture : IAsyncLifetime
     public SqlServerFixture Database { get; } = new();
     private WebApplicationFactory<Program>? factory;
     public HttpClient Guest { get; private set; } = null!;
-    public HttpClient Editor { get; private set; } = null!;
-    public HttpClient Reviewer { get; private set; } = null!;
+    public HttpClient Viewer { get; private set; } = null!;
+    public HttpClient OtherAdmin { get; private set; } = null!;
     public HttpClient Admin { get; private set; } = null!;
-    public Guid EditorId { get; private set; }
+    public Guid AdminId { get; private set; }
+    public int RegistrationPermitLimit { get; init; } = 1000;
     public IServiceProvider Services => factory!.Services;
     public async Task InitializeAsync()
     {
@@ -31,12 +32,13 @@ public sealed class DiscoveryHttpFixture : IAsyncLifetime
         await using var db = Database.CreateContext();
         await DiscoverySeed.RunAsync(db);
         var password = Guid.NewGuid().ToString("N") + "!aA1";
-        foreach (var role in new[] { UserRole.Editor, UserRole.ScientificReviewer, UserRole.Administrator })
+        foreach (var (username, role) in new[] { ("viewer", UserRole.Viewer), ("otheradmin", UserRole.Admin), ("admin", UserRole.Admin) })
         {
-            var email = role + "@discovery.test";
-            var u = new User { Email = email, NormalizedEmail = email.ToUpperInvariant(), DisplayName = role.ToString(), Role = role };
+            var email = username + "@discovery.test";
+            var u = new User { Username = username, NormalizedUsername = username.ToUpperInvariant(),
+                Email = email, NormalizedEmail = email.ToUpperInvariant(), FullName = username, Role = role };
             u.PasswordHash = new PasswordHasher<User>().HashPassword(u, password); db.Users.Add(u);
-            if (role == UserRole.Editor) EditorId = u.Id;
+            if (username == "admin") AdminId = u.Id;
         }
         await db.SaveChangesAsync();
         var cs = db.Database.GetConnectionString()!;
@@ -45,25 +47,27 @@ public sealed class DiscoveryHttpFixture : IAsyncLifetime
             b.UseEnvironment("Development");
             b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?> {
                 ["ConnectionStrings:MarsDatabase"] = cs, ["Nasa:WorkerEnabled"] = "false",
+                ["Auth:LoginPermitLimit"] = "1000",
+                ["Auth:RegistrationPermitLimit"] = RegistrationPermitLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 ["Storage:RawRoot"] = Path.Combine(Path.GetTempPath(), "MarsDiscoveryTests", Guid.NewGuid().ToString("N")),
                 ["Nasa:AllowLocalSimulation"] = "true", ["Nasa:SimulationPort"] = "4010", ["Nasa:TimeoutSeconds"] = "1",
                 ["Logging:LogLevel:Default"] = "Warning", ["Logging:LogLevel:Microsoft.EntityFrameworkCore"] = "Warning"
             }));
         });
         Guest = factory.CreateClient();
-        async Task<HttpClient> Login(UserRole role)
+        async Task<HttpClient> Login(string username)
         {
             var client = factory.CreateClient();
-            var response = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(role + "@discovery.test", password), DiscoveryJson.Options);
+            var response = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(username + "@discovery.test", password), DiscoveryJson.Options);
             Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
             var token = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("accessToken").GetString();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); return client;
         }
-        Editor = await Login(UserRole.Editor); Reviewer = await Login(UserRole.ScientificReviewer); Admin = await Login(UserRole.Administrator);
+        Viewer = await Login("viewer"); OtherAdmin = await Login("otheradmin"); Admin = await Login("admin");
     }
     public async Task DisposeAsync()
     {
-        Guest?.Dispose(); Editor?.Dispose(); Reviewer?.Dispose(); Admin?.Dispose();
+        Guest?.Dispose(); Viewer?.Dispose(); OtherAdmin?.Dispose(); Admin?.Dispose();
         if (factory != null) await factory.DisposeAsync();
         await Database.DisposeAsync();
     }

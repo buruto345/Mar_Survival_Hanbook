@@ -13,7 +13,7 @@ public sealed class UpstreamException(string code, bool retryable, TimeSpan? ret
 public sealed record NasaResponse(byte[] Bytes, string MimeType, Uri Url);
 public sealed class NasaUrlPolicy(IConfiguration config, IWebHostEnvironment env)
 {
-    private static readonly string[] Hosts = ["images-api.nasa.gov", "images-assets.nasa.gov", "ntrs.nasa.gov", "pds.nasa.gov", "trek.nasa.gov", "science.nasa.gov", "www.nasa.gov"];
+    private static readonly string[] Hosts = ["images-api.nasa.gov", "images-assets.nasa.gov", "ntrs.nasa.gov", "pds.nasa.gov", "pds.mcp.nasa.gov", "trek.nasa.gov", "science.nasa.gov", "www.nasa.gov"];
     public bool Simulation => env.IsDevelopment() && config.GetValue<bool>("Nasa:AllowLocalSimulation");
     public void Validate(Uri uri)
     {

@@ -6,12 +6,161 @@
     "version": "v1"
   },
   "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "POST /api/auth/register",
+        "description": "Create an active Viewer account using username, fullName, email and password. Username is 3-50 ASCII letters/digits/dots/underscores/hyphens, starting with a letter or digit; fullName is required (up to 150 characters); password is 12-128 characters. Username and email are unique without case distinctions. Role and other unknown fields are rejected. Returns 201 with profile; use login for a token. Invalid input: 400; duplicate username/email: 409; more than 5 attempts per IP per minute: 429.",
+        "operationId": "Auth_Register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
           "Auth"
         ],
         "summary": "POST /api/auth/login",
+        "description": "Login with email and password. Returns a JWT and profile with username, fullName, email and Admin/Viewer role. Invalid/inactive accounts return 401.",
         "operationId": "Auth_Login",
         "requestBody": {
           "content": {
@@ -144,6 +293,133 @@
             }
           }
         }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "GET /api/auth/me",
+        "description": "Returns the current active account profile for either Admin or Viewer. Requires a valid Bearer token.",
+        "operationId": "Auth_Me",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/api/discover-mars": {
@@ -3518,7 +3794,7 @@
           "DiscoveryArticles"
         ],
         "summary": "GET /api/admin/discover-mars/articles",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_List",
         "parameters": [
           {
@@ -3720,7 +3996,7 @@
           "DiscoveryArticles"
         ],
         "summary": "POST /api/admin/discover-mars/articles",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Create",
         "requestBody": {
           "content": {
@@ -3879,7 +4155,7 @@
           "DiscoveryArticles"
         ],
         "summary": "GET /api/admin/discover-mars/articles/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Get",
         "parameters": [
           {
@@ -4025,7 +4301,7 @@
           "DiscoveryArticles"
         ],
         "summary": "PUT /api/admin/discover-mars/articles/{id}/draft",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Draft",
         "parameters": [
           {
@@ -4204,7 +4480,7 @@
           "DiscoveryArticles"
         ],
         "summary": "GET /api/admin/discover-mars/articles/{id}/versions",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Versions",
         "parameters": [
           {
@@ -4389,7 +4665,7 @@
           "DiscoveryArticles"
         ],
         "summary": "GET /api/admin/discover-mars/articles/{id}/versions/{versionId}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Version",
         "parameters": [
           {
@@ -4544,7 +4820,7 @@
           "DiscoveryArticles"
         ],
         "summary": "GET /api/admin/discover-mars/articles/{id}/versions/{versionId}/preview",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Preview",
         "parameters": [
           {
@@ -4699,7 +4975,7 @@
           "DiscoveryArticles"
         ],
         "summary": "POST /api/admin/discover-mars/articles/{id}/versions/{versionId}/submit",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Submit",
         "parameters": [
           {
@@ -4868,7 +5144,7 @@
           "DiscoveryArticles"
         ],
         "summary": "POST /api/admin/discover-mars/articles/{id}/publish",
-        "description": "Requires a current active account. Policies: Cms, Admin. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Publish",
         "parameters": [
           {
@@ -5042,7 +5318,7 @@
           "DiscoveryArticles"
         ],
         "summary": "POST /api/admin/discover-mars/articles/{id}/unpublish",
-        "description": "Requires a current active account. Policies: Cms, Admin. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Unpublish",
         "parameters": [
           {
@@ -5216,7 +5492,7 @@
           "DiscoveryArticles"
         ],
         "summary": "POST /api/admin/discover-mars/articles/{id}/restore",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryArticles_Restore",
         "parameters": [
           {
@@ -5395,7 +5671,7 @@
           "DiscoveryConnectors"
         ],
         "summary": "GET /api/admin/discover-mars/connectors",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryConnectors_List",
         "responses": {
           "200": {
@@ -5533,7 +5809,7 @@
           "DiscoveryConnectors"
         ],
         "summary": "GET /api/admin/discover-mars/connectors/{key}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryConnectors_Get",
         "parameters": [
           {
@@ -5676,7 +5952,7 @@
           "DiscoveryConnectors"
         ],
         "summary": "PUT /api/admin/discover-mars/connectors/{key}",
-        "description": "Requires a current active account. Policies: Cms, Admin. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryConnectors_Update",
         "parameters": [
           {
@@ -5849,7 +6125,7 @@
           "DiscoveryImports"
         ],
         "summary": "POST /api/admin/discover-mars/imports",
-        "description": "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryImports_Create",
         "parameters": [
           {
@@ -6017,7 +6293,7 @@
           "DiscoveryImports"
         ],
         "summary": "GET /api/admin/discover-mars/imports",
-        "description": "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryImports_List",
         "parameters": [
           {
@@ -6193,7 +6469,7 @@
           "DiscoveryImports"
         ],
         "summary": "GET /api/admin/discover-mars/imports/{jobId}",
-        "description": "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryImports_Get",
         "parameters": [
           {
@@ -6339,7 +6615,7 @@
           "DiscoveryImports"
         ],
         "summary": "GET /api/admin/discover-mars/imports/{jobId}/items",
-        "description": "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryImports_Items",
         "parameters": [
           {
@@ -6531,7 +6807,7 @@
           "DiscoveryImports"
         ],
         "summary": "POST /api/admin/discover-mars/imports/{jobId}/retry",
-        "description": "Requires a current active account. Policies: Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryImports_Retry",
         "parameters": [
           {
@@ -6691,7 +6967,7 @@
           "DiscoveryReviews"
         ],
         "summary": "GET /api/admin/discover-mars/reviews",
-        "description": "Requires a current active account. Policies: ReviewRead. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: ReviewRead. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryReviews_List",
         "parameters": [
           {
@@ -6898,7 +7174,7 @@
           "DiscoveryReviews"
         ],
         "summary": "GET /api/admin/discover-mars/reviews/{id}",
-        "description": "Requires a current active account. Policies: ReviewRead. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: ReviewRead. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryReviews_Get",
         "parameters": [
           {
@@ -7044,7 +7320,7 @@
           "DiscoveryReviews"
         ],
         "summary": "POST /api/admin/discover-mars/reviews/{id}/claim",
-        "description": "Requires a current active account. Policies: ReviewRead, Review. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: ReviewRead, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryReviews_Claim",
         "parameters": [
           {
@@ -7199,7 +7475,7 @@
           "DiscoveryReviews"
         ],
         "summary": "POST /api/admin/discover-mars/reviews/{id}/decision",
-        "description": "Requires a current active account. Policies: ReviewRead, Review. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: ReviewRead, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoveryReviews_Decision",
         "parameters": [
           {
@@ -7373,7 +7649,7 @@
           "DiscoverySources"
         ],
         "summary": "GET /api/admin/discover-mars/sources",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_List",
         "parameters": [
           {
@@ -7563,7 +7839,7 @@
           "DiscoverySources"
         ],
         "summary": "GET /api/admin/discover-mars/sources/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Get",
         "parameters": [
           {
@@ -7709,7 +7985,7 @@
           "DiscoverySources"
         ],
         "summary": "GET /api/admin/discover-mars/sources/{id}/revisions",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Revisions",
         "parameters": [
           {
@@ -7894,7 +8170,7 @@
           "DiscoverySources"
         ],
         "summary": "GET /api/admin/discover-mars/source-revisions/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Revision",
         "parameters": [
           {
@@ -8040,7 +8316,7 @@
           "DiscoverySources"
         ],
         "summary": "GET /api/admin/discover-mars/source-revisions/{id}/raw",
-        "description": "Requires a current active account. Policies: Cms, ReviewRead. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, ReviewRead. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Raw",
         "parameters": [
           {
@@ -8186,7 +8462,7 @@
           "DiscoverySources"
         ],
         "summary": "POST /api/admin/discover-mars/sources/manual",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Manual",
         "requestBody": {
           "content": {
@@ -8368,7 +8644,7 @@
           "DiscoverySources"
         ],
         "summary": "POST /api/admin/discover-mars/source-revisions/{id}/decision",
-        "description": "Requires a current active account. Policies: Cms, Review. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Decision",
         "parameters": [
           {
@@ -8542,7 +8818,7 @@
           "DiscoverySources"
         ],
         "summary": "POST /api/admin/discover-mars/source-revisions/{id}/amend",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Amend",
         "parameters": [
           {
@@ -8744,7 +9020,7 @@
           "DiscoverySources"
         ],
         "summary": "POST /api/admin/discover-mars/source-revisions/{id}/revoke",
-        "description": "Requires a current active account. Policies: Cms, Review. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "DiscoverySources_Revoke",
         "parameters": [
           {
@@ -8918,7 +9194,7 @@
           "FactContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/facts",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "FactContent_List",
         "parameters": [
           {
@@ -9100,7 +9376,7 @@
           "FactContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/facts",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "FactContent_Create",
         "requestBody": {
           "content": {
@@ -9259,7 +9535,7 @@
           "FactContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/facts/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "FactContent_Get",
         "parameters": [
           {
@@ -9403,7 +9679,7 @@
           "FactContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/facts/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "FactContent_Update",
         "parameters": [
           {
@@ -9577,7 +9853,7 @@
           "FactContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/facts/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "FactContent_Archive",
         "parameters": [
           {
@@ -9732,7 +10008,7 @@
           "LocationContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/locations",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "LocationContent_List",
         "parameters": [
           {
@@ -9914,7 +10190,7 @@
           "LocationContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/locations",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "LocationContent_Create",
         "requestBody": {
           "content": {
@@ -10073,7 +10349,7 @@
           "LocationContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/locations/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "LocationContent_Get",
         "parameters": [
           {
@@ -10217,7 +10493,7 @@
           "LocationContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/locations/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "LocationContent_Update",
         "parameters": [
           {
@@ -10391,7 +10667,7 @@
           "LocationContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/locations/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "LocationContent_Archive",
         "parameters": [
           {
@@ -10546,7 +10822,7 @@
           "MapLayerContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/map-layers",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MapLayerContent_List",
         "parameters": [
           {
@@ -10728,7 +11004,7 @@
           "MapLayerContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/map-layers",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MapLayerContent_Create",
         "requestBody": {
           "content": {
@@ -10887,7 +11163,7 @@
           "MapLayerContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/map-layers/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MapLayerContent_Get",
         "parameters": [
           {
@@ -11031,7 +11307,7 @@
           "MapLayerContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/map-layers/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MapLayerContent_Update",
         "parameters": [
           {
@@ -11205,7 +11481,7 @@
           "MapLayerContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/map-layers/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MapLayerContent_Archive",
         "parameters": [
           {
@@ -11360,7 +11636,7 @@
           "Mars_Survival_Hanbook"
         ],
         "summary": "GET /api/admin/discover-mars/health",
-        "description": "Requires a current active account. Policies: . Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: . All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "<>c_<<Main>$>b__0_11",
         "responses": {
           "200": {
@@ -11480,7 +11756,7 @@
           "MeasurementContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/measurements",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MeasurementContent_List",
         "parameters": [
           {
@@ -11662,7 +11938,7 @@
           "MeasurementContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/measurements",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MeasurementContent_Create",
         "requestBody": {
           "content": {
@@ -11821,7 +12097,7 @@
           "MeasurementContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/measurements/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MeasurementContent_Get",
         "parameters": [
           {
@@ -11965,7 +12241,7 @@
           "MeasurementContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/measurements/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MeasurementContent_Update",
         "parameters": [
           {
@@ -12139,7 +12415,7 @@
           "MeasurementContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/measurements/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MeasurementContent_Archive",
         "parameters": [
           {
@@ -12294,7 +12570,7 @@
           "MediaContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/media",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MediaContent_List",
         "parameters": [
           {
@@ -12476,7 +12752,7 @@
           "MediaContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/media",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MediaContent_Create",
         "requestBody": {
           "content": {
@@ -12635,7 +12911,7 @@
           "MediaContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/media/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MediaContent_Get",
         "parameters": [
           {
@@ -12779,7 +13055,7 @@
           "MediaContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/media/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MediaContent_Update",
         "parameters": [
           {
@@ -12953,7 +13229,7 @@
           "MediaContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/media/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MediaContent_Archive",
         "parameters": [
           {
@@ -13108,7 +13384,7 @@
           "MissionContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/missions",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MissionContent_List",
         "parameters": [
           {
@@ -13290,7 +13566,7 @@
           "MissionContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/missions",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MissionContent_Create",
         "requestBody": {
           "content": {
@@ -13449,7 +13725,7 @@
           "MissionContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/missions/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MissionContent_Get",
         "parameters": [
           {
@@ -13593,7 +13869,7 @@
           "MissionContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/missions/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MissionContent_Update",
         "parameters": [
           {
@@ -13767,7 +14043,7 @@
           "MissionContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/missions/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "MissionContent_Archive",
         "parameters": [
           {
@@ -13922,7 +14198,7 @@
           "TimelineEventContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/timeline-events",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "TimelineEventContent_List",
         "parameters": [
           {
@@ -14104,7 +14380,7 @@
           "TimelineEventContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/timeline-events",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "TimelineEventContent_Create",
         "requestBody": {
           "content": {
@@ -14263,7 +14539,7 @@
           "TimelineEventContent"
         ],
         "summary": "GET /api/admin/discover-mars/content/timeline-events/{id}",
-        "description": "Requires a current active account. Policies: Cms. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "TimelineEventContent_Get",
         "parameters": [
           {
@@ -14407,7 +14683,7 @@
           "TimelineEventContent"
         ],
         "summary": "PUT /api/admin/discover-mars/content/timeline-events/{id}",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "TimelineEventContent_Update",
         "parameters": [
           {
@@ -14581,7 +14857,7 @@
           "TimelineEventContent"
         ],
         "summary": "POST /api/admin/discover-mars/content/timeline-events/{id}/archive",
-        "description": "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review.",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
         "operationId": "TimelineEventContent_Archive",
         "parameters": [
           {
@@ -16124,12 +16400,23 @@
       },
       "LoginRequest": {
         "type": "object",
+        "description": "Provide password and exactly one non-blank identifier: email or username. Identifiers are trimmed and matched case-insensitively.",
+        "required": ["password"],
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 254,
+            "nullable": true
           },
           "password": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -17215,6 +17502,42 @@
         },
         "additionalProperties": false
       },
+      "RegisterRequest": {
+        "required": [
+          "email",
+          "fullName",
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 50,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+            "type": "string"
+          },
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 254,
+            "minLength": 0,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "maxLength": 128,
+            "minLength": 12,
+            "type": "string",
+            "format": "password",
+            "writeOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RelatedArticle": {
         "type": "object",
         "properties": {
@@ -17994,8 +18317,16 @@
             "type": "string",
             "format": "uuid"
           },
-          "displayName": {
+          "username": {
             "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
           },
           "role": {
             "$ref": "#/components/schemas/UserRole"
@@ -18005,10 +18336,8 @@
       },
       "UserRole": {
         "enum": [
-          "RegisteredReader",
-          "Editor",
-          "ScientificReviewer",
-          "Administrator"
+          "Viewer",
+          "Admin"
         ],
         "type": "string"
       },

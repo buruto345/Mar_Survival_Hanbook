@@ -1,0 +1,34 @@
+$kind: http-request
+method: POST
+url: '{{baseUrl}}/api/auth/register'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {"username":"{{username}}","fullName":"Registration Smoke Test","email":"{{email}}","password":"{{registrationPassword}}"}
+scripts:
+  - type: beforeRequest
+    language: text/javascript
+    code: |-
+      const suffix = pm.variables.replaceIn('{{$guid}}').replace(/-/g, '');
+      pm.variables.set('username', 'smoke_' + suffix);
+      pm.variables.set('email', suffix + '@example.test');
+      pm.variables.set('registrationPassword', pm.variables.replaceIn('{{$guid}}') + '!');
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Created Viewer', () => { pm.response.to.have.status(201); pm.expect(pm.response.json().role).to.equal('Viewer'); });
+      pm.test('Registration fields preserved', () => {
+        const p = pm.response.json();
+        pm.expect(p.username).to.equal(pm.variables.get('username'));
+        pm.expect(p.fullName).to.equal('Registration Smoke Test');
+        pm.expect(p.email).to.equal(pm.variables.get('email'));
+      });
+      pm.test('Credentials absent from profile', () => {
+        const p = pm.response.json();
+        ['password','passwordHash','normalizedUsername','normalizedEmail','displayName'].forEach(key => pm.expect(p).not.to.have.property(key));
+      });
+      pm.variables.set('userId', pm.response.json().id);

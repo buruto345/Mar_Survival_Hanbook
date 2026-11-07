@@ -39,7 +39,7 @@ public class NasaSimulationTests(DiscoveryHttpFixture fixture) : IClassFixture<D
             Content = JsonContent.Create(new ImportRequest { ConnectorKey = "ntrs", RecordIds = ids ?? [], Query = query, MaxItems = 2, PageSize = 1 }, options: DiscoveryJson.Options)
         };
         request.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
-        var response = await fixture.Editor.SendAsync(request);
+        var response = await fixture.Admin.SendAsync(request);
         var body = await response.Content.ReadAsStringAsync();
         Assert.True(response.IsSuccessStatusCode, body);
         return JsonDocument.Parse(body).RootElement.GetProperty("id").GetGuid();
@@ -100,10 +100,10 @@ public class NasaSimulationTests(DiscoveryHttpFixture fixture) : IClassFixture<D
         Assert.Equal(IngestionStatus.PartiallySucceeded, (await db.IngestionJobs.SingleAsync(x => x.Id == id)).Status);
         var before = await db.IngestionItems.AsNoTracking().Where(x => x.JobId == id && x.ItemKey == "123").SingleAsync();
         await Mode("normal");
-        var get = await fixture.Editor.GetAsync("/api/admin/discover-mars/imports/" + id);
+        var get = await fixture.Admin.GetAsync("/api/admin/discover-mars/imports/" + id);
         var retry = new HttpRequestMessage(HttpMethod.Post, $"/api/admin/discover-mars/imports/{id}/retry");
         retry.Headers.TryAddWithoutValidation("If-Match", get.Headers.ETag!.ToString());
-        Assert.True((await fixture.Editor.SendAsync(retry)).IsSuccessStatusCode);
+        Assert.True((await fixture.Admin.SendAsync(retry)).IsSuccessStatusCode);
         await Run();
         var after = await db.IngestionItems.AsNoTracking().Where(x => x.JobId == id && x.ItemKey == "123").SingleAsync();
         Assert.Equal(before.AttemptCount, after.AttemptCount);
@@ -128,7 +128,7 @@ public class NasaSimulationTests(DiscoveryHttpFixture fixture) : IClassFixture<D
             var http = new HttpRequestMessage(HttpMethod.Post, "/api/admin/discover-mars/imports") {
                 Content = JsonContent.Create(request, options: DiscoveryJson.Options) };
             http.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
-            var response = await fixture.Editor.SendAsync(http);
+            var response = await fixture.Admin.SendAsync(http);
             Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
             var id = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
             await Run();

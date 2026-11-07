@@ -1,6 +1,6 @@
 $kind: http-request
 name: POST /api/admin/discover-mars/content/measurements
-description: "Requires a current active account. Policies: Cms, Edit. Cms = Editor/ScientificReviewer/Administrator; Edit = Editor/Administrator; Review = ScientificReviewer; ReviewRead = ScientificReviewer/Administrator; Admin = Administrator. Resource ownership also applies. Administrator cannot bypass scientific review."
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
 url: "{{baseUrl}}/api/admin/discover-mars/content/measurements"
 method: POST
 headers:
@@ -12,22 +12,22 @@ body:
     {
       "context": "string",
       "evidenceType": "<string>",
-      "factId": "1075d947-a31c-896c-c251-0b152327cc2a",
+      "factId": "4d8712dc-43fc-e17b-cf01-3df59ce11631",
       "instrument": "string",
-      "measurementKind": "Estimate",
-      "observedAt": "1952-12-24T06:21:47.698Z",
+      "measurementKind": "Minimum",
+      "observedAt": "2019-11-02T18:55:14.348Z",
       "originalUnit": "string",
-      "originalValue": 3517.951264511794,
+      "originalValue": 1415.0013029575348,
       "qualityFlag": "string",
-      "sourceRevisionId": "8cc2507e-f26d-b787-edd8-e7108c0d8088",
-      "testEnvironment": "Simulation",
-      "unitId": "1accd9ba-9833-8532-d01e-bf0f4792cf47",
-      "value": 649.9236403033137,
-      "upperValue": 7284.042572136968,
-      "observationEndAt": "2014-01-16T04:01:50.463Z",
+      "sourceRevisionId": "1333af89-3e5f-8cb1-e41f-2adbf8824a55",
+      "testEnvironment": "Earth",
+      "unitId": "12dab29b-72f3-7958-6b28-5b8f1d507286",
+      "value": 8234.604655299336,
+      "upperValue": 8917.956007644534,
+      "observationEndAt": "1997-05-13T11:14:31.982Z",
       "uncertainty": "string",
-      "missionId": "5515151d-e648-0a52-81d4-cd9cf374b828",
-      "locationId": "b4ba6349-0097-ed9b-a96f-cd3c630f0f9f",
+      "missionId": "69be3035-b00d-487b-3eca-a4f7fe8bb317",
+      "locationId": "fde22ade-7227-1a16-970f-29231cd17922",
       "qualityNotes": "string",
       "externalObservationKey": "string"
     }
