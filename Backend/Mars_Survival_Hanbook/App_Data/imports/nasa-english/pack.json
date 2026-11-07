@@ -1,0 +1,1206 @@
+{
+  "key": "nasa-english-starter-v1",
+  "language": "en",
+  "sources": [
+    {
+      "key": "mars-facts",
+      "retrievedAt": "2026-11-03T13:57:44.846983+00:00",
+      "metadata": {
+        "title": "Mars Facts",
+        "url": "https://science.nasa.gov/mars/facts/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nMars — the fourth planet from the Sun — is a dusty, cold, desert world with a very thin atmosphere. This dynamic planet has seasons, polar ice caps, extinct volcanoes, canyons, and weather.\n\nIntroduction\nMars is one of the most explored bodies in our solar system, and it's the only planet where we've sent rovers to roam the alien landscape. NASA missions have found lots of evidence that Mars was much wetter and warmer, with a thicker atmosphere, billions of years ago.\n\nNamesake\nMars was named by the ancient Romans for their god of war because its reddish color was reminiscent of blood. Other civilizations also named the planet for this attribute — for example, the Egyptians called it \"Her Desher,\" meaning \"the red one.\" Even today, it is frequently called the \"Red Planet\" because iron minerals in the Martian dirt oxidize, or rust, causing the surface to look red.\n\nPotential for Life\nScientists don't expect to find living things currently thriving on Mars. Instead, they're looking for signs of life that existed long ago, when Mars was warmer and covered with water.\n\nSize and Distance\nWith a radius of 2,106 miles (3,390 kilometers), Mars is about half the size of Earth. If Earth were the size of a nickel, Mars would be about as big as a raspberry.\n\nFrom an average distance of 142 million miles (228 million kilometers), Mars is 1.5 astronomical units away from the Sun. One astronomical unit (abbreviated as AU), is the distance from the Sun to Earth. From this distance, it takes sunlight 13 minutes to travel from the Sun to Mars.\n\nOrbit and Rotation\nAs Mars orbits the Sun, it completes one rotation every 24.6 hours, which is very similar to one day on Earth (23.9 hours). Martian days are called sols — short for \"solar day.\" A year on Mars lasts 669.6 sols, which is the same as 687 Earth days.\n\nMars' axis of rotation is tilted 25 degrees with respect to the plane of its orbit around the Sun. This is another similarity with Earth, which has an axial tilt of 23.4 degrees. Like Earth, Mars has distinct seasons, but they last longer than seasons here on Earth since Mars takes longer to orbit the Sun (because it's farther away). And while here on Earth the seasons are evenly spread over the year, lasting 3 months (or one quarter of a year), on Mars the seasons vary in length because of Mars' elliptical, egg-shaped orbit around the Sun.\n\nSpring in the northern hemisphere (autumn in the southern) is the longest season at 194 sols. Autumn in the northern hemisphere (spring in the southern) is the shortest at 142 days. Northern winter/southern summer is 154 sols, and northern summer/southern winter is 178 sols.\n\nMoons\nMars has two small moons, Phobos and Deimos , that may be captured asteroids. They're potato-shaped because they have too little mass for gravity to make them spherical.\n\nThe moons get their names from the horses that pulled the chariot of the Greek god of war, Ares (whose Roman counterpart is Mars).\n\nPhobos, the innermost and larger moon, is heavily cratered, with deep grooves on its surface. It is slowly moving towards Mars and will crash into the planet or break apart in about 50 million years.\n\nDeimos is about half as big as Phobos and orbits two and a half times farther away from Mars. Oddly-shaped Deimos is covered in loose dirt that often fills the craters on its surface, making it appear smoother than pockmarked Phobos.\n\nRings\nMars has no rings. However, in 50 million years when Phobos crashes into Mars or breaks apart, it could create a dusty ring around the Red Planet.\n\nFormation\nWhen the solar system settled into its current layout about 4.5 billion years ago, Mars formed when gravity pulled swirling gas and dust in to become the fourth planet from the Sun. Mars is about half the size of Earth, and like its fellow terrestrial planets, it has a central core, a rocky mantle, and a solid crust.\n\nStructure\nMars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep.\n\nSurface\nThe Red Planet is actually many colors. At the surface, we see colors such as brown, gold, and tan. The reason Mars looks reddish is due to oxidization — or rusting — of iron in the rocks, regolith (Martian “soil”), and dust of Mars. This dust gets kicked up into the atmosphere and from a distance makes the planet appear mostly red.\n\nInterestingly, while Mars is about half the diameter of Earth, its surface has nearly the same area as Earth’s dry land. Its volcanoes, impact craters, crustal movement, and atmospheric conditions such as dust storms have altered the landscape of Mars over many years, creating some of the solar system's most interesting topographical features.\n\nA Very Large Canyon\nA vast canyon system called Valles Marineris is long enough to stretch from California to New York . This Martian canyon, the largest in the solar system, extends about 2,400 miles (3,870 kilometers) in length, spans about 370 miles (600 kilometers) across at its widest, and descends about 5.8 miles (9.3 kilometers) at its deepest, from the rim to the canyon floor. That's more than 10 times longer and wider than Earth's Grand Canyon .\n\nThe Largest Volcano\nMars is home to the largest volcano in the solar system, Olympus Mons . It dwarfs Earth's highest peak, Mount Everest, which rises 29,029 feet, or 8,848 meters, above the Earth's surface. Olympus Mons stands more than 25 miles (that's more than 132,000 feet, or 40 kilometers) tall from base to summit, with the base covering an area as large as the state of Arizona.\n\nWater on Mars\nMars appears to have had a watery past, with ancient river valley networks, deltas, and lakebeds, as well as rocks and minerals on the surface that could only have formed in liquid water. Some features suggest that Mars experienced huge floods about 3.5 billion years ago.\n\nThere is water on Mars today, but the Martian atmosphere is too thin for liquid water to exist for long on the surface. Today, water on Mars is found in the form of water-ice just under the surface in the polar regions as well as in briny (salty) water, which seasonally flows down some hillsides and crater walls.\n\nAtmosphere\nMars has a thin atmosphere made up mostly of carbon dioxide, nitrogen, and argon gases. To our eyes, the sky would be hazy and red because of suspended dust instead of the familiar blue tint we see on Earth. Mars' sparse atmosphere doesn't offer much protection from impacts by such objects as meteorites, asteroids, and comets.\n\nThe temperature on Mars can be as high as 70 degrees Fahrenheit (20 degrees Celsius) or as low as about -225 degrees Fahrenheit (-153 degrees Celsius). And because the atmosphere is so thin, heat from the Sun easily escapes this planet. If you were to stand on the surface of Mars on the equator at noon, it would feel like spring at your feet (75 degrees Fahrenheit or 24 degrees Celsius) and winter at your head (32 degrees Fahrenheit or 0 degrees Celsius).\n\nOccasionally, winds on Mars are strong enough to create dust storms that cover much of the planet. After such storms, it can be months before all of the dust settles.\n\nMagnetosphere\nMars has no global magnetic field today, but areas of the Martian crust in the southern hemisphere are highly magnetized, indicating traces of a magnetic field from 4 billion years ago.\n\nNASA Launches Twin Satellites to Investigate Mars' Space Weathe r\nNASA's Escape and Plasma Acceleration and Dynamics Explorers (ESCAPADE) mission, which launched Nov. 13, will study Mars' real-time response to the solar wind, helping us better understand Mars' climate history — from a planet that hosted rivers, lakes, and floods billions of years ago, to the cold, dry desert we see on the surface today. The twin, refrigerator-sized orbiters are scheduled to arrive at Mars in September 2027, and begin their science mission the following spring.\n\nMars Exploration: Science Goals\nThe key to understanding the past, present or future potential for life on Mars can be found in NASA’s four…\n\nMars 2020: Perseverance Rover\nNASA’s Mars Perseverance rover seeks signs of ancient life and collects samples of rock and regolith for possible Earth return.\n\nMars Science Laboratory: Curiosity Rover\nPart of NASA's Mars Science Laboratory mission, at the time of launch, Curiosity was the largest and most capable rover…\n\nMars Exploration\nMars is the only planet we know of inhabited entirely by robots. Learn more about the Mars Missions.",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "mars-facts.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mars/facts/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "mars-factsheet",
+      "retrievedAt": "2026-11-03T14:01:06.929441+00:00",
+      "metadata": {
+        "title": "Mars Fact Sheet",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+        "authors": [
+          {
+            "name": "Dr. David R. Williams",
+            "organization": "NASA Goddard Space Flight Center"
+          }
+        ],
+        "organization": "NASA Goddard Space Flight Center",
+        "sourceType": "WebPage",
+        "excerpt": "Mars Fact Sheet\nMars Fact Sheet\nMars/Earth Comparison\nBulk parameters\nMars\nEarth\nRatio\n(Mars/Earth)\nMass (10\n24\nkg)\n0.64169\n5.9722\n0.107\nVolume (10\n10\nkm\n3\n)\n16.312\n108.321\n0.151\nEquatorial radius (km)\n3396.2\n6378.1\n0.532\nPolar radius (km)\n3376.2\n6356.8\n0.531\nVolumetric mean radius (km)\n3389.5\n6371.0\n0.532\nCore radius (km)\n1830\n**\n3485\n0.525\nEllipticity (Flattening)\n0.00589\n0.00335\n1.76\nMean density (kg/m\n3\n)\n3934\n5513\n0.714\nSurface gravity (mean) (m/s\n2\n)\n3.73\n9.82\n0.380\nSurface acceleration (eq) (m/s\n2\n)\n3.69\n9.78\n0.377\nSurface acceleration (pole) (m/s\n2\n)\n3.73\n9.83\n0.379\nEscape velocity (km/s)\n5.03\n11.19\n0.450\nGM (x 10\n6\nkm\n3\n/s\n2\n)\n0.042828\n0.39860\n0.107\nBond albedo\n0.250\n0.294\n0.850\nGeometric albedo\n0.170\n0.434\n0.392\nV-band magnitude V(1,0)\n-1.60\n-3.99\n-\nSolar irradiance (W/m\n2\n)\n586.2\n1361.0\n0.431\nBlack-body temperature (K)\n209.8\n254.0\n0.826\nTopographic range (km)\n30\n20\n1.500\nMoment of inertia (I/MR\n2\n)\n0.366\n0.3308\n1.106\nJ\n2\n(x 10\n-6\n)\n1960.45\n1082.63\n1.811\nNumber of natural satellites\n2\n1\nPlanetary ring system\nNo\nNo\n**\nRecent results\nindicate the radius of the core of Mars may only be 1650 - 1675 km.\nOrbital parameters\nMars\nEarth\nRatio\n(Mars/Earth)\nSemimajor axis (10\n6\nkm)\n227.956\n149.598\n1.524\nSidereal orbit period (days)\n686.980\n365.256\n1.881\nTropical orbit period\n*\n(days)\n686.972\n365.242\n1.881\nPerihelion (10\n6\nkm)\n206.650\n147.095\n1.405\nAphelion (10\n6\nkm)\n249.261\n152.100\n1.639\nSynodic period (days)\n779.94\n-\n-\nMean orbital velocity (km/s)\n24.08\n29.78\n0.809\nMax. orbital velocity (km/s)\n26.50\n30.29\n0.875\nMin. orbital velocity (km/s)\n21.97\n29.29\n0.750\nOrbit inclination (deg)\n1.848\n0.000\n-\nOrbit eccentricity\n0.0935\n0.0167\n5.599\nSidereal rotation period (hrs)\n24.6229\n23.9345\n1.029\nLength of day (hrs)\n24.6597\n24.0000\n1.027\nObliquity to orbit (deg)\n25.19\n23.44\n1.075\nInclination of equator (deg)\n25.19\n23.44\n1.075\n*\nMean value - the tropical orbit period for Mars can vary from this by up to 0.004 days depending on the initial point of the orbit.\nMars Observational Parameters\nDiscoverer:      Unknown\nDiscovery Date:  Prehistoric\n\nDistance from Earth\n        Minimum (10\n6\nkm)           54.6\n        Maximum (10\n6\nkm)          401.4\nApparent diameter from Earth\n        Maximum (seconds of arc)   25.6\n        Minimum (seconds of arc)    3.5\nMean values at opposition from Earth\n        Distance from Earth (10\n6\nkm)         78.34    \n        Apparent diameter (seconds of arc)   17.8\n        Apparent visual magnitude            -2.0\nMaximum apparent visual magnitude            -2.94\nMars Mean Orbital Elements (J2000)\nSemimajor axis (AU)                  1.52366231  \nOrbital eccentricity                 0.09341233   \nOrbital inclination (deg)            1.85061   \nLongitude of ascending node (deg)   49.57854  \nLongitude of perihelion (deg)      336.04084   \nMean Longitude (deg)               355.45332\nNorth Pole of Rotation\nRight Ascension: 317.681 - 0.106T\nDeclination    :  52.887 - 0.061T\nReference Date : 12:00 UT 1 Jan 2000 (JD 2451545.0)\nT = Julian centuries from reference date\nMartian Atmosphere\nSurface pressure:  6.36 mb at mean radius (variable from 4.0 to 8.7 mb depending on season)  \n                   [6.9 mb to 9 mb (Viking 1 Lander site)]\nSurface density: ~0.016 +/- 0.006 kg/m\n3\nScale height:  11.0 km\nTotal mass of atmosphere: ~2.5 x 10\n16\nkg\nAverage temperature:  ~214 K (-59 C)\nDiurnal temperature range: 184 K to 242 K (-89 to -31 C) (Viking 1 Lander site)\nWind speeds:  2-7 m/s (summer), 5-10 m/s (fall), 17-30 m/s (dust storm) (Viking Lander sites)\nMean molecular weight: 43.49 \nAtmospheric composition (by volume): \n    Major      : Carbon Dioxide (CO\n2\n) - 95.1% ; Nitrogen (N\n2\n) - 2.59%\n                 Argon (Ar) - 1.94%; Oxygen (O\n2\n) - 0.16%; Carbon Monoxide (CO) - 0.06% \n    Minor (ppm): Water (H\n2\nO) - 210; Nitrogen Oxide (NO) - 100; Neon (Ne) - 2.5;\n                 Hydrogen-Deuterium-Oxygen (HDO) - 0.85; Krypton (Kr) - 0.3; \n\t\t Xenon (Xe) - 0.08\nSatellites of Mars\nPhobos\nDeimos\nSemimajor axis* (km)\n9378\n23459\nSidereal orbit period (days)\n0.31891\n1.26244\nSidereal rotation period (days)\n0.31891\n1.26244\nOrbital inclination (deg)\n1.08\n1.79\nOrbital eccentricity\n0.0151\n0.0005\nSubplanetary axis radius (km)\n13.0\n7.8\nAlong-orbit axis radius (km)\n11.4\n6.0\nPolar axis radius (km)\n9.1\n5.1\nMass (10\n15\nkg)\n10.6\n2.4\nMean density (kg/m\n3\n)\n1900\n1750\nGeometric albedo\n0.07\n0.08\nVisual magnitude V(1,0)\n+11.8\n+12.89\nApparent visual magnitude (V\n0\n)\n11.3\n12.40\n*Mean orbital distance from the center of Mars.\nNotes on the factsheets\n- definitions of parameters, units, notes on sub- and superscripts, etc.\nPlanetary Fact Table\n- metric units\nPlanetary Fact Table\n- U.S. units\nPlanetary Fact Table\n- Earth ratio\nMars Home Page\nDirectory to other Planetary Fact Sheets\nAuthor/Curator:\nDr. David R. Williams,\ndave.williams@nasa.gov\nNSSDCA, Mail Code 690.1\nNASA Goddard Space Flight Center\nGreenbelt, MD 20771\n+1-301-286-1258\nNASA Official: Thomas Morgan, thomas.h.morgan@nasa.gov\nLast Updated: 19 May 2025, DRW",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": true
+        }
+      },
+      "files": [
+        {
+          "path": "mars-factsheet.html",
+          "name": "original-page",
+          "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "mariner-4",
+      "retrievedAt": "2026-11-03T13:57:43.852743+00:00",
+      "metadata": {
+        "title": "Mariner 4",
+        "url": "https://science.nasa.gov/mission/mariner-4/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nThe first successful mission to Mars, Mariner 4 captured the first close-up images of any planet beyond Earth. Its grainy black-and-white views of a barren, heavily cratered planet quashed ideas of possible intelligent life, but opened the age of Red Planet exploration, laying a path for the orbiters, landers, and rovers that follow to this day.\n\nMariner 4: First Images From Another Planet\nJune 14, 1965 — NASA’s Mariner 4 became the first spacecraft to fly by Mars, and captured the first close-up views of another planet. Its \"profound\" images dispelled centuries-old notions of the Red Planet, and opened the era of Mars Exploration.\n\nWhat was Mariner 4?\nThe Mariner 4 mission, the second of two Mars flyby attempts launched in 1964 by NASA, was one of the great early successes of the agency, and indeed the Space Age, returning the very first photos of another planet from deep space.\n\nResults\nThe first of the two twin spacecraft, Mariner 3, launched from Cape Kennedy Air Force Station, Florida, on Nov. 5, 1964, atop an Atlas-Agena D rocket. Due to the failure of the spacecraft’s payload shroud to jettison, its solar panels could not deploy and Mariner 3 sailed on into solar orbit as an inert spacecraft.\n\nUsing a new all-metal shroud, Mariner 4 lifted off without any problems and was successfully boosted towards Mars by the Agena D upper stage. A single course correction on Dec. 5, 1964, ensured that the spacecraft would fly between 5,000 and 6000 miles (8,000 and 9,660 kilometers) from the Martian surface.\n\nOn one of the scientific instruments, the plasma probe, there was a component failure making its readings unintelligible, although due to a better telemetry rate, some data was received between January and May 1965. Additionally, a Geiger tube, one of the two sensors in the ionization chamber experiment, failed and stopped returning data in March 1965.\n\nApproximately 40 minutes prior to closest approach (which was at 08:00:57 p.m. EDT on July 14, 1965 [01:00:57 UT July 15], at a range of 6,118 miles (9,846 kilometers), the TV camera began taking the first of 21 images (plus 22 lines of a 22 nd image) through red and green filters.\n\nThe images... fundamentally transformed the scientific view of the Red Planet, providing hard data where speculation had previously dominated.\nAbout 1.25 hours after the encounter, Mariner 4 dipped behind the right-hand side of Mars (as viewed from Earth) in an occultation experiment in order to refract its radio signals through the Martian atmosphere. Data indicated that surface pressure was quite low, i.e., future Mars landers would have to be equipped with retro-rocket engines in addition to parachutes.\n\nThe images, as well as the occultation experiment, fundamentally transformed the scientific view of the Red Planet, providing hard data where speculation had previously dominated.\n\nThe probe detected daytime surface temperatures at minus 148 degrees Fahrenheit (minus 100 degrees Celsius). A very weak radiation belt, about 0.1% of that of Earth’s, was also detected.\n\nThe day after the closest encounter, Mariner 4 began transmitting its photos back to Earth. The images clearly showed Mars to be an ancient Moon-like body with widespread cratering, thus incontrovertibly quashing any expectations of lost civilizations on the planet. Given the thin atmosphere, scientists believed that it was unlikely that Mars harbored any life.\n\nNASA maintained contact with the spacecraft until Oct. 1, 1965, when the probe was 192 million miles (309 million kilometers) from Earth.\n\nTwo years later, in October 1967, the spacecraft was reactivated for attitude control tests in support of the Mariner 5 mission to Venus that used a similar spacecraft bus.\n\nContact was maintained until Dec. 31, 1967, over three years after launch.\n\nMariner 4: First to Explore Mars\nScientists in the 1960s knew relatively little about Mars, and images from the best Earth-based telescopes revealed little surface detail.\n\n'The Changing Face of Mars'\nFrom Mariner 4 through the arrival of the Viking orbiters and landers in 1976, this documentary reveals JPL’s first roles in exploring the Red Planet, using archival footage and interviews with key scientists and engineers.\n\nNSSDC Master Catalog: Mariner 4\nIn depth-mission details and data from the National Space Science Data Center.\n\nMariner 4 Image Catalog\nA collection of the spacecraft's Mars images, original and enhanced, plus a quartet of relief maps made from pairs of the first eight images. Mariner 4 captured 22 images, but the last one was partial, and Nos. 20-22 were all in darkness.\n\nDeep Space Network\nMariner 4 was able to send its images and other data to Earth — even at unprecedented distances of 191 million miles and more — because of the network of enormous dish antennas, NASA's Deep Space Network, capable of collecting the faint signals. Transmissions that left the spacecraft at a signal strength of 10 watts dwindled to a barely perceptible one-billionth-of-one-billionth-of-one-watt when they reached the 85-foot antennas in South Africa, Australia, and Goldstone, California.\n\nMariner 4 Stories and Images\nThis diagram shows the flyby route of NASA's Mariner 4 and the locations of the 22 images taken by the…\n\nIn this archival clip, the Mariner 4 operations and science teams learn for the first time that the spacecraft tape…\n\nTension is high as Mariner 4's Operations Team waits for the signal telling them that a crucial command to turn…\n\nMariner 4 was the first spacecraft to fly by Mars and send home close-up images. Find out how the mission…\n\nWhile waiting for all of Mariner 4's image data to be received, processed and printed, engineers and science team members…\n\nToo anxious to wait for first processed image of Mars, employees from the Telecommunications Section at NASA's Jet Propulsion Laboratory…\n\nJames Webb Space Telescope\nWebb is the premier observatory of the next decade, serving thousands of astronomers worldwide. It studies every phase in the…\n\nPerseverance Rover\nThis rover and its aerial sidekick were assigned to study the geology of Mars and seek signs of ancient microbial…\n\nParker Solar Probe\nOn a mission to “touch the Sun,” NASA's Parker Solar Probe became the first spacecraft to fly through the corona…\n\nJuno\nNASA’s Juno spacecraft entered orbit around Jupiter in 2016, the first explorer to peer below the planet's dense clouds to…",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "mariner-4.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mission/mariner-4/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "viking-1",
+      "retrievedAt": "2026-11-03T13:57:45.381456+00:00",
+      "metadata": {
+        "title": "Viking 1",
+        "url": "https://science.nasa.gov/mission/viking-1/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Viking: 50 Years on Mars\nThroughout history, Mars had been in sight, but never within reach — until July 20, 1976, when NASA’s Viking 1 lander touched down safely and began transmitting the first images from the surface of the Red Planet. Viking 1 broke ground on Mars surface exploration, beginning an effort that continues through today. Mars missions ever since, and those yet to come, seek to uncover whether the planet’s once warm and wet climate was ever habitable to some form of life, as our discoveries help inform sustainability for human exploration in the future. These missions continue building on what the Vikings began.\n\nWhat was Viking 1?\nNASA's Viking 1 made the first truly successful landing on Mars. The Soviet Mars 3 lander claimed a technical first with a survivable landing in 1971, but contact was lost seconds after it touched down.\n\nBoth NASA Viking missions used a combination of orbiter and lander to explore Mars in unprecedented detail.\n\nKey Dates\nAug. 7, 1980: Orbiter was shut down after running out of attitude-control propellant\n\nResults\nViking 1 was the first of a pair of complex deep-space probes that were designed to reach Mars and collect evidence on the possibility on life on Mars.\n\nEach spacecraft was composed of two primary elements, an orbiter (5,157 pounds or 2,339 kilograms) and a lander (2,156 pounds or 978 kilograms). The orbiter design borrowed heavily from the Mariner spacecraft buses, or the main body and infrastructure, while the lander looked superficially like a much larger version of the Surveyor lunar lander.\n\nPrior to launch, the batteries of the first spacecraft were discharged, prompting NASA to replace the original first spacecraft with the second, which was launched as Viking 1.\n\nAfter three course corrections (Aug. 27, 1975, June 10, 1976, and June 15, 1976), the spacecraft entered orbit around Mars June 19, 1976. Initial orbital parameters were 932 × 31,255 miles (1,500 × 50,300 kilometers). The following day, the orbiter moved into an operational orbit at 932 × 20,381 miles (1,500 × 32,800 kilometers).\n\nThe same day, when the orbiter began transmitting back photos of the primary landing site in the Chryse region, scientists discovered that the area was rougher than expected. Using the new photos, scientists targeted the lander to a different site on the western slopes of Chryse Planitia (Golden Plain).\n\nThe lander separated from the orbiter at 08:32 UT July 20, 1976, and after a complicated atmospheric entry sequence during which the probe took air samples, Viking Lander 1 set down safely at 22.483 degrees north latitude and 47.94 degrees west longitude at 11:53:06 UT July 20, 1976. It landed about 17 miles (28 kilometers) from its planned target.\n\nOnce down, the spacecraft began taking high-quality photographs (in three colors) of its surroundings. Besides high-resolution images, the lander also took a 300-degree panorama of its surroundings that showed not only parts of the spacecraft itself but also the gently rolling plains of the environs.\n\nInstruments recorded temperatures ranging from minus 123 degrees Fahrenheit (minus 86 degrees Celsius) before dawn to minus 27 degrees Fahrenheit (minus 33 degrees Celsius) in the afternoon. The seismometer on the lander was, however, inoperable.\n\nOn July 28, 1976, the lander’s robot arm scooped up the first soil samples and deposited them into a special biological laboratory that included a gas chromatograph mass spectrometer.\n\nThe cumulative data from the four samples collected could have been construed as indicating the presence of life (weak positive), but the major test for organic compounds using the gas chromatograph experiment (capable of detecting organic compounds that comprised more than 10-100 parts per billion in the soil) gave negative results.\n\nData showed an abundance of sulfur, certainly different from any known material found on Earth or the Moon.\n\nWhile the primary mission for both Viking 1 and Viking 2 ended in November 1976, activities continued through the Extended Mission (November 1976 to May 1978) and the Continuation Mission (May 1978 to July 1979). Viking 1’s orbiter then continued a Survey Mission from July 1979 to July 1980.\n\nThe lander continued to return daily (and then eventually weekly) weather reports as part of the Viking Monitor Mission. In January 1982, it was renamed the Thomas Mutch Memorial Station in honor of Thomas A. Mutch (1931-1980) the leader of the Viking imaging team who had died Oct. 6, 1980.\n\nThe lander operated until Nov. 11, 1982, when a faulty command sent from Earth resulted in an interruption of communications. Further attempts to regain contact proved to be unsuccessful.\n\nThe orbiter, after taking many more high-resolution images of the planet and its two moons, far superior than those from Mariner 9, was shut down Aug. 7, 1980, after it ran out of attitude control propellant on its 1,489th orbit around Mars.\n\nKey Source\nSiddiqi, Asif A. Beyond Earth: A Chronicle of Deep Space Exploration, 1958-2016 . NASA History Program Office, 2018.\n\nJames Webb Space Telescope\nWebb is the premier observatory of the next decade, serving thousands of astronomers worldwide. It studies every phase in the…\n\nPerseverance Rover\nThis rover and its aerial sidekick were assigned to study the geology of Mars and seek signs of ancient microbial…\n\nParker Solar Probe\nOn a mission to “touch the Sun,” NASA's Parker Solar Probe became the first spacecraft to fly through the corona…\n\nJuno\nNASA’s Juno spacecraft entered orbit around Jupiter in 2016, the first explorer to peer below the planet's dense clouds to…",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "viking-1.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mission/viking-1/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "curiosity",
+      "retrievedAt": "2026-11-03T13:57:43.860272+00:00",
+      "metadata": {
+        "title": "Mars Science Laboratory: Curiosity Rover",
+        "url": "https://science.nasa.gov/mission/msl-curiosity/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nPart of NASA's Mars Science Laboratory mission, at the time of launch Curiosity was the largest and most capable rover ever sent to Mars.\n\nThe foundation of NASA's Mars Science Laboratory mission, Curiosity was the largest and most capable rover ever sent to Mars when it launched in 2011. Curiosity set out to answer the question: Did Mars ever have the right environmental conditions to support small life forms called microbes? Early in its mission, Curiosity's scientific tools found chemical and mineral evidence of past habitable environments on Mars. It continues to explore the rock record from a time when Mars could have been home to microbial life.\n\nCuriosity Reaches 1-Kilometer Elevation Gain\nNASA’s Curiosity Mars rover reached the pinnacle — so far — of its 14-year-old mission on Aug. 26, 2026, when it marked an elevation gain of 1 kilometer in its journey from Gale Crater on Mars up the slope of Mount Sharp.\n\nNASA’s Curiosity Finds Organic Molecules Never Seen Before on Mars\nAfter years of lab work, the results are in: A rock that NASA’s Curiosity Mars rover drilled and analyzed in…\n\n‘Non-Biologic Processes Don’t Fully Explain Mars Organics’\nIn a new study, researchers say that non-biological sources they considered could not fully account for the abundance of organic compounds in a sample collected on Mars by NASA’s Curiosity rover. A Feb. 4 report in the journal Astrobiology analyzed the discovery — the largest organic compounds found on Mars, hypothesized to possibly be fragments of fatty acids preserved in the ancient mudstone in Gale Crater.\n\nNASA’s Curiosity Rover Sees Martian ‘Spiderwebs’ Up Close\nFor about six months, NASA’s Curiosity Mars rover has been exploring a region full of geologic formations called boxwork, low…\n\nSize\nAbout the size of a small SUV — 10 feet long, 9 feet wide and 7 feet tall), not including the arm.\n\nFeatures\nGeology lab, rocker-bogie suspension, rock-vaporizing laser and lots of cameras\n\nCuriosity’s 42 Drill Holes\nNASA's Curiosity Mars rover has collected 42 powderized rock samples with the drill on the end of its robotic arm. This grid shows all 42 holes made by the drill when collecting the samples.\n\nLanding Site: Gale Crater\nCuriosity explores Gale Crater and acquires rock, soil, and air samples for onboard analysis. The car-size rover is about as tall as a basketball player and uses a 7 foot-long arm to place tools close to rocks selected for study. Curiosity's large size allows it to carry an advanced kit of 10 science instruments. It has tools including 17 cameras, a laser to vaporize and study small pinpoint spots of rocks at a distance, and a drill to collect powdered rock samples. It hunts for special rocks that formed in water and/or have signs of organics. The Curiosity rover has taught us a lot about the history of Mars and its potential to support life. Take a tour of its landing site, Gale Crater. Credit NASA/JPL-Caltech\n\nScience\nCuriosity is seeking evidence of organics, the chemical building blocks of life.\n\nMission Updates\nPosts written by self-selected Mars Science Laboratory mission team members, eager to share with the public all that Curiosity is doing.\n\nCuriosity Lights Up ‘Nevado Sajama’ at Night\nNASA’s Curiosity Mars rover used LED lights on the end of its robotic arm to create this rare nighttime view of the Red Planet’s surface on Dec. 6, 2025, the 4,740th Martian day, or sol, of the rover’s mission. The LED lights are part of the Mars Hand Lens Imager, or MAHLI, a camera on the end of Curiosity’s robotic arm. The image was captured by the Mast Camera, or Mastcam, on the rover’s mast, or “head.” Credits: NASA/JPL-Caltech/MSSS\n\nMars 2020: Perseverance Rover\nNASA’s Mars Perseverance rover seeks signs of ancient life and collects samples of rock and regolith for possible Earth return.\n\nMars Exploration\nMars is the only planet we know of inhabited entirely by robots. Learn more about the Mars Missions.\n\nMars\nMars is the fourth planet from the Sun, and the seventh largest. It’s the only planet we know of inhabited…",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "curiosity.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mission/msl-curiosity/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "perseverance",
+      "retrievedAt": "2026-11-03T13:57:43.866869+00:00",
+      "metadata": {
+        "title": "Mars 2020: Perseverance Rover",
+        "url": "https://science.nasa.gov/mission/mars-2020-perseverance/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nFive years ago, the most advanced robotic explorer ever sent to the Red Planet landed, “safely on the surface of Mars, ready to begin seeking the signs of past life.” See how far it’s gotten — scientifically and literally — as it rolls into the rest of the decade.\n\nThe Mars 2020 Perseverance Rover is searching for signs of ancient microbial life, to advance NASA's quest to explore the past habitability of Mars. The rover is collecting core samples of Martian rock and regolith (broken rock and soil), for potential pickup by a future mission that would bring them to Earth for detailed study.\n\nRecord-Setting Rover: Perseverance Goes the Distance\nSince it landed on the Red Planet in 2021 to search for signs of ancient life, NASA’s Perseverance Mars rover has driven farther, faster than any vehicle ever has on the surface of another world. On Oct. 11, its odometer reached 28.10 miles (45.22 kilometers), rolling past the record of 28.06 miles (45.16 kilometers) by NASA’s Opportunity rover (2004-2018). And Perseverance has covered the ground in about 5½ years, compared to almost 15 for its predecessor.\n\nPerseverance Discovered Potential Biosignature\nIn the summer of 2024, Perseverance investigated its “most puzzling, complex, and potentially important rock yet,” according to one mission scientist. It showed signs of past water, organic material, and clues suggesting chemical reactions by microbial life. In September 2025, after a rigorous, yearlong peer-review to scrutinize the Mars 2020 team findings, the journal Nature published the validated results: Perseverance’s \"Sapphire Canyon\" sample from the rock nicknamed “Cheyava Falls” contains potential biosignatures — clues that suggest past life may have been present, but that require more data or further study before any conclusions about the absence or presence of life.\n\nMars Rock Samples: The Stories They Could Tell\nNASA's Mars Perseverance rover is building a unique rock collection, which also includes samples of Mars atmosphere and loose surface material. These samples record the history of the Jezero Crater landing site, and may even preserve signs of ancient life. Learn more about these precious samples, which Mars Sample Return could deliver to Earth for detailed study in the future.\n\nMars 2020 Team Discoveries\nDuring its first five years on the Martian surface, Perseverance has collected more than two dozen geologically diverse rock samples — including one containing potential biosignatures — explored the history of geology, water, and habitable environments in Jezero crater and on the crater rim, demonstrated proof-of-concept for an off-world helicopter and onsite oxygen production, in preparation for future human exploration, and made numerous science discoveries and technical breakthroughs. Here are just a few.\n\nPerseverance Sheds More Light on Jezero Crater’s Watery Past\nThe rover discovered a habitable, stable lake, delta, and river system in Jezero Crater's history.\n\nThe (Crater) Floor Was Lava\nScientists were surprised to find two different types of volcanic rock that had interacted with water, making up Jezero Crater’s floor.\n\nPerseverance Fords an Ancient River to Reach Science Target\nOriginally considered just a route to avoid rover-slowing boulders, Neretva Vallis has provided a bounty of geologic options for the science team.\n\nPerseverance Studies the Wild Winds of Jezero Crater\nThe rover observed diverse and dynamic weather fluctuations, seasonal changes, and a complex hydrologic cycle.\n\nHarvesting Oxygen From the Martian Atmosphere\nMOXIE device successfully produces oxygen from carbon dioxide in the Martian atmosphere — technology for future explorers to fill lungs and fuel rockets.\n\nLanding Site: Jezero Crater\nNASA chose Jezero Crater as the landing site for the Perseverance rover. Scientists believe the area was once flooded with water and was home to an ancient river delta. The process of landing site selection involved a combination of mission team members and scientists from around the world, who carefully examined more than 60 candidate locations on the Red Planet. After the exhaustive five-year study of potential sites, each with its own unique characteristics and appeal, Jezero rose to the top.\n\nJezero Crater tells a story of the on-again, off-again nature of the wet past of Mars. More than 3.5 billion years ago, river channels spilled over the crater wall and created a lake. Scientists see evidence that water carried clay minerals from the surrounding area into the crater lake. Conceivably, microbial life could have lived in Jezero during one or more of these wet times. If so, signs of their remains might be found in lakebed or shoreline sediments. Scientists will study how the region formed and evolved, seek signs of past life, and collect samples of Mars rock and soil that might preserve these signs.\n\nJezero Crater is 28 miles (45 kilometers) wide, and is located on the western edge of a flat plain called Isidis Planitia, which lies just north of the Martian equator. The landing site is about 2,300 miles (3,700 kilometers) from the Curiosity rover landing site in Gale Crater.\n\nObjective\nThe Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars.\n\nScience\nThe rover’s mission has four science objectives: Studying Mars' Habitability, Seeking Signs of Past Microbial Life, Collecting and Caching Samples, and Preparing for Future Human Missions.\n\nRaw Images\nView raw images sent back by Perseverance from its explorations on Mars.\n\nMission Updates\nRead updates provided by self-selected Mars 2020 mission team members who love to share with the public what Perseverance is doing.\n\nThe Mars Report\nYour source for everything on or about the Red Planet, continuing NASA's six decades of unparalleled exploration and discoveries — mission news, science findings, unique Mars imagery, and more.\n\nMars Ingenuity Helicopter\nStrapped to the rover's belly for the journey to Mars was a technology demonstration — the Mars Helicopter, Ingenuity, which completed 72 historic flights. In a feat that's been called a “Wright Brothers moment,” Ingenuity became the first aircraft to achieve powered, controlled flight on another planet.\n\n‘Tango Delta. Touchdown confirmed!’\nFeb. 18, 2021: Watch and hear views and commentary from mission control at NASA's Jet Propulsion Laboratory, as the Mars 2020 Perseverance mission lands on Mars. Video includes actual footage from cameras on the spacecraft's entry, descent, and landing suite as it approached the Martian surface.\n\nMars Science Laboratory: Curiosity Rover\nPart of NASA's Mars Science Laboratory mission, at the time of launch, Curiosity was the largest and most capable rover…\n\nMars Exploration\nMars is the only planet we know of inhabited entirely by robots. Learn more about the Mars Missions.\n\nMars\nMars is the fourth planet from the Sun, and the seventh largest. It’s the only planet we know of inhabited…",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "perseverance.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mission/mars-2020-perseverance/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "mro",
+      "retrievedAt": "2026-11-03T13:57:45.101554+00:00",
+      "metadata": {
+        "title": "Mars Reconnaissance Orbiter",
+        "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nNASA's Mars Reconnaissance Orbiter searches for evidence that water persisted on the surface of Mars for a long period of time.\n\nNASA's Mars Reconnaissance Orbiter blasted off from Cape Canaveral in 2005, on a search for evidence that water persisted on the surface of Mars for long periods of time. While other Mars missions have shown that water flowed across the surface in Mars' history, it remains a mystery whether water was ever around long enough to provide a habitat for life.\n\nCelebrating NASA’s Mars Reconnaissance Orbiter’s 20th Anniversary: Crater Near Sirenum Fossae\nNASA’s Mars Reconnaissance Orbiter (MRO) captures a detailed view of a relatively fresh crater in this image released on June…\n\nStudying the History of Water on Mars\nAfter a seven-month cruise to Mars and six months of aerobraking to reach its science orbit, Mars Reconnaissance Orbiter began seeking out the history of water on Mars with its science instruments. The instruments zoom in for extreme close-up photography of the Martian surface, analyze minerals, look for subsurface water, trace how much dust and water are distributed in the atmosphere, and monitor daily global weather. These studies are identifying deposits of minerals that may have formed in water over long periods of time, looking for evidence of shorelines of ancient seas and lakes, and analyzing deposits placed in layers over time by flowing water. The mission is examining whether underground Martian ice discovered by the Mars Odyssey orbiter is the top layer of a deep ice deposit or a shallow layer in equilibrium with the atmosphere and its seasonal cycle of water vapor.\n\nLooking at Small-Scale Features\nIn its survey of the red planet, the Mars Reconnaissance Orbiter is increasing tenfold the number of spots surveyed close-up. One of the orbiter's cameras is the largest ever flown on a planetary mission. Though previous cameras on other Mars orbiters could identify objects no smaller than a school bus, this camera can spot something as small as a dinner table. That capability has allowed the orbiter to identify obstacles such as large rocks that could jeopardize the safety of landers and rovers, including the Phoenix mission and Mars Science Laboratory mission. Its imaging spectrometer looks at small-scale areas about five times smaller than a football field, a scale perfect for identifying any hot springs or other small water features.\n\nThe Interplanetary Internet\nThe orbiter's telecommunications systems provide a crucial service for Martian spacecraft, serving as the first link in a communications bridge back to Earth, an \"interplanetary Internet\" that can be used by numerous international spacecraft in coming years.\n\nScience\nMars Reconnaissance Orbiter is providing new information in unprecedented detail about the surface, subsurface, and atmosphere of Mars.\n\nNASA’s Mars Spacecraft Capture Images of Comet 3I/ATLAS\nTwo orbiters and a rover captured images of the interstellar object — from the closest location any of the agency’s…\n\nMars Science Laboratory: Curiosity Rover\nPart of NASA's Mars Science Laboratory mission, at the time of launch, Curiosity was the largest and most capable rover…\n\nMars 2020: Perseverance Rover\nNASA’s Mars Perseverance rover seeks signs of ancient life and collects samples of rock and regolith for possible Earth return.\n\nMars Exploration: Science Goals\nThe key to understanding the past, present or future potential for life on Mars can be found in NASA’s four…\n\nMars\nMars is the fourth planet from the Sun, and the seventh largest. It’s the only planet we know of inhabited…",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "mro.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "gale",
+      "retrievedAt": "2026-11-03T13:57:44.949441+00:00",
+      "metadata": {
+        "title": "Oblique view of Gale Crater from the Northwest",
+        "url": "https://science.nasa.gov/resource/oblique-view-of-gale-crater-from-the-northwest/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Overview\nThis computer-generated view based on multiple orbital observations shows Mars' Gale crater as if seen from an aircraft northwest of the crater.\n\nNASA has selected Gale as the landing site for the Mars Science Laboratory mission. The mission's rover will be placed on the ground in a northern portion of Gale crater in August 2012.\n\nGale crater is 96 miles (154 kilometers) in diameter and holds a layered mountain rising about 3 miles (5 kilometers) above the crater floor. The ellipse superimposed on this image indicates the intended landing area, 12.4 miles (20 kilometers) by 15.5 miles (25 kilometers). The portion of the crater within the landing area has an alluvial fan likely formed by water-carried sediments. The lower layers of the nearby mountain -- within driving distance for Curiosity -- contain minerals indicating a wet history. The intended landing site is at 4.5 degrees south latitude, 137.4 degrees east longitude.\n\nThis view was created using visible-light imaging by the Thermal Emission Imaging System camera on NASA's Mars Odyssey orbiter and three-dimensional information from the Mars Orbiter Laser Altimeter, which flew on NASA's Mars Global Surveyor orbiter. Color information is generalized from color imaging of portions of the scene by the High Resolution Imaging Science Experiment camera on NASA's Mars Reconnaissance Orbiter. The vertical dimension is not exaggerated.\n\nThe Mars Science Laboratory spacecraft is being prepared for launch during the period Nov. 25 to Dec. 18, 2011. In a prime mission lasting one Martian year -- nearly two Earth years -- after landing, researchers will use the rover's tools to study whether the landing region has had environmental conditions favorable for supporting microbial life and for preserving clues about whether life existed.\n\nNASA's Jet Propulsion Laboratory, a division of the California Institute of Technology in Pasadena, manages the Mars Science Laboratory Project for NASA's Science Mission Directorate in Washington.\n\nArizona State University, Tempe, operates the Thermal Emission Imaging System. The Mars Orbiter Laser Altimeter was operated by NASA Goddard Space Flight Center, Greenbelt, Md. The University of Arizona, Tucson, operates the High Resolution Science Imaging Experiment. JPL manages Mars Odyssey and Mars Reconnaissance Orbiter for NASA's Science Mission Directorate.",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "gale.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/resource/oblique-view-of-gale-crater-from-the-northwest/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "olympus",
+      "retrievedAt": "2026-11-03T14:00:32.831491+00:00",
+      "metadata": {
+        "title": "Olympus Mons",
+        "url": "https://science.nasa.gov/photojournal/pj-olympus-mons-11/",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Description\nThis VIS image shows the southeast flank of Olympus Mons. This huge volcano is surrounded by an escarpment, a large cliff at the volcano margin. This image has a landslide along this escarpment.\n\nOrbit Number: 39041 Latitude: 15.5617 Longitude: 230.202 Instrument: VIS Captured: 2010-10-02 23:37\n\nPlease see the THEMIS Data Citation Note for details on crediting THEMIS images.\n\nNASA's Jet Propulsion Laboratory manages the 2001 Mars Odyssey mission for NASA's Science Mission Directorate, Washington, D.C. The Thermal Emission Imaging System (THEMIS) was developed by Arizona State University, Tempe, in collaboration with Raytheon Santa Barbara Remote Sensing. The THEMIS investigation is led by Dr. Philip Christensen at Arizona State University. Lockheed Martin Astronautics, Denver, is the prime contractor for the Odyssey project, and developed and built the orbiter. Mission operations are conducted jointly from Lockheed Martin and from JPL, a division of the California Institute of Technology in Pasadena.",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "olympus.html",
+          "name": "original-page",
+          "url": "https://science.nasa.gov/photojournal/pj-olympus-mons-11/",
+          "mimeType": "text/html"
+        }
+      ]
+    },
+    {
+      "key": "valles",
+      "retrievedAt": "2026-11-03T14:00:32.111091+00:00",
+      "metadata": {
+        "title": "Valles Marineris",
+        "url": "https://marsoweb.nas.nasa.gov/landingsites/previous/sites/Valles_Marineris/imageBig.html",
+        "authors": [
+          {
+            "name": "NASA (corporate publisher; individual byline requires verification)",
+            "organization": "NASA"
+          }
+        ],
+        "organization": "NASA",
+        "sourceType": "WebPage",
+        "excerpt": "Valles Marineris\nValles Marineris\nS. Clifford and J. George\nLatitude\nLongitude\n4.1S\n35.2W",
+        "usageNote": "Original English NASA text archived for editorial review. Verify authorship and any third-party rights before publication.",
+        "providerMetadata": {
+          "language": "en",
+          "extraction": "HTML to plain text; whitespace normalized; no translation",
+          "individualBylineVerified": false
+        }
+      },
+      "files": [
+        {
+          "path": "valles.html",
+          "name": "original-page",
+          "url": "https://marsoweb.nas.nasa.gov/landingsites/previous/sites/Valles_Marineris/imageBig.html",
+          "mimeType": "text/html"
+        }
+      ]
+    }
+  ],
+  "imports": [
+    {
+      "key": "ntrs",
+      "request": {
+        "connectorKey": "ntrs",
+        "recordIds": [
+          "20240012934",
+          "20205008958",
+          "20230016438"
+        ],
+        "pageSize": 3,
+        "maxItems": 3
+      }
+    },
+    {
+      "key": "images",
+      "request": {
+        "connectorKey": "images",
+        "recordIds": [
+          "PIA00407",
+          "PIA02980",
+          "PIA01685",
+          "PIA15443",
+          "PIA02005",
+          "PIA01167",
+          "PIA23239",
+          "PIA24096",
+          "PIA19808",
+          "PIA24487"
+        ],
+        "pageSize": 10,
+        "maxItems": 10
+      }
+    },
+    {
+      "key": "meda-pressure",
+      "request": {
+        "connectorKey": "pds",
+        "recordIds": [
+          "urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0"
+        ],
+        "pageSize": 1,
+        "maxItems": 1
+      }
+    },
+    {
+      "key": "mola",
+      "request": {
+        "connectorKey": "mars-trek",
+        "layerKey": "mola-color-shade",
+        "pageSize": 1,
+        "maxItems": 1
+      }
+    }
+  ],
+  "resources": [
+    {
+      "key": "mariner-4",
+      "kind": "missions",
+      "sourceKey": "mariner-4",
+      "data": {
+        "nasaIdentifier": "nasa-science:mariner-4",
+        "name": "Mariner 4",
+        "agency": "NASA",
+        "missionType": "Flyby",
+        "status": "Completed",
+        "launchDate": "1964-11-28T14:22:01Z",
+        "description": "The Mariner 4 mission, the second of two Mars flyby attempts launched in 1964 by NASA, was one of the great early successes of the agency, and indeed the Space Age, returning the very first photos of another planet from deep space.",
+        "statusVerifiedAt": null
+      }
+    },
+    {
+      "key": "viking-1",
+      "kind": "missions",
+      "sourceKey": "viking-1",
+      "data": {
+        "nasaIdentifier": "nasa-science:viking-1",
+        "name": "Viking 1",
+        "agency": "NASA",
+        "missionType": "Other",
+        "status": "Completed",
+        "launchDate": "1975-08-20T21:22:00Z",
+        "description": "NASA's Viking 1 made the first truly successful landing on Mars. The Soviet Mars 3 lander claimed a technical first with a survivable landing in 1971, but contact was lost seconds after it touched down.\n\nBoth NASA Viking missions used a combination of orbiter and lander to explore Mars in unprecedented detail.",
+        "statusVerifiedAt": null
+      }
+    },
+    {
+      "key": "curiosity",
+      "kind": "missions",
+      "sourceKey": "curiosity",
+      "data": {
+        "nasaIdentifier": "nasa-science:curiosity",
+        "name": "Mars Science Laboratory: Curiosity Rover",
+        "agency": "NASA",
+        "missionType": "Rover",
+        "status": "Unknown",
+        "launchDate": null,
+        "description": "Part of NASA's Mars Science Laboratory mission, at the time of launch Curiosity was the largest and most capable rover ever sent to Mars.\n\nThe foundation of NASA's Mars Science Laboratory mission, Curiosity was the largest and most capable rover ever sent to Mars when it launched in 2011. Curiosity set out to answer the question: Did Mars ever have the right environmental conditions to support small life forms called microbes? Early in its mission, Curiosity's scientific tools found chemical and mineral evidence of past habitable environments on Mars. It continues to explore the rock record from a time when Mars could have been home to microbial life.",
+        "statusVerifiedAt": null
+      }
+    },
+    {
+      "key": "perseverance",
+      "kind": "missions",
+      "sourceKey": "perseverance",
+      "data": {
+        "nasaIdentifier": "nasa-science:perseverance",
+        "name": "Mars 2020: Perseverance Rover",
+        "agency": "NASA",
+        "missionType": "Rover",
+        "status": "Unknown",
+        "launchDate": null,
+        "description": "The Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars.",
+        "statusVerifiedAt": null
+      }
+    },
+    {
+      "key": "mro",
+      "kind": "missions",
+      "sourceKey": "mro",
+      "data": {
+        "nasaIdentifier": "nasa-science:mro",
+        "name": "Mars Reconnaissance Orbiter",
+        "agency": "NASA",
+        "missionType": "Orbiter",
+        "status": "Unknown",
+        "launchDate": null,
+        "description": "NASA's Mars Reconnaissance Orbiter searches for evidence that water persisted on the surface of Mars for a long period of time.\n\nNASA's Mars Reconnaissance Orbiter blasted off from Cape Canaveral in 2005, on a search for evidence that water persisted on the surface of Mars for long periods of time. While other Mars missions have shown that water flowed across the surface in Mars' history, it remains a mystery whether water was ever around long enough to provide a habitat for life.",
+        "statusVerifiedAt": null
+      }
+    },
+    {
+      "key": "mariner-launch",
+      "kind": "timeline-events",
+      "sourceKey": "mariner-4",
+      "data": {
+        "title": "Mariner 4 launch",
+        "description": "Nov 28, 1964 / 14:22:01 UT",
+        "eventDate": "1964-11-28T14:22:01Z",
+        "isPlanned": false,
+        "agency": "NASA"
+      },
+      "missionKey": "mariner-4"
+    },
+    {
+      "key": "mariner-flyby",
+      "kind": "timeline-events",
+      "sourceKey": "mariner-4",
+      "data": {
+        "title": "Mariner 4 closest approach to Mars",
+        "description": "01:00:57 UT July 15",
+        "eventDate": "1965-07-15T01:00:57Z",
+        "isPlanned": false,
+        "agency": "NASA"
+      },
+      "missionKey": "mariner-4"
+    },
+    {
+      "key": "viking-launch",
+      "kind": "timeline-events",
+      "sourceKey": "viking-1",
+      "data": {
+        "title": "Viking 1 launch",
+        "description": "Aug. 20, 1975 / 21:22:00 UT",
+        "eventDate": "1975-08-20T21:22:00Z",
+        "isPlanned": false,
+        "agency": "NASA"
+      },
+      "missionKey": "viking-1"
+    },
+    {
+      "key": "viking-landing",
+      "kind": "timeline-events",
+      "sourceKey": "viking-1",
+      "data": {
+        "title": "Viking 1 landing on Mars",
+        "description": "11:53:06 UT July 20, 1976",
+        "eventDate": "1976-07-20T11:53:06Z",
+        "isPlanned": false,
+        "agency": "NASA"
+      },
+      "missionKey": "viking-1"
+    },
+    {
+      "key": "gale-site",
+      "kind": "locations",
+      "sourceKey": "gale",
+      "data": {
+        "name": "Gale Crater intended MSL landing site (2011)",
+        "slug": "gale-site-en",
+        "latitude": -4.5,
+        "longitude": 137.4,
+        "coordinateSystem": "Mars latitude; east-positive longitude normalized to -180..180; source datum requires review",
+        "description": "The intended landing site is at 4.5 degrees south latitude, 137.4 degrees east longitude."
+      }
+    },
+    {
+      "key": "viking-site",
+      "kind": "locations",
+      "sourceKey": "viking-1",
+      "data": {
+        "name": "Viking 1 landing site, Chryse Planitia",
+        "slug": "viking-site-en",
+        "latitude": 22.483,
+        "longitude": -47.94,
+        "coordinateSystem": "Mars latitude; east-positive longitude normalized to -180..180; source datum requires review",
+        "description": "22.483 degrees north latitude and 47.94 degrees west longitude"
+      }
+    },
+    {
+      "key": "olympus-site",
+      "kind": "locations",
+      "sourceKey": "olympus",
+      "data": {
+        "name": "Olympus Mons southeast flank, THEMIS orbit 39041",
+        "slug": "olympus-site-en",
+        "latitude": 15.5617,
+        "longitude": -129.798,
+        "coordinateSystem": "Mars latitude; east-positive longitude normalized to -180..180; source datum requires review",
+        "description": "Orbit Number: 39041 Latitude: 15.5617 Longitude: 230.202; stored longitude = 230.202 - 360 degrees."
+      }
+    },
+    {
+      "key": "valles-site",
+      "kind": "locations",
+      "sourceKey": "valles",
+      "data": {
+        "name": "Valles Marineris proposed landing site (Clifford and George)",
+        "slug": "valles-site-en",
+        "latitude": -4.1,
+        "longitude": -35.2,
+        "coordinateSystem": "Mars latitude; east-positive longitude normalized to -180..180; source datum requires review",
+        "description": "Valles Marineris S. Clifford and J. George Latitude Longitude 4.1S 35.2W"
+      }
+    },
+    {
+      "key": "radius",
+      "kind": "facts",
+      "sourceKey": "mars-facts",
+      "data": {
+        "name": "Mars radius (rounded NASA overview value)",
+        "originalValue": 3390,
+        "originalUnit": "km",
+        "value": 3390000,
+        "upperValue": null,
+        "measurementKind": "Estimate",
+        "context": "With a radius of 2,106 miles (3,390 kilometers), Mars is about half the size of Earth. If Earth were the size of a nickel, Mars would be about as big as a raspberry.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "m"
+    },
+    {
+      "key": "core-radius",
+      "kind": "facts",
+      "sourceKey": "mars-facts",
+      "data": {
+        "name": "Mars core radius range",
+        "originalValue": 1500,
+        "originalUnit": "km",
+        "value": 1500000,
+        "upperValue": 2100000,
+        "measurementKind": "Range",
+        "context": "Mars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "m"
+    },
+    {
+      "key": "mantle",
+      "kind": "facts",
+      "sourceKey": "mars-facts",
+      "data": {
+        "name": "Mars rocky mantle thickness range",
+        "originalValue": 1240,
+        "originalUnit": "km",
+        "value": 1240000,
+        "upperValue": 1880000,
+        "measurementKind": "Range",
+        "context": "Mars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "m"
+    },
+    {
+      "key": "crust",
+      "kind": "facts",
+      "sourceKey": "mars-facts",
+      "data": {
+        "name": "Mars crust thickness range",
+        "originalValue": 10,
+        "originalUnit": "km",
+        "value": 10000,
+        "upperValue": 50000,
+        "measurementKind": "Range",
+        "context": "Mars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "m"
+    },
+    {
+      "key": "gravity",
+      "kind": "facts",
+      "sourceKey": "mars-factsheet",
+      "data": {
+        "name": "Surface gravity (mean)",
+        "originalValue": 3.73,
+        "originalUnit": "m/s²",
+        "value": 3.73,
+        "upperValue": null,
+        "measurementKind": "Estimate",
+        "context": "Mars Fact Sheet: Physical parameters; Surface gravity (mean). Preserve this definition rather than substituting an equatorial value.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "m/s²"
+    },
+    {
+      "key": "pressure",
+      "kind": "facts",
+      "sourceKey": "mars-factsheet",
+      "data": {
+        "name": "Surface pressure at mean radius",
+        "originalValue": 6.36,
+        "originalUnit": "mb",
+        "value": 636,
+        "upperValue": null,
+        "measurementKind": "Estimate",
+        "context": "Surface pressure: 6.36 mb at mean radius (variable from 4.0 to 8.7 mb depending on season). 1 mb = 100 Pa.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "Pa"
+    },
+    {
+      "key": "average-temperature",
+      "kind": "facts",
+      "sourceKey": "mars-factsheet",
+      "data": {
+        "name": "Average atmospheric temperature",
+        "originalValue": 214,
+        "originalUnit": "K",
+        "value": 214,
+        "upperValue": null,
+        "measurementKind": "Estimate",
+        "context": "Mars atmosphere: Average temperature: ~214 K (-59 C). An overview estimate, not a timestamped measurement.",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "K"
+    },
+    {
+      "key": "diurnal-temperature",
+      "kind": "facts",
+      "sourceKey": "mars-factsheet",
+      "data": {
+        "name": "Diurnal temperature range at Viking 1 Lander site",
+        "originalValue": 184,
+        "originalUnit": "K",
+        "value": 184,
+        "upperValue": 242,
+        "measurementKind": "Range",
+        "context": "Diurnal temperature range: 184 K to 242 K (-89 to -31 C) (Viking 1 Lander site).",
+        "evidenceType": "Unspecified",
+        "testEnvironment": "Unspecified"
+      },
+      "unitSymbol": "K"
+    }
+  ],
+  "articles": [
+    {
+      "draft": {
+        "slug": "mariner-4-and-viking-1-en",
+        "categorySlug": "exploration-history",
+        "languageCode": "en",
+        "title": "Mariner 4 and Viking 1",
+        "summary": "The Mariner 4 mission, the second of two Mars flyby attempts launched in 1964 by NASA, was one of the great early successes of the agency, and indeed the Space Age, returning the very first photos of another planet from deep space.",
+        "sections": [
+          {
+            "anchor": "section-1",
+            "heading": "What was Mariner 4?",
+            "body": "The Mariner 4 mission, the second of two Mars flyby attempts launched in 1964 by NASA, was one of the great early successes of the agency, and indeed the Space Age, returning the very first photos of another planet from deep space."
+          },
+          {
+            "anchor": "section-2",
+            "heading": "Results",
+            "body": "The first of the two twin spacecraft, Mariner 3, launched from Cape Kennedy Air Force Station, Florida, on Nov. 5, 1964, atop an Atlas-Agena D rocket. Due to the failure of the spacecraft’s payload shroud to jettison, its solar panels could not deploy and Mariner 3 sailed on into solar orbit as an inert spacecraft.\n\nUsing a new all-metal shroud, Mariner 4 lifted off without any problems and was successfully boosted towards Mars by the Agena D upper stage. A single course correction on Dec. 5, 1964, ensured that the spacecraft would fly between 5,000 and 6000 miles (8,000 and 9,660 kilometers) from the Martian surface.\n\nOn one of the scientific instruments, the plasma probe, there was a component failure making its readings unintelligible, although due to a better telemetry rate, some data was received between January and May 1965. Additionally, a Geiger tube, one of the two sensors in the ionization chamber experiment, failed and stopped returning data in March 1965.\n\nApproximately 40 minutes prior to closest approach (which was at 08:00:57 p.m. EDT on July 14, 1965 [01:00:57 UT July 15], at a range of 6,118 miles (9,846 kilometers), the TV camera began taking the first of 21 images (plus 22 lines of a 22 nd image) through red and green filters."
+          },
+          {
+            "anchor": "section-3",
+            "heading": "What was Viking 1?",
+            "body": "NASA's Viking 1 made the first truly successful landing on Mars. The Soviet Mars 3 lander claimed a technical first with a survivable landing in 1971, but contact was lost seconds after it touched down.\n\nBoth NASA Viking missions used a combination of orbiter and lander to explore Mars in unprecedented detail."
+          },
+          {
+            "anchor": "section-4",
+            "heading": "Results",
+            "body": "Viking 1 was the first of a pair of complex deep-space probes that were designed to reach Mars and collect evidence on the possibility on life on Mars.\n\nEach spacecraft was composed of two primary elements, an orbiter (5,157 pounds or 2,339 kilograms) and a lander (2,156 pounds or 978 kilograms). The orbiter design borrowed heavily from the Mariner spacecraft buses, or the main body and infrastructure, while the lander looked superficially like a much larger version of the Surveyor lunar lander.\n\nPrior to launch, the batteries of the first spacecraft were discharged, prompting NASA to replace the original first spacecraft with the second, which was launched as Viking 1.\n\nAfter three course corrections (Aug. 27, 1975, June 10, 1976, and June 15, 1976), the spacecraft entered orbit around Mars June 19, 1976. Initial orbital parameters were 932 × 31,255 miles (1,500 × 50,300 kilometers). The following day, the orbiter moved into an operational orbit at 932 × 20,381 miles (1,500 × 32,800 kilometers).\n\nThe same day, when the orbiter began transmitting back photos of the primary landing site in the Chryse region, scientists discovered that the area was rougher than expected. Using the new photos, scientists targeted the lander to a different site on the western slopes of Chryse Planitia (Golden Plain).\n\nThe lander separated from the orbiter at 08:32 UT July 20, 1976, and after a complicated atmospheric entry sequence during which the probe took air samples, Viking Lander 1 set down safely at 22.483 degrees north latitude and 47.94 degrees west longitude at 11:53:06 UT July 20, 1976. It landed about 17 miles (28 kilometers) from its planned target.\n\nOnce down, the spacecraft began taking high-quality photographs (in three colors) of its surroundings. Besides high-resolution images, the lander also took a 300-degree panorama of its surroundings that showed not only parts of the spacecraft itself but also the gently rolling plains of the environs.\n\nInstruments recorded temperatures ranging from minus 123 degrees Fahrenheit (minus 86 degrees Celsius) before dawn to minus 27 degrees Fahrenheit (minus 33 degrees Celsius) in the afternoon. The seismometer on the lander was, however, inoperable.\n\nOn July 28, 1976, the lander’s robot arm scooped up the first soil samples and deposited them into a special biological laboratory that included a gas chromatograph mass spectrometer.\n\nThe cumulative data from the four samples collected could have been construed as indicating the presence of life (weak positive), but the major test for organic compounds using the gas chromatograph experiment (capable of detecting organic compounds that comprised more than 10-100 parts per billion in the soil) gave negative results.\n\nData showed an abundance of sulfur, certainly different from any known material found on Earth or the Moon.\n\nWhile the primary mission for both Viking 1 and Viking 2 ended in November 1976, activities continued through the Extended Mission (November 1976 to May 1978) and the Continuation Mission (May 1978 to July 1979). Viking 1’s orbiter then continued a Survey Mission from July 1979 to July 1980.\n\nThe lander continued to return daily (and then eventually weekly) weather reports as part of the Viking Monitor Mission. In January 1982, it was renamed the Thomas Mutch Memorial Station in honor of Thomas A. Mutch (1931-1980) the leader of the Viking imaging team who had died Oct. 6, 1980.\n\nThe lander operated until Nov. 11, 1982, when a faulty command sent from Earth resulted in an interruption of communications. Further attempts to regain contact proved to be unsuccessful.\n\nThe orbiter, after taking many more high-resolution images of the planet and its two moons, far superior than those from Mariner 9, was shut down Aug. 7, 1980, after it ran out of attitude control propellant on its 1,489th orbit around Mars."
+          }
+        ],
+        "changeSummary": "Initial English NASA source excerpts; original wording preserved; scientific review pending."
+      },
+      "sourceKeys": [
+        "mariner-4",
+        "viking-1"
+      ],
+      "claims": [
+        {
+          "key": "claim-1",
+          "text": "The Mariner 4 mission, the second of two Mars flyby attempts launched in 1964 by NASA, was one of the great early successes of the agency, and indeed the Space Age, returning the very first photos of another planet from deep space.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mariner-4"
+          ],
+          "locator": {
+            "heading": "What was Mariner 4?",
+            "url": "https://science.nasa.gov/mission/mariner-4/"
+          }
+        },
+        {
+          "key": "claim-2",
+          "text": "The first of the two twin spacecraft, Mariner 3, launched from Cape Kennedy Air Force Station, Florida, on Nov. 5, 1964, atop an Atlas-Agena D rocket. Due to the failure of the spacecraft’s payload shroud to jettison, its solar panels could not deploy and Mariner 3 sailed on into solar orbit as an inert spacecraft.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mariner-4"
+          ],
+          "locator": {
+            "heading": "Results",
+            "url": "https://science.nasa.gov/mission/mariner-4/"
+          }
+        },
+        {
+          "key": "claim-3",
+          "text": "NASA's Viking 1 made the first truly successful landing on Mars. The Soviet Mars 3 lander claimed a technical first with a survivable landing in 1971, but contact was lost seconds after it touched down.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "viking-1"
+          ],
+          "locator": {
+            "heading": "What was Viking 1?",
+            "url": "https://science.nasa.gov/mission/viking-1/"
+          }
+        },
+        {
+          "key": "claim-4",
+          "text": "Viking 1 was the first of a pair of complex deep-space probes that were designed to reach Mars and collect evidence on the possibility on life on Mars.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "viking-1"
+          ],
+          "locator": {
+            "heading": "Results",
+            "url": "https://science.nasa.gov/mission/viking-1/"
+          }
+        }
+      ],
+      "resourceKeys": [
+        "mariner-4",
+        "viking-1",
+        "mariner-launch",
+        "mariner-flyby",
+        "viking-launch",
+        "viking-landing",
+        "viking-site",
+        "image:PIA02980",
+        "image:PIA01685"
+      ]
+    },
+    {
+      "draft": {
+        "slug": "mars-structure-and-surface-en",
+        "categorySlug": "structure-and-terrain",
+        "languageCode": "en",
+        "title": "Mars Facts: Structure and Surface",
+        "summary": "When the solar system settled into its current layout about 4.5 billion years ago, Mars formed when gravity pulled swirling gas and dust in to become the fourth planet from the Sun. Mars is about half the size of Earth, and like its fellow terrestrial planets, it has a central core, a rocky mantle, and a solid crust.",
+        "sections": [
+          {
+            "anchor": "section-1",
+            "heading": "Formation",
+            "body": "When the solar system settled into its current layout about 4.5 billion years ago, Mars formed when gravity pulled swirling gas and dust in to become the fourth planet from the Sun. Mars is about half the size of Earth, and like its fellow terrestrial planets, it has a central core, a rocky mantle, and a solid crust."
+          },
+          {
+            "anchor": "section-2",
+            "heading": "Structure",
+            "body": "Mars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep."
+          },
+          {
+            "anchor": "section-3",
+            "heading": "Surface",
+            "body": "The Red Planet is actually many colors. At the surface, we see colors such as brown, gold, and tan. The reason Mars looks reddish is due to oxidization — or rusting — of iron in the rocks, regolith (Martian “soil”), and dust of Mars. This dust gets kicked up into the atmosphere and from a distance makes the planet appear mostly red.\n\nInterestingly, while Mars is about half the diameter of Earth, its surface has nearly the same area as Earth’s dry land. Its volcanoes, impact craters, crustal movement, and atmospheric conditions such as dust storms have altered the landscape of Mars over many years, creating some of the solar system's most interesting topographical features."
+          },
+          {
+            "anchor": "section-4",
+            "heading": "A Very Large Canyon",
+            "body": "A vast canyon system called Valles Marineris is long enough to stretch from California to New York . This Martian canyon, the largest in the solar system, extends about 2,400 miles (3,870 kilometers) in length, spans about 370 miles (600 kilometers) across at its widest, and descends about 5.8 miles (9.3 kilometers) at its deepest, from the rim to the canyon floor. That's more than 10 times longer and wider than Earth's Grand Canyon ."
+          },
+          {
+            "anchor": "section-5",
+            "heading": "The Largest Volcano",
+            "body": "Mars is home to the largest volcano in the solar system, Olympus Mons . It dwarfs Earth's highest peak, Mount Everest, which rises 29,029 feet, or 8,848 meters, above the Earth's surface. Olympus Mons stands more than 25 miles (that's more than 132,000 feet, or 40 kilometers) tall from base to summit, with the base covering an area as large as the state of Arizona."
+          }
+        ],
+        "changeSummary": "Initial English NASA source excerpts; original wording preserved; scientific review pending."
+      },
+      "sourceKeys": [
+        "mars-facts"
+      ],
+      "claims": [
+        {
+          "key": "claim-1",
+          "text": "When the solar system settled into its current layout about 4.5 billion years ago, Mars formed when gravity pulled swirling gas and dust in to become the fourth planet from the Sun. Mars is about half the size of Earth, and like its fellow terrestrial planets, it has a central core, a rocky mantle, and a solid crust.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Formation",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-2",
+          "text": "Mars has a dense core at its center between 930 and 1,300 miles (1,500 to 2,100 kilometers) in radius. It's made of iron, nickel, and sulfur. Surrounding the core is a rocky mantle between 770 and 1,170 miles (1,240 to 1,880 kilometers) thick, and above that, a crust made of iron, magnesium, aluminum, calcium, and potassium. This crust is between 6 and 30 miles (10 to 50 kilometers) deep.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Structure",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-3",
+          "text": "The Red Planet is actually many colors. At the surface, we see colors such as brown, gold, and tan. The reason Mars looks reddish is due to oxidization — or rusting — of iron in the rocks, regolith (Martian “soil”), and dust of Mars. This dust gets kicked up into the atmosphere and from a distance makes the planet appear mostly red.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Surface",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-4",
+          "text": "A vast canyon system called Valles Marineris is long enough to stretch from California to New York . This Martian canyon, the largest in the solar system, extends about 2,400 miles (3,870 kilometers) in length, spans about 370 miles (600 kilometers) across at its widest, and descends about 5.8 miles (9.3 kilometers) at its deepest, from the rim to the canyon floor. That's more than 10 times longer and wider than Earth's Grand Canyon .",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "A Very Large Canyon",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-5",
+          "text": "Mars is home to the largest volcano in the solar system, Olympus Mons . It dwarfs Earth's highest peak, Mount Everest, which rises 29,029 feet, or 8,848 meters, above the Earth's surface. Olympus Mons stands more than 25 miles (that's more than 132,000 feet, or 40 kilometers) tall from base to summit, with the base covering an area as large as the state of Arizona.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "The Largest Volcano",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        }
+      ],
+      "resourceKeys": [
+        "radius",
+        "core-radius",
+        "mantle",
+        "crust",
+        "olympus-site",
+        "valles-site",
+        "image:PIA00407",
+        "image:PIA15443",
+        "image:PIA02005",
+        "image:PIA01167",
+        "layer:Mars_MGS_MOLA_ClrShade_merge_global_463m"
+      ]
+    },
+    {
+      "draft": {
+        "slug": "mars-atmosphere-en",
+        "categorySlug": "atmosphere-temperature-gravity",
+        "languageCode": "en",
+        "title": "Mars Facts: Atmosphere",
+        "summary": "Mars has a thin atmosphere made up mostly of carbon dioxide, nitrogen, and argon gases. To our eyes, the sky would be hazy and red because of suspended dust instead of the familiar blue tint we see on Earth. Mars' sparse atmosphere doesn't offer much protection from impacts by such objects as meteorites, asteroids, and comets.",
+        "sections": [
+          {
+            "anchor": "section-1",
+            "heading": "Atmosphere",
+            "body": "Mars has a thin atmosphere made up mostly of carbon dioxide, nitrogen, and argon gases. To our eyes, the sky would be hazy and red because of suspended dust instead of the familiar blue tint we see on Earth. Mars' sparse atmosphere doesn't offer much protection from impacts by such objects as meteorites, asteroids, and comets.\n\nThe temperature on Mars can be as high as 70 degrees Fahrenheit (20 degrees Celsius) or as low as about -225 degrees Fahrenheit (-153 degrees Celsius). And because the atmosphere is so thin, heat from the Sun easily escapes this planet. If you were to stand on the surface of Mars on the equator at noon, it would feel like spring at your feet (75 degrees Fahrenheit or 24 degrees Celsius) and winter at your head (32 degrees Fahrenheit or 0 degrees Celsius).\n\nOccasionally, winds on Mars are strong enough to create dust storms that cover much of the planet. After such storms, it can be months before all of the dust settles."
+          },
+          {
+            "anchor": "section-2",
+            "heading": "Magnetosphere",
+            "body": "Mars has no global magnetic field today, but areas of the Martian crust in the southern hemisphere are highly magnetized, indicating traces of a magnetic field from 4 billion years ago."
+          }
+        ],
+        "changeSummary": "Initial English NASA source excerpts; original wording preserved; scientific review pending."
+      },
+      "sourceKeys": [
+        "mars-facts",
+        "ntrs:20240012934"
+      ],
+      "claims": [
+        {
+          "key": "claim-1",
+          "text": "Mars has a thin atmosphere made up mostly of carbon dioxide, nitrogen, and argon gases. To our eyes, the sky would be hazy and red because of suspended dust instead of the familiar blue tint we see on Earth. Mars' sparse atmosphere doesn't offer much protection from impacts by such objects as meteorites, asteroids, and comets.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Atmosphere",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-2",
+          "text": "Mars has no global magnetic field today, but areas of the Martian crust in the southern hemisphere are highly magnetized, indicating traces of a magnetic field from 4 billion years ago.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Magnetosphere",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        }
+      ],
+      "resourceKeys": [
+        "gravity",
+        "pressure",
+        "average-temperature",
+        "diurnal-temperature",
+        "viking-site",
+        "image:PIA00407"
+      ]
+    },
+    {
+      "draft": {
+        "slug": "mars-water-and-jezero-en",
+        "categorySlug": "water-and-life",
+        "languageCode": "en",
+        "title": "Water on Mars and Jezero Crater",
+        "summary": "Mars appears to have had a watery past, with ancient river valley networks, deltas, and lakebeds, as well as rocks and minerals on the surface that could only have formed in liquid water. Some features suggest that Mars experienced huge floods about 3.5 billion years ago.",
+        "sections": [
+          {
+            "anchor": "section-1",
+            "heading": "Water on Mars",
+            "body": "Mars appears to have had a watery past, with ancient river valley networks, deltas, and lakebeds, as well as rocks and minerals on the surface that could only have formed in liquid water. Some features suggest that Mars experienced huge floods about 3.5 billion years ago.\n\nThere is water on Mars today, but the Martian atmosphere is too thin for liquid water to exist for long on the surface. Today, water on Mars is found in the form of water-ice just under the surface in the polar regions as well as in briny (salty) water, which seasonally flows down some hillsides and crater walls."
+          },
+          {
+            "anchor": "section-2",
+            "heading": "Potential for Life",
+            "body": "Scientists don't expect to find living things currently thriving on Mars. Instead, they're looking for signs of life that existed long ago, when Mars was warmer and covered with water."
+          },
+          {
+            "anchor": "section-3",
+            "heading": "Landing Site: Jezero Crater",
+            "body": "NASA chose Jezero Crater as the landing site for the Perseverance rover. Scientists believe the area was once flooded with water and was home to an ancient river delta. The process of landing site selection involved a combination of mission team members and scientists from around the world, who carefully examined more than 60 candidate locations on the Red Planet. After the exhaustive five-year study of potential sites, each with its own unique characteristics and appeal, Jezero rose to the top.\n\nJezero Crater tells a story of the on-again, off-again nature of the wet past of Mars. More than 3.5 billion years ago, river channels spilled over the crater wall and created a lake. Scientists see evidence that water carried clay minerals from the surrounding area into the crater lake. Conceivably, microbial life could have lived in Jezero during one or more of these wet times. If so, signs of their remains might be found in lakebed or shoreline sediments. Scientists will study how the region formed and evolved, seek signs of past life, and collect samples of Mars rock and soil that might preserve these signs.\n\nJezero Crater is 28 miles (45 kilometers) wide, and is located on the western edge of a flat plain called Isidis Planitia, which lies just north of the Martian equator. The landing site is about 2,300 miles (3,700 kilometers) from the Curiosity rover landing site in Gale Crater."
+          },
+          {
+            "anchor": "section-4",
+            "heading": "Objective",
+            "body": "The Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars."
+          }
+        ],
+        "changeSummary": "Initial English NASA source excerpts; original wording preserved; scientific review pending."
+      },
+      "sourceKeys": [
+        "mars-facts",
+        "perseverance",
+        "ntrs:20205008958",
+        "ntrs:20230016438"
+      ],
+      "claims": [
+        {
+          "key": "claim-1",
+          "text": "Mars appears to have had a watery past, with ancient river valley networks, deltas, and lakebeds, as well as rocks and minerals on the surface that could only have formed in liquid water. Some features suggest that Mars experienced huge floods about 3.5 billion years ago.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Water on Mars",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-2",
+          "text": "Scientists don't expect to find living things currently thriving on Mars. Instead, they're looking for signs of life that existed long ago, when Mars was warmer and covered with water.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mars-facts"
+          ],
+          "locator": {
+            "heading": "Potential for Life",
+            "url": "https://science.nasa.gov/mars/facts/"
+          }
+        },
+        {
+          "key": "claim-3",
+          "text": "NASA chose Jezero Crater as the landing site for the Perseverance rover. Scientists believe the area was once flooded with water and was home to an ancient river delta. The process of landing site selection involved a combination of mission team members and scientists from around the world, who carefully examined more than 60 candidate locations on the Red Planet. After the exhaustive five-year study of potential sites, each with its own unique characteristics and appeal, Jezero rose to the top.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "perseverance"
+          ],
+          "locator": {
+            "heading": "Landing Site: Jezero Crater",
+            "url": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+          }
+        },
+        {
+          "key": "claim-4",
+          "text": "The Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "perseverance"
+          ],
+          "locator": {
+            "heading": "Objective",
+            "url": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+          }
+        }
+      ],
+      "resourceKeys": [
+        "perseverance",
+        "mro",
+        "image:PIA23239",
+        "image:PIA24096"
+      ]
+    },
+    {
+      "draft": {
+        "slug": "mars-rovers-and-orbiter-en",
+        "categorySlug": "missions-and-rovers",
+        "languageCode": "en",
+        "title": "Mars Rovers and Mars Reconnaissance Orbiter",
+        "summary": "Part of NASA's Mars Science Laboratory mission, at the time of launch Curiosity was the largest and most capable rover ever sent to Mars.",
+        "sections": [
+          {
+            "anchor": "section-1",
+            "heading": "Overview",
+            "body": "Part of NASA's Mars Science Laboratory mission, at the time of launch Curiosity was the largest and most capable rover ever sent to Mars.\n\nThe foundation of NASA's Mars Science Laboratory mission, Curiosity was the largest and most capable rover ever sent to Mars when it launched in 2011. Curiosity set out to answer the question: Did Mars ever have the right environmental conditions to support small life forms called microbes? Early in its mission, Curiosity's scientific tools found chemical and mineral evidence of past habitable environments on Mars. It continues to explore the rock record from a time when Mars could have been home to microbial life."
+          },
+          {
+            "anchor": "section-2",
+            "heading": "Landing Site: Gale Crater",
+            "body": "Curiosity explores Gale Crater and acquires rock, soil, and air samples for onboard analysis. The car-size rover is about as tall as a basketball player and uses a 7 foot-long arm to place tools close to rocks selected for study. Curiosity's large size allows it to carry an advanced kit of 10 science instruments. It has tools including 17 cameras, a laser to vaporize and study small pinpoint spots of rocks at a distance, and a drill to collect powdered rock samples. It hunts for special rocks that formed in water and/or have signs of organics. The Curiosity rover has taught us a lot about the history of Mars and its potential to support life. Take a tour of its landing site, Gale Crater. Credit NASA/JPL-Caltech"
+          },
+          {
+            "anchor": "section-3",
+            "heading": "Objective",
+            "body": "The Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars."
+          },
+          {
+            "anchor": "section-4",
+            "heading": "Science",
+            "body": "The rover’s mission has four science objectives: Studying Mars' Habitability, Seeking Signs of Past Microbial Life, Collecting and Caching Samples, and Preparing for Future Human Missions."
+          },
+          {
+            "anchor": "section-5",
+            "heading": "Overview",
+            "body": "NASA's Mars Reconnaissance Orbiter searches for evidence that water persisted on the surface of Mars for a long period of time.\n\nNASA's Mars Reconnaissance Orbiter blasted off from Cape Canaveral in 2005, on a search for evidence that water persisted on the surface of Mars for long periods of time. While other Mars missions have shown that water flowed across the surface in Mars' history, it remains a mystery whether water was ever around long enough to provide a habitat for life."
+          },
+          {
+            "anchor": "section-6",
+            "heading": "Science",
+            "body": "Mars Reconnaissance Orbiter is providing new information in unprecedented detail about the surface, subsurface, and atmosphere of Mars."
+          }
+        ],
+        "changeSummary": "Initial English NASA source excerpts; original wording preserved; scientific review pending."
+      },
+      "sourceKeys": [
+        "curiosity",
+        "perseverance",
+        "mro"
+      ],
+      "claims": [
+        {
+          "key": "claim-1",
+          "text": "Part of NASA's Mars Science Laboratory mission, at the time of launch Curiosity was the largest and most capable rover ever sent to Mars.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "curiosity"
+          ],
+          "locator": {
+            "heading": "Overview",
+            "url": "https://science.nasa.gov/mission/msl-curiosity/"
+          }
+        },
+        {
+          "key": "claim-2",
+          "text": "Curiosity explores Gale Crater and acquires rock, soil, and air samples for onboard analysis. The car-size rover is about as tall as a basketball player and uses a 7 foot-long arm to place tools close to rocks selected for study. Curiosity's large size allows it to carry an advanced kit of 10 science instruments. It has tools including 17 cameras, a laser to vaporize and study small pinpoint spots of rocks at a distance, and a drill to collect powdered rock samples. It hunts for special rocks that formed in water and/or have signs of organics. The Curiosity rover has taught us a lot about the history of Mars and its potential to support life. Take a tour of its landing site, Gale Crater. Credit NASA/JPL-Caltech",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "curiosity"
+          ],
+          "locator": {
+            "heading": "Landing Site: Gale Crater",
+            "url": "https://science.nasa.gov/mission/msl-curiosity/"
+          }
+        },
+        {
+          "key": "claim-3",
+          "text": "The Perseverance rover is searching for signs of ancient microbial life, which will advance NASA's quest to explore the past habitability of Mars.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "perseverance"
+          ],
+          "locator": {
+            "heading": "Objective",
+            "url": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+          }
+        },
+        {
+          "key": "claim-4",
+          "text": "The rover’s mission has four science objectives: Studying Mars' Habitability, Seeking Signs of Past Microbial Life, Collecting and Caching Samples, and Preparing for Future Human Missions.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "perseverance"
+          ],
+          "locator": {
+            "heading": "Science",
+            "url": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+          }
+        },
+        {
+          "key": "claim-5",
+          "text": "NASA's Mars Reconnaissance Orbiter searches for evidence that water persisted on the surface of Mars for a long period of time.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mro"
+          ],
+          "locator": {
+            "heading": "Overview",
+            "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/"
+          }
+        },
+        {
+          "key": "claim-6",
+          "text": "Mars Reconnaissance Orbiter is providing new information in unprecedented detail about the surface, subsurface, and atmosphere of Mars.",
+          "evidenceType": "Unspecified",
+          "testEnvironment": "Unspecified",
+          "sourceKeys": [
+            "mro"
+          ],
+          "locator": {
+            "heading": "Science",
+            "url": "https://science.nasa.gov/mission/mars-reconnaissance-orbiter/"
+          }
+        }
+      ],
+      "resourceKeys": [
+        "curiosity",
+        "perseverance",
+        "mro",
+        "gale-site",
+        "image:PIA19808",
+        "image:PIA24487"
+      ]
+    }
+  ]
+}

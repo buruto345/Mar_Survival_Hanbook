@@ -1,0 +1,35 @@
+<html>
+<title>Valles Marineris</title>
+<head>
+
+<Script>
+</Script>
+
+</head>
+
+<body>
+<center>
+<font face=Helvetica size=4><b>
+Valles Marineris     
+</font>
+<br>
+<font face=Helvetica size=3>
+S. Clifford and J. George
+</font>
+<p>
+
+<img name='Valles Marineris' src=imageBig.jpg width=512 height=512></a>
+<br clear=all>
+
+<table>
+  <tr align=center>
+    <td><font face=Helvetica size=2><b>Latitude
+    <td><font face=Helvetica size=2><b>Longitude
+  <tr align=center>
+    <td><font face=Helvetica size=2>4.1S
+    <td><font face=Helvetica size=2>35.2W
+</table>
+
+</center>
+</body>
+</html>

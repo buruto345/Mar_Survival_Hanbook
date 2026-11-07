@@ -1,0 +1,6 @@
+workflows:
+  syncSpecToCollection:
+    - spec: ../postman/specs/discover-mars.openapi.json
+      collection: ../postman/collections/Discover Mars API
+      options:
+        folderStrategy: Tags

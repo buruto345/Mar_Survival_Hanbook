@@ -1,0 +1,6 @@
+{
+  "email": "auditadmin@example.test",
+  "root": "D:\\Mar_Survival\\Backend\\Mars_Survival_Hanbook\\App_Data\\api-audit",
+  "database": "MarsDiscoveryAudit_987de51186454a1b95c976ba62fc970a",
+  "password": "REDACTED_AFTER_AUDIT"
+}

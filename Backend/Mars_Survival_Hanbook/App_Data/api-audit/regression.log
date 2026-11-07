@@ -1,0 +1,19 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Mars_Survival_Hanbook -> D:\Mar_Survival\Backend\Mars_Survival_Hanbook\bin\Debug\net8.0\Mars_Survival_Hanbook.dll
+  Mars_Survival_Hanbook.Tests -> D:\Mar_Survival\Backend\Mars_Survival_Hanbook.Tests\bin\Debug\net8.0\Mars_Survival_Hanbook.Tests.dll
+Test run for D:\Mar_Survival\Backend\Mars_Survival_Hanbook.Tests\bin\Debug\net8.0\Mars_Survival_Hanbook.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    71, Skipped:     0, Total:    71, Duration: 57 s - Mars_Survival_Hanbook.Tests.dll (net8.0)
+WARNING: Overwriting results file: D:\Mar_Survival\Backend\Mars_Survival_Hanbook.Tests\TestResults\discovery.trx
+Results File: D:\Mar_Survival\Backend\Mars_Survival_Hanbook.Tests\TestResults\discovery.trx
+  Mars_Survival_Hanbook -> D:\Mar_Survival\Backend\Mars_Survival_Hanbook\bin\Debug\net8.0\Mars_Survival_Hanbook.dll
+  Mars_Survival_Hanbook.Tests -> D:\Mar_Survival\Backend\Mars_Survival_Hanbook.Tests\bin\Debug\net8.0\Mars_Survival_Hanbook.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:07.61
+No changes have been made to the model since the last migration.

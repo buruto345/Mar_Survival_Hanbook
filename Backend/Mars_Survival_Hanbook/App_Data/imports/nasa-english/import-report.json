@@ -1,0 +1,283 @@
+{
+  "pack": "nasa-english-starter-v1",
+  "language": "en",
+  "importedAt": "2026-11-03T14:18:30.8609248+00:00",
+  "actorId": "5411cd8a-3de3-430c-9b1f-0e31a8f5cdd9",
+  "revisions": {
+    "mars-facts": "1e866c06-8c0e-43b6-b252-ddfeb56abfa4",
+    "mars-factsheet": "62bdcc9b-1b38-40db-a9fb-4b30bc48baed",
+    "mariner-4": "f98c5243-2310-4144-bcac-e6ad569d6936",
+    "viking-1": "cf3a723b-3b61-4cd8-b1c0-31412c40c6d7",
+    "curiosity": "7917c96b-93c6-4b1e-84f0-f2aff6d8cec8",
+    "perseverance": "f0e97f36-be80-414c-9c4a-6f279140c9a5",
+    "mro": "c12cd0d3-0412-4c42-a3ca-70ffddda8aa8",
+    "gale": "c8dc8c82-4b2d-48e4-a350-55d788245778",
+    "olympus": "ecafa630-bb0a-4e64-b4db-4cfbb7105e74",
+    "valles": "e5a70a8a-dd41-45bb-ac64-4795070bdd26",
+    "marstrek:Mars_MGS_MOLA_ClrShade_merge_global_463m": "ec615347-b051-4649-a1ed-2f044ebc98aa",
+    "images:PIA01167": "39117047-de1f-4250-9c3c-33499f37fac8",
+    "images:PIA00407": "f4349961-8917-4dbb-b1d4-d9f48f550965",
+    "images:PIA02980": "8cc32c05-5c1d-4eb2-99bb-2bbf8fb05b4f",
+    "images:PIA15443": "784272ac-c917-4dce-9865-ba9a548245bd",
+    "pds:urn:nasa:pds:mars2020_meda:data_calibrated_env:we__0015___________cal_ps__________________p::2.0": "dd2fc6e5-46f9-4bd7-8600-f332fd0f9b4a",
+    "ntrs:20240012934": "b0c24913-985b-4bb1-ae81-47b7082ce82c",
+    "images:PIA24487": "8ec882b9-4148-4332-9e16-3213888ecfe0",
+    "images:PIA19808": "cc5454cf-9256-4eb8-b391-20a609f4d8c4",
+    "ntrs:20230016438": "b332770a-04ba-483a-9d60-cf10b0a5c766",
+    "images:PIA02005": "bcacdd1c-cf52-47b6-a273-389dc3da9927",
+    "images:PIA23239": "02103d47-d2d0-4526-b169-48652b63d44c",
+    "images:PIA24096": "e6ded15d-55a5-4bc5-b359-3c9c9d16c571",
+    "ntrs:20205008958": "edfe495f-2010-4748-8ff4-2d4e1ad2daef",
+    "images:PIA01685": "11072c5c-7eb4-48ae-94d6-bad37d6036d1"
+  },
+  "resources": {
+    "image:PIA15443": {
+      "id": "71eb3084-89d1-4c6c-ba70-0e0e9fa85b4f",
+      "kind": "media"
+    },
+    "image:PIA02980": {
+      "id": "0661f6e9-b719-442b-b19f-1c882416f05d",
+      "kind": "media"
+    },
+    "image:PIA19808": {
+      "id": "e79657c0-9c8c-436a-b194-2f539ea05c95",
+      "kind": "media"
+    },
+    "image:PIA23239": {
+      "id": "d45601ca-e36b-4d81-bdf9-4c0eb8b0a17e",
+      "kind": "media"
+    },
+    "image:PIA01685": {
+      "id": "144ac8b0-d481-4d9b-8544-5b467c9e5d12",
+      "kind": "media"
+    },
+    "image:PIA01167": {
+      "id": "671083f6-4f19-4e86-9758-733351f4e067",
+      "kind": "media"
+    },
+    "image:PIA24096": {
+      "id": "73167920-41af-416a-9368-9209fc19bd7d",
+      "kind": "media"
+    },
+    "image:PIA02005": {
+      "id": "0d5e5891-74cd-4338-bc15-bd8bac83d83c",
+      "kind": "media"
+    },
+    "image:PIA00407": {
+      "id": "fe98841a-3a28-4cfe-9951-c37005d3fa99",
+      "kind": "media"
+    },
+    "image:PIA24487": {
+      "id": "25c88201-72f3-46b6-8466-c62cf6a56257",
+      "kind": "media"
+    },
+    "layer:Mars_MGS_MOLA_ClrShade_merge_global_463m": {
+      "id": "020dcc48-997d-47e2-a96e-8e13c171432b",
+      "kind": "map-layers"
+    },
+    "mariner-4": {
+      "id": "1eb8b3eb-e9d8-49f4-9475-f8ee7cc927d6",
+      "kind": "missions"
+    },
+    "viking-1": {
+      "id": "2e7fdea7-a279-40ec-9b29-e3914e80b2fb",
+      "kind": "missions"
+    },
+    "curiosity": {
+      "id": "a5833124-4f14-44fe-a34d-264995489f0e",
+      "kind": "missions"
+    },
+    "perseverance": {
+      "id": "c306010f-0803-42db-ad9e-701a4d791814",
+      "kind": "missions"
+    },
+    "mro": {
+      "id": "2212d835-e602-4fb1-b4b9-3785fc887e55",
+      "kind": "missions"
+    },
+    "mariner-launch": {
+      "id": "3a9cc6fc-dba5-4635-a8fa-1185676b335c",
+      "kind": "timeline-events"
+    },
+    "mariner-flyby": {
+      "id": "3ef5cb68-19ec-4ee0-a272-9de4895b7694",
+      "kind": "timeline-events"
+    },
+    "viking-launch": {
+      "id": "5e99cf21-99ac-4ed1-9b51-752fbe9c405e",
+      "kind": "timeline-events"
+    },
+    "viking-landing": {
+      "id": "ca6a8c08-2098-4f8f-864b-040e7749a70c",
+      "kind": "timeline-events"
+    },
+    "gale-site": {
+      "id": "9b154875-7285-4450-b629-b27014e60268",
+      "kind": "locations"
+    },
+    "viking-site": {
+      "id": "665f1fe9-84da-4632-9e2d-3819dbc18932",
+      "kind": "locations"
+    },
+    "olympus-site": {
+      "id": "9bd93654-863b-43ec-bfb2-9e6f06687fc3",
+      "kind": "locations"
+    },
+    "valles-site": {
+      "id": "324def4d-fed4-4d4c-8689-c83c4719a59d",
+      "kind": "locations"
+    },
+    "radius": {
+      "id": "f0f0d0e9-5213-411b-94df-8441c3bc0220",
+      "kind": "facts"
+    },
+    "core-radius": {
+      "id": "12bedd13-09b6-4e4d-b092-da94f939d63b",
+      "kind": "facts"
+    },
+    "mantle": {
+      "id": "0e38c63f-9311-4c4d-b449-2c8dbd35d484",
+      "kind": "facts"
+    },
+    "crust": {
+      "id": "3a5cd38c-f1c7-46e4-99d9-d358ecadf8c6",
+      "kind": "facts"
+    },
+    "gravity": {
+      "id": "eae4ab5e-f283-4c59-a96b-b1d83c7d769a",
+      "kind": "facts"
+    },
+    "pressure": {
+      "id": "0d617a2a-dd24-4b6d-9d33-1d5c3c72f73d",
+      "kind": "facts"
+    },
+    "average-temperature": {
+      "id": "eb3952bd-d2dc-426c-ad77-5f59ee880172",
+      "kind": "facts"
+    },
+    "diurnal-temperature": {
+      "id": "f247d707-7c08-4f39-bdaf-689c4ca2f2fc",
+      "kind": "facts"
+    }
+  },
+  "results": [
+    {
+      "kind": "source",
+      "key": "mars-facts",
+      "id": "1e866c06-8c0e-43b6-b252-ddfeb56abfa4",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "mars-factsheet",
+      "id": "62bdcc9b-1b38-40db-a9fb-4b30bc48baed",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "mariner-4",
+      "id": "f98c5243-2310-4144-bcac-e6ad569d6936",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "viking-1",
+      "id": "cf3a723b-3b61-4cd8-b1c0-31412c40c6d7",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "curiosity",
+      "id": "7917c96b-93c6-4b1e-84f0-f2aff6d8cec8",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "perseverance",
+      "id": "f0e97f36-be80-414c-9c4a-6f279140c9a5",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "mro",
+      "id": "c12cd0d3-0412-4c42-a3ca-70ffddda8aa8",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "gale",
+      "id": "c8dc8c82-4b2d-48e4-a350-55d788245778",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "olympus",
+      "id": "ecafa630-bb0a-4e64-b4db-4cfbb7105e74",
+      "created": false
+    },
+    {
+      "kind": "source",
+      "key": "valles",
+      "id": "e5a70a8a-dd41-45bb-ac64-4795070bdd26",
+      "created": false
+    },
+    {
+      "kind": "job",
+      "key": "ntrs",
+      "id": "929d29f1-9386-4c27-8f65-9cd92306d15f",
+      "status": "Succeeded",
+      "errorMessage": null
+    },
+    {
+      "kind": "job",
+      "key": "images",
+      "id": "5ed09304-544e-4815-b2ea-50c78dd3739b",
+      "status": "Succeeded",
+      "errorMessage": null
+    },
+    {
+      "kind": "job",
+      "key": "meda-pressure",
+      "id": "b4280783-a937-4d42-8d39-5240a530157d",
+      "status": "Succeeded",
+      "errorMessage": null
+    },
+    {
+      "kind": "job",
+      "key": "mola",
+      "id": "d8ee9ea6-f3cd-4f90-9601-289a09e032e3",
+      "status": "Succeeded",
+      "errorMessage": null
+    },
+    {
+      "kind": "article",
+      "id": "4d062371-dc09-45c7-adfb-03c1e51b6432",
+      "slug": "mariner-4-and-viking-1-en",
+      "created": false
+    },
+    {
+      "kind": "article",
+      "id": "01dceb12-5fb9-4e9a-956f-4aa279cdd67d",
+      "slug": "mars-structure-and-surface-en",
+      "created": false
+    },
+    {
+      "kind": "article",
+      "id": "5aa1552f-0851-4c94-97c4-7771a8b05886",
+      "slug": "mars-atmosphere-en",
+      "created": false
+    },
+    {
+      "kind": "article",
+      "id": "96cd15e7-bfd5-4905-97fe-7131580a297c",
+      "slug": "mars-water-and-jezero-en",
+      "created": false
+    },
+    {
+      "kind": "article",
+      "id": "90d74f86-55f6-4679-9da9-b6437be5c5ce",
+      "slug": "mars-rovers-and-orbiter-en",
+      "created": false
+    }
+  ]
+}
