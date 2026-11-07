@@ -2,6 +2,8 @@
 
 Backend đã cấu hình `MarsDbContext` cho SQL Server, migration `InitialCreate` và design-time factory để dùng được cả Visual Studio Package Manager Console lẫn .NET CLI.
 
+Discover Mars bổ sung ba migration: `AddDiscoverMarsVersioning`, `EnforceDiscoverMarsIntegrity`, `PreserveDiscoveryObservationIdentity`. Với database cũ có dữ liệu, chạy expand → backfill dry-run/apply → integrity theo [runbook](../../../Docs/Discover_Mars_Implementation_Status.md) trước khi dùng các lệnh update tổng quát bên dưới. Backfill giữ nguồn/review cũ làm evidence, không tự phê duyệt nội dung legacy.
+
 Kết nối mặc định trong `appsettings.json`:
 
 - Server: `(localdb)\MSSQLLocalDB`

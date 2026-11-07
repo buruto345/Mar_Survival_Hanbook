@@ -1,0 +1,23 @@
+{
+  "$kind": "http-example",
+  "name": "400 captured locally 2026-11-03",
+  "request": {
+    "method": "GET",
+    "url": "{{baseUrl}}/api/discover-mars/missions?status=1"
+  },
+  "response": {
+    "statusCode": 400,
+    "statusText": "Bad Request",
+    "headers": [
+      {
+        "key": "Content-Type",
+        "value": "application/problem+json; charset=utf-8"
+      }
+    ],
+    "body": {
+      "type": "json",
+      "content": "{\"title\":\"Dữ liệu không hợp lệ.\",\"status\":400,\"errors\":{\"Status\":[\"Use a supported enum name; numeric enum values are not accepted.\"]},\"code\":\"invalid_request\",\"traceId\":\"0HNPPCFB7CIE9:00000001\"}"
+    }
+  },
+  "order": 1000
+}

@@ -7,6 +7,9 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Editorial content. Publication authorization and scientific approval belong in the application layer.</summary>
 public class Article : Entity
 {
+    public Guid? PublishedVersionId { get; set; }
+    public Guid? CurrentDraftVersionId { get; set; }
+    public bool RequiresReview { get; set; }
     [MaxLength(300)]
     public required string Title { get; set; }
 

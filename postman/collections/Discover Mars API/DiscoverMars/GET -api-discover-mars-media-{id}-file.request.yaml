@@ -1,0 +1,20 @@
+$kind: http-request
+name: GET /api/discover-mars/media/{id}/file
+description: ""
+url: "{{baseUrl}}/api/discover-mars/media/:id/file?articleVersionId=782db424-aac5-8763-3211-065257b84b58&page=1&pageSize=20&q=string&language=vi"
+method: GET
+headers:
+  Accept: application/octet-stream
+queryParams:
+  articleVersionId: 782db424-aac5-8763-3211-065257b84b58
+  page: "1"
+  pageSize: "20"
+  q: string
+  language: vi
+pathVariables:
+  - key: id
+    value: 782db424-aac5-8763-3211-065257b84b58
+    disabled: false
+    description: "(Required) "
+settings: {}
+order: 16000

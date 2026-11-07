@@ -11,6 +11,10 @@ namespace Mars_Survival_Hanbook.Data;
 /// </summary>
 public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(options)
 {
+    public DbSet<SourceRevision> SourceRevisions => Set<SourceRevision>();
+    public DbSet<IngestionItem> IngestionItems => Set<IngestionItem>();
+    public DbSet<ArticleVersionSource> ArticleVersionSources => Set<ArticleVersionSource>();
+    public DbSet<PublicationResource> PublicationResources => Set<PublicationResource>();
     public DbSet<Module> Modules => Set<Module>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Article> Articles => Set<Article>();
@@ -56,13 +60,18 @@ public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.HasDbFunction(typeof(MarsDbContext).GetMethod(nameof(JsonValue))!).HasName("JSON_VALUE").IsBuiltIn();
         RelationshipConfiguration.Configure(modelBuilder);
         ContentConfiguration.Configure(modelBuilder);
         ScienceConfiguration.Configure(modelBuilder);
         TechnologyConfiguration.Configure(modelBuilder);
         OperationsConfiguration.Configure(modelBuilder);
+        DiscoveryConfiguration.Configure(modelBuilder);
         CommonConfiguration.Configure(modelBuilder);
     }
+
+    public static string? JsonValue(string json, string path) =>
+        throw new NotSupportedException("SQL Server JSON_VALUE is only available in database queries.");
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
@@ -80,6 +89,7 @@ public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(
 
     private void UpdateTimestamps()
     {
+        DiscoveryImmutability.Validate(ChangeTracker);
         var now = DateTimeOffset.UtcNow;
         foreach (var entry in ChangeTracker.Entries<Entity>())
         {

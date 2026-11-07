@@ -1,0 +1,39 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/measurements
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/measurements"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "context": "string",
+      "evidenceType": "<string>",
+      "factId": "4d8712dc-43fc-e17b-cf01-3df59ce11631",
+      "instrument": "string",
+      "measurementKind": "Minimum",
+      "observedAt": "2019-11-02T18:55:14.348Z",
+      "originalUnit": "string",
+      "originalValue": 1415.0013029575348,
+      "qualityFlag": "string",
+      "sourceRevisionId": "1333af89-3e5f-8cb1-e41f-2adbf8824a55",
+      "testEnvironment": "Earth",
+      "unitId": "12dab29b-72f3-7958-6b28-5b8f1d507286",
+      "value": 8234.604655299336,
+      "upperValue": 8917.956007644534,
+      "observationEndAt": "1997-05-13T11:14:31.982Z",
+      "uncertainty": "string",
+      "missionId": "69be3035-b00d-487b-3eca-a4f7fe8bb317",
+      "locationId": "fde22ade-7227-1a16-970f-29231cd17922",
+      "qualityNotes": "string",
+      "externalObservationKey": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

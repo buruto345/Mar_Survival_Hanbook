@@ -1,0 +1,16 @@
+$kind: http-request
+method: POST
+url: '{{baseUrl}}/api/auth/register'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {"username":"{{username}}","fullName":"Registration Smoke Test","email":"{{email}}","password":"{{registrationPassword}}"}
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Duplicate account rejected', () => pm.response.to.have.status(409));

@@ -8,6 +8,9 @@ internal static class OperationsConfiguration
     public static void Configure(ModelBuilder builder)
     {
         builder.Entity<User>().HasIndex(x => x.NormalizedEmail).IsUnique();
+        builder.Entity<User>().HasIndex(x => x.NormalizedUsername).IsUnique();
+        builder.Entity<User>().ToTable(t => t.HasCheckConstraint("CK_Users_ViewerProfile",
+            "[Role] = N'Admin' OR ([Email] IS NOT NULL AND [NormalizedEmail] IS NOT NULL AND [FullName] IS NOT NULL)"));
         builder.Entity<ReviewTask>().HasIndex(x => new { x.ReviewerId, x.State, x.DueAt });
         builder.Entity<ReviewTask>().HasIndex(x => new { x.ArticleId, x.State });
         builder.Entity<ReviewTask>().ToTable(t =>

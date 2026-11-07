@@ -8,6 +8,7 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>A reusable scientific value preserving its original value, unit, context and source.</summary>
 public class ScientificFact : Entity
 {
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(300)]
     public required string Name { get; set; }
 

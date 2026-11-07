@@ -6,6 +6,7 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Links an article's claim scope to its NASA source and evidence context.</summary>
 public class ArticleSource
 {
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(4000)]
     public required string ClaimNote { get; set; }
 

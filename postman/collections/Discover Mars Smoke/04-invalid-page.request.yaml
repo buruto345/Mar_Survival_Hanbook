@@ -1,0 +1,15 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/discover-mars/articles?pageSize=101'
+order: 4000
+queryParams:
+  - key: pageSize
+    value: '101'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 400', () => pm.response.to.have.status(400));
+      pm.test('Machine-readable validation error', () => pm.expect(pm.response.json().code).to.eql('invalid_request'));
+      pm.test('Public response cannot be cached across revocation', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));
+examples: './.resources/04-invalid-page.resources/examples'

@@ -1,0 +1,33 @@
+$kind: http-request
+name: POST /api/admin/discover-mars/content/facts
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/content/facts"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "context": "string",
+      "evidenceType": "<string>",
+      "measurementKind": "Minimum",
+      "name": "string",
+      "originalUnit": "string",
+      "originalValue": 9294.894458726048,
+      "sourceRevisionId": "36c163a5-ab52-ac54-dd00-bc63dd103d93",
+      "testEnvironment": "Earth",
+      "unitId": "5157b7d1-4342-30dc-4ce3-5b16f8be71f0",
+      "value": 877.1859342232347,
+      "upperValue": 9427.65605635941,
+      "assumptions": "string",
+      "uncertainty": "string",
+      "observedAt": "1954-10-18T08:47:00.334Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 2000

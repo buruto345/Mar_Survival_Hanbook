@@ -1,0 +1,10 @@
+simulation: discover-mars-nasa
+routing: path
+mocks:
+  - name: NASA contract fixtures
+    routeKey: nasa
+    origin:
+      - ntrs.nasa.gov
+      - images-api.nasa.gov
+      - pds.nasa.gov
+    path: postman/mocks/nasa/config.yaml

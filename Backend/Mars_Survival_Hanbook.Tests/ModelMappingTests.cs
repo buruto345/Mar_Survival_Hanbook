@@ -70,10 +70,12 @@ public class ModelMappingTests
         var user = new User
         {
             Email = "reader@example.test", NormalizedEmail = "READER@EXAMPLE.TEST",
-            DisplayName = "Reader", PasswordHash = "sensitive-test-hash"
+            Username = "reader", NormalizedUsername = "READER", FullName = "Reader", PasswordHash = "sensitive-test-hash"
         };
         var json = JsonSerializer.Serialize(user);
         Assert.DoesNotContain("PasswordHash", json);
+        Assert.DoesNotContain("NormalizedUsername", json);
+        Assert.DoesNotContain("NormalizedEmail", json);
         Assert.DoesNotContain("sensitive-test-hash", json);
     }
 }

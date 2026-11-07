@@ -1,0 +1,122 @@
+$kind: http-request
+name: PUT /api/admin/discover-mars/articles/{id}/draft
+description: "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply."
+url: "{{baseUrl}}/api/admin/discover-mars/articles/:id/draft"
+method: PUT
+headers:
+  - key: If-Match
+    value: string
+    disabled: false
+    description: (Required) Quoted ETag from GET article, including submit/restore/publish.
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: id
+    value: 782db424-aac5-8763-3211-065257b84b58
+    disabled: false
+    description: "(Required) "
+body:
+  type: json
+  content: |-
+    {
+      "categorySlug": "string",
+      "claims": [
+        {
+          "key": "string",
+          "text": "string",
+          "evidenceType": "<string>",
+          "testEnvironment": "DeepSpace",
+          "sourceRevisionIds": [
+            "41924a7c-8664-0a23-3fb9-bed4d428268c",
+            "986ad839-c864-ffad-782d-321fd645250f"
+          ],
+          "locator": {
+            "key_0": "string"
+          }
+        },
+        {
+          "key": "string",
+          "text": "string",
+          "evidenceType": "<string>",
+          "testEnvironment": "Mars",
+          "sourceRevisionIds": [
+            "13aad4d7-1544-ba72-d2fb-19c563fe6413",
+            "5244b9f9-a19f-1750-0d4a-55ad652202c7"
+          ],
+          "locator": {
+            "key_0": "string",
+            "key_1": "string"
+          }
+        }
+      ],
+      "languageCode": "ut-Ga",
+      "mediaPlacements": [
+        {
+          "mediaId": "31f419d8-cfa6-94ad-f857-5f410046151f",
+          "displayOrder": 9146,
+          "caption": "string"
+        },
+        {
+          "mediaId": "85842cca-9f44-77ca-4745-fd5883c1d675",
+          "displayOrder": 3848,
+          "caption": "string"
+        }
+      ],
+      "relatedArticleIds": [
+        "7aea0a2e-5512-38d0-0d70-2285406a4d44",
+        "5f99a07c-2c0e-3597-fa86-f9e9681e9938"
+      ],
+      "resourceRefs": {
+        "factIds": [
+          "1dfe6b93-ab8d-13fa-4fb0-94ce53e2859e",
+          "14f18624-e937-8dc9-73ec-0baf34ebaac0"
+        ],
+        "measurementIds": [
+          "355c024a-5a21-7c3e-d1eb-cadd1c092197",
+          "8fea5e05-66d6-9837-9f3d-499e13ec8e93"
+        ],
+        "missionIds": [
+          "fed92309-5ea9-65b2-3c9b-0c0503b421be",
+          "493a1bfe-e796-4590-1501-d06c5c81808f"
+        ],
+        "locationIds": [
+          "79a4bcc6-b80d-47eb-0f5c-50e96c36598e",
+          "1ad0066e-b30f-79eb-d3a7-8174b6a09021"
+        ],
+        "timelineEventIds": [
+          "8383635b-4084-4c01-e169-88cc3a999f23",
+          "fc2669ab-cba8-ab67-c1b6-4de015a4ecc3"
+        ],
+        "mediaIds": [
+          "68c5007f-8895-548d-cae8-2854e50e2561",
+          "91c9c8d4-f9b7-6102-7317-aeaf91dd6b3a"
+        ],
+        "mapLayerIds": [
+          "15113e44-0d19-97f0-f674-015a5b426283",
+          "477faf60-5741-4ede-3712-066ff77397de"
+        ]
+      },
+      "sections": [
+        {
+          "anchor": "string",
+          "heading": "string",
+          "body": "string"
+        }
+      ],
+      "slug": "1fbnuobeply1m2p4722qd-7dim2g56vzygg83gvh6pu29n8fkimk457h9uh75t4d7f892-69d4wy2cyht1-8f5s-wkr",
+      "sourceRevisionIds": [
+        "b930c7bd-d279-cdaa-48d6-f899db46dd38",
+        "43a96ed1-0802-3cf4-a235-cfbd1b3f1ff0"
+      ],
+      "summary": "string",
+      "title": "string",
+      "changeSummary": "string"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+order: 4000

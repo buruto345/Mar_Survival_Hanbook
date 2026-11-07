@@ -7,6 +7,8 @@ namespace Mars_Survival_Hanbook.Models;
 /// <summary>Media metadata with mandatory provenance, credit, usage notes and accessible alternative text.</summary>
 public class MediaAsset : Entity
 {
+    [MaxLength(64)] public string? FileChecksum { get; set; }
+    public Guid? SourceRevisionId { get; set; }
     [MaxLength(200)]
     public string? NasaId { get; set; }
 

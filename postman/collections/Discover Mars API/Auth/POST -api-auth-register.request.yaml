@@ -1,0 +1,19 @@
+$kind: http-request
+name: POST /api/auth/register
+description: "Create an active Viewer account using username, fullName, email and password. Username is 3-50 ASCII letters/digits/dots/underscores/hyphens, starting with a letter or digit; fullName is required (up to 150 characters); password is 12-128 characters. Username and email are unique without case distinctions. Role and other unknown fields are rejected. Returns 201 with profile; use login for a token. Invalid input: 400; duplicate username/email: 409; more than 5 attempts per IP per minute: 429."
+url: "{{baseUrl}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "TjolvXy0rGVqltm@dh.bav",
+      "fullName": "string",
+      "password": "stringstring",
+      "username": "JTMPOzfMZ"
+    }
+settings: {}
+order: 1000

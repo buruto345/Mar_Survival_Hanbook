@@ -1,0 +1,12 @@
+$kind: http-request
+method: GET
+url: '{{baseUrl}}/api/discover-mars/articles/__missing_smoke_article'
+order: 6000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('HTTP 404', () => pm.response.to.have.status(404));
+      pm.test('No missing or draft title disclosed', () => pm.expect(pm.response.json().code).to.eql('not_found'));
+      pm.test('Public response cannot be cached across revocation', () => pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store'));
+examples: './.resources/06-missing-article.resources/examples'
