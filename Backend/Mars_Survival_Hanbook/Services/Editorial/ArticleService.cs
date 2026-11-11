@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mars_Survival_Hanbook.Services.Editorial;
 
-public sealed class ArticleService(MarsDbContext db, CurrentActor actor, SnapshotService snapshots)
+public sealed class ArticleService(MarsDbContext db, CurrentActor actor, SnapshotService snapshots, ContentModule module)
 {
     public async Task<Article> GetAsync(Guid id, CancellationToken ct)
     {
         var a = await db.Articles.Include(x => x.Category).ThenInclude(x => x.Module).SingleOrDefaultAsync(x => x.Id == id, ct)
             ?? throw ApiException.Missing();
-        if (a.Category.Module.Slug != "discover-mars") throw ApiException.Missing();
+        if (a.Category.Module.Slug != module.Slug) throw ApiException.Missing();
         actor.ViewArticle(a); return a;
     }
     public async Task<ArticleVersion> VersionAsync(Guid articleId, Guid versionId, CancellationToken ct)
@@ -25,19 +25,21 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
     }
     public async Task<Article> SaveDraftAsync(Guid? id, ArticleDraftRequest r, string? etag, CancellationToken ct)
     {
+        if (module.Slug == ContentModule.Survival && r.LanguageCode != "en")
+            throw ApiException.Invalid("Survival Knowledge drafts require languageCode en.");
         Validator.ValidateObject(r, new ValidationContext(r), true);
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await DatabaseLocks.AcquireAsync(db, "article:" + (id?.ToString() ?? r.Slug), ct);
-        var category = await db.Categories.SingleOrDefaultAsync(x => x.Slug == r.CategorySlug && x.Module.Slug == "discover-mars" && x.ArchivedAt == null, ct)
-            ?? throw ApiException.Invalid("Category không thuộc Discover Mars.");
-        Article a;
+        Article? a = null;
         if (id.HasValue)
         {
             a = await GetAsync(id.Value, ct); actor.Own(a.CreatedById); Concurrency.Check(a, etag);
-            if (a.ArchivedAt != null || a.Status == ArticleStatus.Archived) throw ApiException.Conflict("Bài đã lưu trữ.");
-            if (a.PublishedVersionId != null && a.Slug != r.Slug) throw ApiException.Conflict("Slug đã xuất bản phải giữ nguyên.");
+            if (a.ArchivedAt != null || a.Status == ArticleStatus.Archived) throw ApiException.Conflict("The article is archived.");
+            if (a.PublishedVersionId != null && a.Slug != r.Slug) throw ApiException.Conflict("The slug of a published article cannot change.");
         }
-        else
+        var category = await db.Categories.SingleOrDefaultAsync(x => x.Slug == r.CategorySlug && x.Module.Slug == module.Slug && x.ArchivedAt == null, ct)
+            ?? throw ApiException.Invalid("The category does not belong to this module.");
+        if (a == null)
         {
             a = new() { CategoryId = category.Id, CreatedById = actor.Id,
                 Title = r.Title, Slug = r.Slug, Summary = r.Summary, Content = "", LanguageCode = r.LanguageCode };
@@ -45,7 +47,7 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         }
         a.CategoryId = category.Id; a.Title = r.Title; a.Slug = r.Slug; a.Summary = r.Summary;
         a.LanguageCode = r.LanguageCode; a.Content = string.Join("\n\n", r.Sections.Select(x => x.Heading + "\n" + x.Body)); a.UpdatedById = actor.Id;
-        var s = await snapshots.BuildAsync(a.Id, r, ct);
+        var s = await snapshots.BuildAsync(a.Id, r, module.Slug, ct);
         await UpdateWorkingLinksAsync(a.Id, s, ct);
         await AppendAsync(a, s, r.ChangeSummary, ct);
         await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); return a;
@@ -66,7 +68,7 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         {
             var node = System.Text.Json.Nodes.JsonNode.Parse(m.GetRawText())!.AsObject();
             if (SnapshotService.Text(m, "fileChecksum") is { Length: 64 })
-                node["url"] = $"/api/discover-mars/media/{m.GetProperty("id").GetGuid()}/file?articleVersionId={versionId}";
+                node["url"] = $"/api/{s.ModuleSlug}/media/{m.GetProperty("id").GetGuid()}/file?articleVersionId={versionId}&language={s.LanguageCode}";
             return System.Text.Json.JsonSerializer.SerializeToElement(node, DiscoveryJson.Options);
         }).ToArray();
         var json = DiscoveryJson.Write(s);
@@ -131,7 +133,7 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         var a = await GetAsync(id, ct); actor.Own(a.CreatedById); Concurrency.Check(a, etag);
         var v = await VersionAsync(id, versionId, ct);
         if (a.CurrentDraftVersionId != v.Id || v.ReviewState != ArticleVersionReviewState.Draft)
-            throw ApiException.Conflict("Chỉ gửi bản nháp hiện hành một lần.");
+            throw ApiException.Conflict("Only the current draft can be submitted, and only once.");
         await snapshots.ValidateGateAsync(v, ct);
         var task = new ReviewTask { ArticleId = id, ArticleVersionId = v.Id, SubmittedById = actor.Id };
         db.ReviewTasks.Add(task); v.ReviewState = ArticleVersionReviewState.InReview;
@@ -148,10 +150,10 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         var v = await VersionAsync(id, versionId, ct);
         if (a.ArchivedAt != null || a.Status == ArticleStatus.Archived || a.CurrentDraftVersionId != v.Id ||
             v.ReviewState != ArticleVersionReviewState.Approved || v.ReviewedAt == null || v.ReviewedById == null)
-            throw ApiException.Gate("Chỉ xuất bản đúng bản nháp hiện hành đã duyệt.");
+            throw ApiException.Gate("Only the approved current draft can be published.");
         if (!await db.ReviewTasks.AnyAsync(x => x.ArticleVersionId == v.Id && x.State == ReviewState.Approved &&
             x.SourcesChecked && x.ClaimsChecked && x.UnitsChecked && x.EvidenceChecked && x.MediaRightsChecked &&
-            x.ReviewerId == v.ReviewedById && x.CompletedAt != null, ct)) throw ApiException.Gate("Thiếu phê duyệt đúng phiên bản.");
+            x.ReviewerId == v.ReviewedById && x.CompletedAt != null, ct)) throw ApiException.Gate("Approval is missing for this version.");
         await snapshots.ValidateGateAsync(v, ct);
         if (a.PublishedVersionId == v.Id && a.Status == ArticleStatus.Published) { await tx.CommitAsync(ct); return a; }
         a.PublishedVersionId = v.Id; a.Status = ArticleStatus.Published;
@@ -178,9 +180,11 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         await DatabaseLocks.AcquireAsync(db, "article:" + id, ct);
         var a = await GetAsync(id, ct); actor.Own(a.CreatedById); Concurrency.Check(a, etag);
         var s = SnapshotService.Read(await VersionAsync(id, r.SourceVersionId, ct));
+        if (module.Slug == ContentModule.Survival && s.LanguageCode != "en")
+            throw ApiException.Invalid("Only English versions can be restored as Survival Knowledge drafts.");
         a.Title = s.Title; a.Summary = s.Summary; a.LanguageCode = s.LanguageCode;
         a.Content = string.Join("\n\n", s.Sections.Select(x => x.Heading + "\n" + x.Body));
-        a.CategoryId = await db.Categories.Where(x => x.Slug == s.CategorySlug && x.Module.Slug == "discover-mars").Select(x => x.Id).SingleAsync(ct);
+        a.CategoryId = await db.Categories.Where(x => x.Slug == s.CategorySlug && x.Module.Slug == module.Slug).Select(x => x.Id).SingleAsync(ct);
         await UpdateWorkingLinksAsync(a.Id, s, ct);
         await AppendAsync(a, s, r.ChangeSummary, ct);
         await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); return a;

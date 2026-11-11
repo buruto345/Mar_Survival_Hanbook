@@ -78,7 +78,7 @@ public sealed class AuthenticationService(MarsDbContext db, IPasswordHasher<User
         try { result = hasher.VerifyHashedPassword(active ? user! : Dummy, active ? user!.PasswordHash : DummyHash, request.Password); }
         catch (FormatException) { /* Invalid stored hashes must not turn a rejected login into HTTP 500. */ }
         if (user == null || result == PasswordVerificationResult.Failed || user.State != UserState.Active || user.ArchivedAt != null)
-            throw new ApiException(401, "invalid_credentials", "Email, tên đăng nhập hoặc mật khẩu không hợp lệ.");
+            throw new ApiException(401, "invalid_credentials", "Invalid email, username or password.");
         if (result == PasswordVerificationResult.SuccessRehashNeeded) user.PasswordHash = hasher.HashPassword(user, request.Password);
         user.LastLoginAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);

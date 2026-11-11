@@ -12,24 +12,24 @@ public sealed class ImportService(MarsDbContext db, CurrentActor actor, IConfigu
 {
     public async Task<IngestionJob> CreateAsync(ImportRequest r, string? key, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(key) || key.Length > 200) throw ApiException.Invalid("Idempotency-Key bắt buộc, tối đa 200 ký tự.");
+        if (string.IsNullOrWhiteSpace(key) || key.Length > 200) throw ApiException.Invalid("Supply an Idempotency-Key of at most 200 characters.");
         var c = await db.NasaConnectors.SingleOrDefaultAsync(x => x.Key == r.ConnectorKey && x.IsEnabled, ct)
-            ?? throw ApiException.Invalid("Connector không tồn tại hoặc đang tắt.");
+            ?? throw ApiException.Invalid("The connector is missing or disabled.");
         if (r.MaxItems > config.GetValue("Nasa:Import:MaxItems", 500) || r.PageSize > r.MaxItems ||
             r.RecordIds.Any(x => string.IsNullOrWhiteSpace(x) || x.Length > 200))
-            throw ApiException.Invalid("Giới hạn import không hợp lệ.");
+            throw ApiException.Invalid("The import limits are invalid.");
         if (c.ConnectorType is ConnectorType.Images or ConnectorType.Ntrs &&
-            r.RecordIds.Length == 0 && string.IsNullOrWhiteSpace(r.Query)) throw ApiException.Invalid("Cần query hoặc recordIds.");
+            r.RecordIds.Length == 0 && string.IsNullOrWhiteSpace(r.Query)) throw ApiException.Invalid("Supply a query or recordIds.");
         if (c.ConnectorType == ConnectorType.Ntrs && r.RecordIds.Any(x => x.Any(ch => !char.IsAsciiDigit(ch))))
-            throw ApiException.Invalid("NTRS citation ID phải là chữ số.");
+            throw ApiException.Invalid("NTRS citation IDs must contain only digits.");
         if (c.ConnectorType == ConnectorType.Pds && (r.RecordIds.Length == 0 || r.RecordIds.Any(x => !x.StartsWith("urn:nasa:pds:"))))
-            throw ApiException.Invalid("PDS cần LID/LIDVID đã xác định.");
+            throw ApiException.Invalid("PDS requires an explicit LID or LIDVID.");
         if (c.ConnectorType == ConnectorType.Pds && r.IncludeMembers &&
             (!r.From.HasValue || !r.To.HasValue || r.To < r.From || (r.To.Value - r.From.Value).TotalDays > 31))
-            throw ApiException.Invalid("PDS members cần from/to tối đa 31 ngày.");
+            throw ApiException.Invalid("Supply a PDS member date range of at most 31 days.");
         if (c.ConnectorType == ConnectorType.MarsTrek && (r.LayerKey == null || config["Nasa:MarsTrek:Layers:" + r.LayerKey] == null))
-            throw ApiException.Invalid("Layer key chưa được cấu hình.");
-        if (c.ConnectorType == ConnectorType.ManualArchive) throw ApiException.Invalid("Dùng /sources/manual cho nguồn web.");
+            throw ApiException.Invalid("The layer key has not been configured.");
+        if (c.ConnectorType == ConnectorType.ManualArchive) throw ApiException.Invalid("Use /sources/manual for web sources.");
         _ = NasaConnectorClient.Provider(c.ConnectorType);
         var json = DiscoveryJson.Write(r); var hash = SourceNormalization.Hash(SourceNormalization.CanonicalJson(json));
         await using var tx = await db.Database.BeginTransactionAsync(ct);
@@ -37,7 +37,7 @@ public sealed class ImportService(MarsDbContext db, CurrentActor actor, IConfigu
         var existing = await db.IngestionJobs.SingleOrDefaultAsync(x => x.RequestedById == actor.Id && x.ConnectorId == c.Id && x.RequestKey == key, ct);
         if (existing is not null)
         {
-            if (existing.RequestHash != hash) throw ApiException.Conflict("Idempotency-Key đã dùng với request khác.");
+            if (existing.RequestHash != hash) throw ApiException.Conflict("This Idempotency-Key has already been used for a different request.");
             await tx.CommitAsync(ct); return existing;
         }
         var job = new IngestionJob { ConnectorId = c.Id, RequestedById = actor.Id, RequestKey = key,
@@ -55,7 +55,7 @@ public sealed class ImportService(MarsDbContext db, CurrentActor actor, IConfigu
     {
         var job = await GetAsync(id, ct); Concurrency.Check(job, etag);
         if (job.Status is IngestionStatus.Running or IngestionStatus.Queued or IngestionStatus.Cancelled)
-            throw ApiException.Conflict("Job không ở trạng thái có thể retry.");
+            throw ApiException.Conflict("The job cannot be retried in its current state.");
         foreach (var item in await db.IngestionItems.Where(x => x.JobId == id && x.Status == IngestionItemStatus.Failed && x.AttemptCount < 10).ToListAsync(ct))
         { item.Status = IngestionItemStatus.Queued; item.NextAttemptAt = null; item.CompletedAt = null; }
         job.Status = IngestionStatus.Queued; job.NextAttemptAt = null; job.LeaseOwner = null; job.LeaseExpiresAt = null;

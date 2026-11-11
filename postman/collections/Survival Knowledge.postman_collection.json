@@ -1,0 +1,480 @@
+{
+  "info": {
+    "name": "Survival Knowledge",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run both folders in order on a disposable database with the English edition. Supply username and password via a local environment. The CMS flow leaves one unpublished test article."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5086"
+    }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Module",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Survival module', () => pm.expect(pm.response.json().slug).to.equal('survival-knowledge'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Topics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/categories"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Five topics in display order', () => pm.expect(pm.response.json().map(c=>c.slug)).to.eql(['oxygen-and-low-pressure','extreme-temperatures','space-radiation','dust-storms','partial-gravity']));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published article in category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/articles?category=dust-storms&pageSize=1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "const p=pm.response.json();",
+                  "pm.test('Published result', () => pm.expect(p.total).to.be.above(0));",
+                  "pm.variables.set('slug',p.items[0].slug);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read and resolve citation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/articles/{{slug}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "const a=pm.response.json();",
+                  "const claim=a.claims[0];",
+                  "const source=a.sources.find(s=>s.sourceRevisionId===claim.sourceRevisionIds[0]);",
+                  "pm.test('Version and locator', () => { pm.expect(a.languageCode).to.equal('en'); pm.expect(a.version).to.be.above(0); pm.expect(Object.keys(claim.locator)).not.to.be.empty; });",
+                  "pm.variables.set('sourceId',source.sourceId);",
+                  "pm.variables.set('revisionId',source.sourceRevisionId);",
+                  "pm.variables.set('draft',JSON.stringify({categorySlug:a.categorySlug,slug:'smoke-'+pm.variables.replaceIn('{{$guid}}'),languageCode:'en',title:a.title,summary:a.summary,sections:a.sections,claims:a.claims,resourceRefs:{factIds:a.facts.map(f=>f.id)}}));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pinned source revision",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/sources/{{sourceId}}/revisions/{{revisionId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Same revision', () => pm.expect(pm.response.json().sourceRevisionId).to.eql(pm.variables.get('revisionId')));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CMS (test database only)",
+      "item": [
+        {
+          "name": "Log in as test Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"{{username}}\", \"password\": \"{{password}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.variables.set('token',pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create isolated copy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles",
+            "body": {
+              "mode": "raw",
+              "raw": "{{draft}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.variables.set('articleTag',pm.response.headers.get('ETag'));",
+                  "const a=pm.response.json();",
+                  "pm.variables.set('articleId',a.id);",
+                  "pm.variables.set('versionId',a.currentDraftVersionId);",
+                  "pm.variables.set('testSlug',a.slug);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Preview",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles/{{articleId}}/versions/{{versionId}}/preview"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "{{articleTag}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles/{{articleId}}/versions/{{versionId}}/submit"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "pm.variables.set('reviewTag',pm.response.headers.get('ETag'));",
+                  "pm.variables.set('reviewId',pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Claim review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "{{reviewTag}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/reviews/{{reviewId}}/claim"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.variables.set('reviewTag',pm.response.headers.get('ETag'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve exact version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "{{reviewTag}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/reviews/{{reviewId}}/decision",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"decision\": \"Approved\", \"notes\": \"Smoke test copy of published material.\", \"checklist\": {\"sourcesChecked\": true, \"claimsChecked\": true, \"unitsChecked\": true, \"evidenceChecked\": true, \"mediaRightsChecked\": true}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reload article ETag",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles/{{articleId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.variables.set('articleTag',pm.response.headers.get('ETag'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "{{articleTag}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles/{{articleId}}/publish",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"versionId\": \"{{versionId}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.variables.set('articleTag',pm.response.headers.get('ETag'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anonymous read",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/articles/{{testSlug}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Published version', () => pm.expect(pm.response.json().articleVersionId).to.equal(pm.variables.get('versionId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unpublish test article",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "If-Match",
+                "value": "{{articleTag}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/survival-knowledge/articles/{{articleId}}/unpublish",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\": \"Integration test completed.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Withdrawn article",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/survival-knowledge/articles/{{testSlug}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

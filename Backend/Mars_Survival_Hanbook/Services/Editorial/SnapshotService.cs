@@ -11,16 +11,16 @@ namespace Mars_Survival_Hanbook.Services.Editorial;
 
 public sealed class SnapshotService(MarsDbContext db, ContentService content, RawStorage raw)
 {
-    public async Task<ArticleSnapshot> BuildAsync(Guid articleId, ArticleDraftRequest r, CancellationToken ct)
+    public async Task<ArticleSnapshot> BuildAsync(Guid articleId, ArticleDraftRequest r, string moduleSlug, CancellationToken ct)
     {
         if (r.Sections.Select(x => x.Anchor).Distinct().Count() != r.Sections.Length ||
-            r.Claims.Select(x => x.Key).Distinct().Count() != r.Claims.Length) throw ApiException.Invalid("Anchor/claim key phải duy nhất.");
+            r.Claims.Select(x => x.Key).Distinct().Count() != r.Claims.Length) throw ApiException.Invalid("Section anchors and claim keys must be unique.");
         foreach (var text in r.Sections.SelectMany(x => new[] { x.Heading, x.Body }).Concat(r.Claims.Select(x => x.Text))
             .Concat(r.MediaPlacements.Select(x => x.Caption ?? "")).Append(r.Title).Append(r.Summary))
             if (Regex.IsMatch(text, @"<\s*/?\s*[a-zA-Z!]", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
-                throw ApiException.Invalid("Nội dung dùng văn bản thuần; không nhận HTML.");
+                throw ApiException.Invalid("Use plain text for article content. HTML is unsupported.");
         var refs = r.ResourceRefs;
-        var s = new ArticleSnapshot { ArticleId = articleId, CategorySlug = r.CategorySlug, LanguageCode = r.LanguageCode,
+        var s = new ArticleSnapshot { ModuleSlug = moduleSlug, ArticleId = articleId, CategorySlug = r.CategorySlug, LanguageCode = r.LanguageCode,
             Title = r.Title.Trim(), Summary = r.Summary.Trim(), Sections = r.Sections, Claims = r.Claims,
             RelatedArticleIds = r.RelatedArticleIds.Where(x => x != articleId).Distinct().ToArray() };
         s.Measurements = await LoadAsync("measurements", refs.MeasurementIds, ct);
@@ -32,7 +32,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         s.Media = await LoadAsync("media", refs.MediaIds, ct);
         if (r.MediaPlacements.Select(x => x.MediaId).Distinct().Count() != r.MediaPlacements.Length ||
             r.MediaPlacements.Any(x => !refs.MediaIds.Contains(x.MediaId)))
-            throw ApiException.Invalid("Media placement phải duy nhất và thuộc resourceRefs.mediaIds.");
+            throw ApiException.Invalid("Each media placement must be unique and reference an item in resourceRefs.mediaIds.");
         s.Media = s.Media.Select((media, index) =>
         {
             var placement = r.MediaPlacements.SingleOrDefault(x => x.MediaId == media.GetProperty("id").GetGuid());
@@ -44,7 +44,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var dependencies = r.SourceRevisionIds.Concat(r.Claims.SelectMany(x => x.SourceRevisionIds))
             .Concat(Blocks(s).SelectMany(x => Ids(x.Value, "sourceRevisionId"))).Distinct().Order().ToArray();
         var revisions = await db.SourceRevisions.Include(x => x.Source).Where(x => dependencies.Contains(x.Id)).ToListAsync(ct);
-        if (revisions.Count != dependencies.Length || dependencies.Contains(Guid.Empty)) throw ApiException.Invalid("Thiếu source revision của nội dung.");
+        if (revisions.Count != dependencies.Length || dependencies.Contains(Guid.Empty)) throw ApiException.Invalid("A required source revision is missing.");
         s.Sources = revisions.OrderBy(x => x.Id).Select(ToCitation).ToArray();
         return s;
     }
@@ -54,7 +54,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         foreach (var id in ids.Distinct())
         {
             var r = await content.GetAsync(kind, id, ct);
-            if (r.Entity.ArchivedAt != null) throw ApiException.Invalid("Không dùng working record đã lưu trữ.");
+            if (r.Entity.ArchivedAt != null) throw ApiException.Invalid("Archived resources cannot be used.");
             result.Add(r.Data);
         }
         return result.ToArray();
@@ -74,54 +74,58 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
     };
     public static ArticleSnapshot Read(ArticleVersion v)
     {
-        if (v.SnapshotSchemaVersion != 1) throw ApiException.Gate("Snapshot cần chuyển đổi schema trước khi sử dụng.");
+        if (v.SnapshotSchemaVersion != 1) throw ApiException.Gate("The snapshot schema must be upgraded.");
         var s = DiscoveryJson.Read<ArticleSnapshot>(v.Snapshot);
-        if (s.SchemaVersion != 1 || s.ArticleId == Guid.Empty || s.ArticleId != v.ArticleId) throw ApiException.Gate("Snapshot legacy cần biên tập lại.");
+        if (s.SchemaVersion != 1 || s.ArticleId == Guid.Empty || s.ArticleId != v.ArticleId) throw ApiException.Gate("This legacy snapshot requires editorial review.");
         return s;
     }
     public async Task ValidateGateAsync(ArticleVersion v, CancellationToken ct)
     {
         var s = Read(v);
-        if (v.SnapshotHash != SourceNormalization.Hash(v.Snapshot)) throw ApiException.Gate("Snapshot hash không khớp.");
-        var dependencies = s.Sources.Select(x => x.SourceRevisionId).Order().ToArray();
-        var links = await db.ArticleVersionSources.Where(x => x.ArticleVersionId == v.Id).OrderBy(x => x.SourceRevisionId).ToListAsync(ct);
-        if (dependencies.Length == 0 || !dependencies.SequenceEqual(links.Select(x => x.SourceRevisionId)))
-            throw ApiException.Gate("Dependency links không khớp snapshot.");
+        if (s.ModuleSlug == ContentModule.Survival && (s.LanguageCode != "en" || v.LanguageCode != "en"))
+            throw ApiException.Gate("Only English Survival Knowledge versions can be submitted or published.");
+        if (v.SnapshotHash != SourceNormalization.Hash(v.Snapshot)) throw ApiException.Gate("The snapshot hash does not match.");
+        var dependencies = s.Sources.Select(x => x.SourceRevisionId).ToHashSet();
+        var links = await db.ArticleVersionSources.Where(x => x.ArticleVersionId == v.Id).ToListAsync(ct);
+        if (dependencies.Count == 0 || !dependencies.SetEquals(links.Select(x => x.SourceRevisionId)))
+            throw ApiException.Gate("Source revision links differ from the snapshot.");
         var actual = s.Claims.SelectMany(x => x.SourceRevisionIds).Concat(Blocks(s).SelectMany(x => Ids(x.Value, "sourceRevisionId"))).Distinct();
         if (actual.Any(x => !dependencies.Contains(x)) || s.Sources.Any(x => !links.Any(l => l.SourceId == x.SourceId && l.SourceRevisionId == x.SourceRevisionId)))
-            throw ApiException.Gate("Thiếu dependency hoặc source parent không khớp.");
+            throw ApiException.Gate("A dependency is missing or its source does not match.");
         if (await db.SourceRevisions.AnyAsync(x => dependencies.Contains(x.Id) &&
             (x.VerificationStatus != VerificationStatus.Accepted || x.RevokedAt != null || x.VerifiedAt == null || x.VerifiedById == null), ct))
-            throw ApiException.Gate("Mọi revision phải được reviewer chấp nhận và chưa thu hồi.");
+            throw ApiException.Gate("Every source revision must be accepted and active.");
         if (s.Claims.Length == 0 || s.Claims.Any(x => x.SourceRevisionIds.Length == 0 ||
             x.EvidenceType == EvidenceType.Unspecified || x.TestEnvironment == TestEnvironment.Unspecified ||
             x.Locator is null || x.Locator.Count == 0 || x.Locator.Values.Any(string.IsNullOrWhiteSpace)))
-            throw ApiException.Gate("Claim cần nguồn, locator, evidence và bối cảnh rõ ràng.");
+            throw ApiException.Gate("Each claim requires a source revision, locator, evidence type and context.");
+        if (s.ModuleSlug == ContentModule.Survival && s.Facts.Any(f => Text(f, "verificationStatus") != "Accepted"))
+            throw ApiException.Gate("Approve each fact before saving a Survival Knowledge draft that uses it.");
         foreach (var f in s.Facts.Concat(s.Measurements))
             if (Text(f, "evidenceType") is null or "Unspecified" || Text(f, "testEnvironment") is null or "Unspecified" ||
                 !f.TryGetProperty("unit", out _) || string.IsNullOrWhiteSpace(Text(f, "context")))
-                throw ApiException.Gate("Fact/measurement thiếu đơn vị, bối cảnh hoặc evidence.");
+                throw ApiException.Gate("A fact or measurement is missing its unit, context or evidence type.");
         foreach (var m in s.Measurements)
             if (Text(m, "qualityFlag") is not ("valid" or "good" or "0") || string.IsNullOrWhiteSpace(Text(m, "instrument")))
-                throw ApiException.Gate("Measurement chưa qua kiểm tra quality/instrument.");
+                throw ApiException.Gate("Verify the measurement quality flag and instrument.");
         foreach (var m in s.Media)
         {
             if (new[] { "credit", "usageNote", "altText", "url", "originalUrl" }.Any(x => string.IsNullOrWhiteSpace(Text(m, x))))
-                throw ApiException.Gate("Media thiếu credit/quyền sử dụng/alt text.");
+                throw ApiException.Gate("Media requires credit, usage rights, alternative text and URLs.");
             if (Text(m, "fileChecksum") is { } checksum)
             {
                 if (Text(m, "mimeType") is not ("image/jpeg" or "image/png" or "image/gif" or "image/webp" or "image/tiff"))
-                    throw ApiException.Gate("File ảnh lưu trữ cần MIME được hỗ trợ.");
+                    throw ApiException.Gate("Stored images require a supported MIME type.");
                 try { _ = await raw.ReadAsync(checksum, ct); }
-                catch (Exception e) when (e is ApiException or IOException) { throw ApiException.Gate("Không tìm thấy file ảnh đúng checksum."); }
+                catch (Exception e) when (e is ApiException or IOException) { throw ApiException.Gate("The stored image could not be verified against its checksum."); }
             }
         }
         if (s.Missions.Any(m => Text(m, "statusVerifiedAt") is null))
-            throw ApiException.Gate("Mission cần ngày xác minh trạng thái.");
+            throw ApiException.Gate("The mission requires a status verification date.");
         foreach (var layer in s.MapLayers)
             if (new[] { "attribution", "style", "coordinateSystem", "boundingBoxJson", "resourceUrlTemplate", "tileMatrixSet" }
                 .Any(x => string.IsNullOrWhiteSpace(Text(layer, x))))
-                throw ApiException.Gate("Map layer cần attribution, projection, bbox và WMTS metadata đầy đủ.");
+                throw ApiException.Gate("Map layers require attribution, projection, bounds and complete WMTS metadata.");
     }
     public static string? Text(JsonElement e, string key) =>
         e.TryGetProperty(key, out var p) && p.ValueKind is not (JsonValueKind.Null or JsonValueKind.Undefined) ? p.ToString() : null;

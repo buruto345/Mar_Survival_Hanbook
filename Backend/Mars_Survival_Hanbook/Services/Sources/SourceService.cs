@@ -15,7 +15,7 @@ public sealed class SourceService(MarsDbContext db, CurrentActor actor, RawStora
     {
         _ = SourceNormalization.CanonicalUrl(request.Url);
         if (request.RetrievedAt == default || request.RetrievedAt > DateTimeOffset.UtcNow.AddMinutes(5))
-            throw ApiException.Invalid("Ngày truy xuất không hợp lệ.");
+            throw ApiException.Invalid("The retrieval date is invalid.");
         var metadata = new SourceMetadata(request.Title, request.Url, request.Authors, request.Organization,
             request.SourceType, request.Excerpt, request.UsageNote, request.Credit);
         var stored = await raw.PutAsync(Encoding.UTF8.GetBytes(DiscoveryJson.Write(metadata)), ct);
@@ -78,7 +78,7 @@ public sealed class SourceService(MarsDbContext db, CurrentActor actor, RawStora
     {
         var previous = await db.SourceRevisions.Include(x => x.Source).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
         Concurrency.Check(previous, etag);
-        if (previous.RawStoragePath is null || previous.RawChecksum is null) throw ApiException.Gate("Cần bổ sung bằng chứng gốc trước khi sửa metadata.");
+        if (previous.RawStoragePath is null || previous.RawChecksum is null) throw ApiException.Gate("Archive the original evidence before amending its metadata.");
         var m = DiscoveryJson.Read<SourceMetadata>(previous.MetadataSnapshot);
         var metadata = m with { Title = request.Title, Authors = request.Authors, Organization = request.Organization,
             Excerpt = request.Excerpt, UsageNote = request.UsageNote, Credit = request.Credit };
@@ -90,18 +90,18 @@ public sealed class SourceService(MarsDbContext db, CurrentActor actor, RawStora
     public async Task<SourceRevision> DecideAsync(Guid id, SourceDecision request, string? etag, CancellationToken ct)
     {
         if (request.Decision is not (VerificationStatus.Accepted or VerificationStatus.Rejected))
-            throw ApiException.Invalid("Chỉ chấp nhận Accepted hoặc Rejected.");
+            throw ApiException.Invalid("Choose Accepted or Rejected.");
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         await DatabaseLocks.AcquireAsync(db, "publication", ct);
         var r = await db.SourceRevisions.Include(x => x.Source).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
         Concurrency.Check(r, etag);
         if (r.RevokedAt != null || r.VerificationStatus != VerificationStatus.Pending)
-            throw ApiException.Conflict("Revision đã có quyết định; dùng thu hồi cho nguồn đã chấp nhận.");
+            throw ApiException.Conflict("This revision already has a decision. Use revocation to withdraw an accepted revision.");
         var m = DiscoveryJson.Read<SourceMetadata>(r.MetadataSnapshot);
         if (request.Decision == VerificationStatus.Accepted &&
             (m.Authors.Length == 0 || m.Authors.Any(a => string.IsNullOrWhiteSpace(a.Name) || string.IsNullOrWhiteSpace(a.Organization)) ||
              string.IsNullOrWhiteSpace(m.Organization) || string.IsNullOrWhiteSpace(request.Notes) || r.RawStoragePath is null))
-            throw ApiException.Gate("Cần tác giả/tổ chức, bản gốc và ghi chú xác minh.");
+            throw ApiException.Gate("Approval requires author affiliations, a responsible organization, archived evidence and review notes.");
         r.VerificationStatus = request.Decision; r.VerificationNotes = request.Notes;
         r.VerifiedById = actor.Id; r.VerifiedAt = DateTimeOffset.UtcNow;
         if (request.Decision == VerificationStatus.Accepted)
@@ -123,7 +123,7 @@ public sealed class SourceService(MarsDbContext db, CurrentActor actor, RawStora
         var r = await db.SourceRevisions.Include(x => x.Source).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
         Concurrency.Check(r, etag);
         if (r.VerificationStatus != VerificationStatus.Accepted || r.RevokedAt != null)
-            throw ApiException.Conflict("Chỉ thu hồi revision đang Accepted.");
+            throw ApiException.Conflict("Only an active accepted revision can be revoked.");
         r.RevokedAt = DateTimeOffset.UtcNow; r.RevocationReason = reason;
         if (r.Source.CurrentAcceptedRevisionId == id) r.Source.CurrentAcceptedRevisionId = null;
         foreach (var a in await db.Articles.Where(a => db.ArticleVersionSources.Any(l =>

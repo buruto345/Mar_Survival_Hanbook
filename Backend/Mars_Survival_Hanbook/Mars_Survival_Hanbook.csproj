@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="ImageMarHanbook/*" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.33" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.33" />

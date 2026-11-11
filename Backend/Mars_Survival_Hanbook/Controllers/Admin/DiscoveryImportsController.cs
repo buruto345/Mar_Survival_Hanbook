@@ -56,7 +56,7 @@ public sealed class DiscoveryConnectorsController(MarsDbContext db, CurrentActor
     {
         var c = await db.NasaConnectors.SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw ApiException.Missing();
         Concurrency.Check(c, Request.Headers.IfMatch);
-        if (!Uri.TryCreate(r.BaseUrl, UriKind.Absolute, out var uri)) throw ApiException.Invalid("Base URL không hợp lệ.");
+        if (!Uri.TryCreate(r.BaseUrl, UriKind.Absolute, out var uri)) throw ApiException.Invalid("The base URL is invalid.");
         urls.Validate(uri);
         c.BaseUrl = r.BaseUrl; c.IsEnabled = r.IsEnabled; c.AccessPolicy = r.AccessPolicy; c.RateLimitPerMinute = r.RateLimitPerMinute;
         Audit.Add(db, actor.Id, nameof(NasaConnector), c.Id, AuditAction.Updated, "Connector configuration updated", actor.TraceId);

@@ -50,22 +50,22 @@ public sealed class ContentService(MarsDbContext db, CurrentActor actor)
     public async Task<WorkingResource> SaveAsync(string kind, Guid? id, ProvenancedRequest request, string? etag, CancellationToken ct)
     {
         ContentValidation.Validate(request);
-        var revision = await db.SourceRevisions.SingleOrDefaultAsync(x => x.Id == request.SourceRevisionId, ct) ?? throw ApiException.Invalid("Revision không tồn tại.");
-        if (revision.RevokedAt != null) throw ApiException.Gate("Revision đã bị thu hồi.");
+        var revision = await db.SourceRevisions.SingleOrDefaultAsync(x => x.Id == request.SourceRevisionId, ct) ?? throw ApiException.Invalid("The source revision does not exist.");
+        if (revision.RevokedAt != null) throw ApiException.Gate("The source revision has been revoked.");
         switch (request)
         {
             case FactRequest f:
                 await ValidateUnitAsync(f.UnitId, f.OriginalValue, f.OriginalUnit, f.Value, ct); break;
             case MeasurementRequest m:
                 await ValidateUnitAsync(m.UnitId, m.OriginalValue, m.OriginalUnit, m.Value, ct);
-                if (!await db.ScientificFacts.AnyAsync(x => x.Id == m.FactId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("Fact không tồn tại.");
-                if (m.MissionId.HasValue && !await db.Missions.AnyAsync(x => x.Id == m.MissionId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("Mission không tồn tại.");
-                if (m.LocationId.HasValue && !await db.MarsLocations.AnyAsync(x => x.Id == m.LocationId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("Location không tồn tại.");
+                if (!await db.ScientificFacts.AnyAsync(x => x.Id == m.FactId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("The fact does not exist.");
+                if (m.MissionId.HasValue && !await db.Missions.AnyAsync(x => x.Id == m.MissionId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("The mission does not exist.");
+                if (m.LocationId.HasValue && !await db.MarsLocations.AnyAsync(x => x.Id == m.LocationId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("The location does not exist.");
                 break;
             case TimelineEventRequest e when e.MissionId.HasValue:
-                if (!await db.Missions.AnyAsync(x => x.Id == e.MissionId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("Mission không tồn tại."); break;
+                if (!await db.Missions.AnyAsync(x => x.Id == e.MissionId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("The mission does not exist."); break;
             case MapLayerRequest m when m.LocationId.HasValue:
-                if (!await db.MarsLocations.AnyAsync(x => x.Id == m.LocationId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("Location không tồn tại."); break;
+                if (!await db.MarsLocations.AnyAsync(x => x.Id == m.LocationId && x.ArchivedAt == null, ct)) throw ApiException.Invalid("The location does not exist."); break;
         }
         Entity candidate = request switch
         {
@@ -76,15 +76,15 @@ public sealed class ContentService(MarsDbContext db, CurrentActor actor)
             TimelineEventRequest r => ContentMapping.ToEntity(r, revision.SourceId),
             MediaRequest r => ContentMapping.ToEntity(r, revision.SourceId),
             MapLayerRequest r => ContentMapping.ToEntity(r, revision.SourceId),
-            _ => throw ApiException.Invalid("Loại nội dung không hợp lệ.")
+            _ => throw ApiException.Invalid("Invalid content type.")
         };
         if (id.HasValue)
         {
             var old = (await GetAsync(kind, id.Value, ct)).Entity;
             Concurrency.Check(old, etag);
-            if (old.ArchivedAt != null) throw ApiException.Conflict("Nội dung đã lưu trữ.");
+            if (old.ArchivedAt != null) throw ApiException.Conflict("The resource is archived.");
             if (old is ScientificFact { VerificationStatus: VerificationStatus.Accepted })
-                throw ApiException.Conflict("Tạo candidate mới cho fact đã được xác minh.");
+                throw ApiException.Conflict("Create a new candidate to revise a verified fact.");
             var entry = db.Entry(old);
             foreach (var property in db.Entry(candidate).Properties)
                 if (property.Metadata.Name is not ("Id" or "CreatedAt" or "UpdatedAt" or "RowVersion" or "ArchivedAt"))
@@ -98,11 +98,32 @@ public sealed class ContentService(MarsDbContext db, CurrentActor actor)
         await db.SaveChangesAsync(ct);
         return new(candidate, await RepresentationAsync(candidate, ct));
     }
+    public async Task<WorkingResource> ReviewFactAsync(Guid id, SourceDecision decision, string? etag, CancellationToken ct)
+    {
+        var fact = await db.ScientificFacts.SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
+        Concurrency.Check(fact, etag);
+        if (decision.Decision is not (VerificationStatus.Accepted or VerificationStatus.Rejected))
+            throw ApiException.Invalid("Invalid fact review decision.");
+        if (fact.ArchivedAt != null || fact.VerificationStatus != VerificationStatus.Pending)
+            throw ApiException.Conflict("The fact has already been reviewed or archived.");
+        if (decision.Decision == VerificationStatus.Accepted &&
+            (fact.EvidenceType == EvidenceType.Unspecified || fact.TestEnvironment == TestEnvironment.Unspecified ||
+             !await db.SourceRevisions.AnyAsync(x => x.Id == fact.SourceRevisionId &&
+                x.VerificationStatus == VerificationStatus.Accepted && x.RevokedAt == null, ct)))
+            throw ApiException.Gate("An accepted source revision, evidence type and environment are required.");
+        fact.VerificationStatus = decision.Decision;
+        fact.VerifiedAt = DateTimeOffset.UtcNow;
+        fact.VerifiedById = actor.Id;
+        Audit.Add(db, actor.Id, nameof(ScientificFact), id,
+            decision.Decision == VerificationStatus.Accepted ? AuditAction.Approved : AuditAction.Rejected, decision.Notes, actor.TraceId);
+        await db.SaveChangesAsync(ct);
+        return new(fact, await RepresentationAsync(fact, ct));
+    }
     private async Task ValidateUnitAsync(Guid id, decimal original, string from, decimal value, CancellationToken ct)
     {
-        var unit = await db.Units.SingleOrDefaultAsync(x => x.Id == id && x.ArchivedAt == null, ct) ?? throw ApiException.Invalid("Unit không tồn tại.");
+        var unit = await db.Units.SingleOrDefaultAsync(x => x.Id == id && x.ArchivedAt == null, ct) ?? throw ApiException.Invalid("The unit does not exist.");
         if (ContentValidation.ConvertUnit(original, from, unit.Symbol) != value)
-            throw ApiException.Invalid("Giá trị không khớp quy đổi đơn vị gốc.");
+            throw ApiException.Invalid("The value does not match the conversion from its original unit.");
     }
     public async Task<WorkingResource> ArchiveAsync(string kind, Guid id, string? etag, CancellationToken ct)
     {
@@ -123,9 +144,10 @@ public sealed class ContentService(MarsDbContext db, CurrentActor actor)
             ExplorationEvent x => ContentMapping.ToRequest(x),
             MediaAsset x => ContentMapping.ToRequest(x),
             MapLayer x => ContentMapping.ToRequest(x),
-            _ => throw ApiException.Invalid("Loại nội dung không được hỗ trợ.")
+            _ => throw ApiException.Invalid("Unsupported content type.")
         };
         var json = JsonSerializer.SerializeToNode(request, request.GetType(), DiscoveryJson.Options)!.AsObject();
+        if (e is ScientificFact fact) json["verificationStatus"] = fact.VerificationStatus.ToString();
         json["id"] = e.Id;
         json["sourceId"] = await db.SourceRevisions.Where(x => x.Id == request.SourceRevisionId).Select(x => (Guid?)x.SourceId).SingleOrDefaultAsync(ct);
         Guid? unitId = e switch { ScientificFact f => f.UnitId, Measurement m => m.UnitId, _ => null };

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mars_Survival_Hanbook.Controllers.Admin;
 
-[ApiController, Route("api/admin/discover-mars/reviews"), Authorize(Policy = "ReviewRead")]
-public sealed class DiscoveryReviewsController(MarsDbContext db, ReviewService service) : ControllerBase
+[ApiController, Authorize(Policy = "ReviewRead")]
+public abstract class ReviewsControllerBase(ReviewService service) : ControllerBase
 {
     public static object Dto(ReviewTask t) => new { t.Id, t.ArticleId, t.ArticleVersionId, t.State, t.ReviewerId,
         t.SubmittedById, t.SubmittedAt, t.CompletedAt, t.DueAt, t.ReviewNotes,
@@ -19,15 +19,23 @@ public sealed class DiscoveryReviewsController(MarsDbContext db, ReviewService s
     private IActionResult Result(ReviewTask t) { Response.Headers.ETag = Concurrency.ETag(t); return Ok(Dto(t)); }
     [HttpGet] public async Task<IActionResult> List([FromQuery] PageQuery queryOptions, ReviewState? state, Guid? reviewerId, Guid? articleId, DateTimeOffset? dueBefore, CancellationToken ct)
     {
-        var page = await db.ReviewTasks.Where(x => (state == null || x.State == state) && (reviewerId == null || x.ReviewerId == reviewerId) &&
+        var page = await service.List(queryOptions.Language).Where(x => (state == null || x.State == state) && (reviewerId == null || x.ReviewerId == reviewerId) &&
             (articleId == null || x.ArticleId == articleId) && (dueBefore == null || x.DueAt <= dueBefore))
             .OrderBy(x => x.SubmittedAt).ThenBy(x => x.Id).PageAsync(queryOptions, ct);
         return Ok(new PageResult<object>(page.Items.Select(Dto).ToArray(), page.Page, page.PageSize, page.Total));
     }
     [HttpGet("{id:guid}")] public async Task<IActionResult> Get(Guid id, CancellationToken ct)
-        => Result(await db.ReviewTasks.SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing());
+        => Result(await service.Tasks.SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing());
     [HttpPost("{id:guid}/claim"), Authorize(Policy = "Review")] public async Task<IActionResult> Claim(Guid id, CancellationToken ct)
         => Result(await service.ClaimAsync(id, Request.Headers.IfMatch, ct));
     [HttpPost("{id:guid}/decision"), Authorize(Policy = "Review")] public async Task<IActionResult> Decision(Guid id, ReviewDecision r, CancellationToken ct)
         => Result(await service.DecideAsync(id, r, Request.Headers.IfMatch, ct));
 }
+
+[Route("api/admin/discover-mars/reviews")]
+public sealed class DiscoveryReviewsController(ReviewService service)
+    : ReviewsControllerBase(service);
+
+[SurvivalKnowledge, Route("api/admin/survival-knowledge/reviews")]
+public sealed class SurvivalReviewsController(ReviewService service)
+    : ReviewsControllerBase(service);

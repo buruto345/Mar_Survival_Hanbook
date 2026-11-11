@@ -4,6 +4,7 @@ public record UnitResponse(Guid Id, string Symbol, string QuantityKind);
 
 public class FactResponse : FactRequest
 {
+    public Models.Enums.VerificationStatus? VerificationStatus { get; set; }
     public Guid Id { get; set; }
     public Guid? SourceId { get; set; }
     public Guid? ArticleVersionId { get; set; }

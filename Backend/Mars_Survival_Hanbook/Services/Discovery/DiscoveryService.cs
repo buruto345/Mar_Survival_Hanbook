@@ -22,20 +22,21 @@ public sealed class PublicResourceRow
     public DateTimeOffset? PublishedAt { get; set; }
     public string CategorySlug { get; set; } = "";
 }
-public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
+public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, ContentModule module)
 {
-    public IQueryable<Publication> Publications(string language = "vi") =>
+    public IQueryable<Publication> Publications(string? language) =>
         from a in db.Articles.AsNoTracking()
         join v in db.ArticleVersions.AsNoTracking() on a.PublishedVersionId equals v.Id
-        where a.Status == ArticleStatus.Published && a.ArchivedAt == null && a.Category.Module.Slug == "discover-mars" &&
-            v.LanguageCode == language && v.SnapshotSchemaVersion == 1 &&
+        where a.Status == ArticleStatus.Published && a.ArchivedAt == null && a.Category.Module.Slug == module.Slug &&
+            (module.Slug != ContentModule.Survival || v.LanguageCode == "en") &&
+            (language == null || v.LanguageCode == language) && v.SnapshotSchemaVersion == 1 &&
             !db.ArticleVersionSources.Any(l => l.ArticleVersionId == v.Id &&
                 (l.SourceRevision.RevokedAt != null || l.SourceRevision.VerificationStatus != VerificationStatus.Accepted))
         select new Publication { Article = a, Version = v };
 
     public async Task<object> ModuleAsync(string language, CancellationToken ct)
     {
-        var m = await db.Modules.AsNoTracking().Where(x => x.Slug == "discover-mars" && x.ArchivedAt == null)
+        var m = await db.Modules.AsNoTracking().Where(x => x.Slug == module.Slug && x.ArchivedAt == null)
             .Select(x => new { x.Id, x.Name, x.Slug, x.Description }).SingleOrDefaultAsync(ct) ?? throw ApiException.Missing();
         var cover = await (from p in Publications(language)
             join media in db.PublicationResources on p.Version.Id equals media.ArticleVersionId
@@ -49,13 +50,13 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
     {
         var counts = await Publications(language).GroupBy(x => x.Version.CategorySlug)
             .Select(x => new { Slug = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.Slug, x => x.Count, ct);
-        var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == "discover-mars" && x.ArchivedAt == null)
+        var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.ArchivedAt == null)
             .OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id).ToListAsync(ct);
         return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug) }).ToArray();
     }
     public async Task<object> CategoryAsync(string slug, string language, CancellationToken ct)
     {
-        var c = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == "discover-mars" && x.Slug == slug && x.ArchivedAt == null)
+        var c = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.Slug == slug && x.ArchivedAt == null)
             .Select(x => new { x.Id, x.Slug, x.Name, x.Description }).SingleOrDefaultAsync(ct) ?? throw ApiException.Missing();
         return new { c.Id, c.Slug, c.Name, c.Description, PublishedArticleCount = await Publications(language).CountAsync(x => x.Version.CategorySlug == slug, ct) };
     }
@@ -70,7 +71,7 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
             : query.OrderByDescending(x => x.Article.PublishedAt).ThenBy(x => x.Article.Id);
         return await ordered.Select(x => new {
             x.Article.Id, x.Article.Slug, x.Version.Title, x.Version.Summary, x.Version.CategorySlug, x.Version.LanguageCode,
-            ArticleVersionId = x.Version.Id, x.Version.ReviewedAt, x.Article.PublishedAt,
+            ArticleVersionId = x.Version.Id, x.Version.Version, x.Version.ReviewedAt, x.Article.PublishedAt,
             ThumbnailUrl = db.PublicationResources.Where(p => p.ArticleVersionId == x.Version.Id && p.Kind == "media" &&
                 MarsDbContext.JsonValue(p.Payload, "$.mediaType") == "Image").OrderBy(p => p.ResourceId)
                 .Select(p => MarsDbContext.JsonValue(p.Payload, "$.url")).FirstOrDefault()
@@ -98,7 +99,7 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
         node["bodyFormat"] = "plainText";
         return node;
     }
-    private IQueryable<PublicResourceRow> ResourceRows(string language) =>
+    private IQueryable<PublicResourceRow> ResourceRows(string? language) =>
         from p in Publications(language)
         join r in db.PublicationResources.AsNoTracking() on p.Version.Id equals r.ArticleVersionId
         select new PublicResourceRow { Resource = r, ArticleId = p.Article.Id, ArticleVersionId = p.Version.Id,
@@ -106,10 +107,10 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
     public async Task<object> ResourcesAsync(string kind, DiscoveryQuery q, CancellationToken ct)
     {
         var bbox = ContentValidation.Bbox(q.Bbox);
-        if (q.From > q.To) throw ApiException.Invalid("from phải trước to.");
+        if (q.From > q.To) throw ApiException.Invalid("The start time must precede the end time.");
         if (kind == "measurements" && ((!q.FactId.HasValue && !q.MissionId.HasValue) || !q.From.HasValue || !q.To.HasValue ||
             (q.To.Value - q.From.Value).TotalDays > config.GetValue("Discovery:MaxMeasurementDays", 31)))
-            throw ApiException.Invalid("Measurement cần factId/missionId và from/to trong khoảng cho phép.");
+            throw ApiException.Invalid("Supply a factId or missionId and a supported measurement date range.");
         var all = ResourceRows(q.Language).Where(x => x.Resource.Kind == kind);
         // Select the canonical representation before applying user filters.
         var query = all.Where(x => !all.Any(y => y.Resource.ResourceId == x.Resource.ResourceId &&
@@ -140,7 +141,7 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
         var node = JsonNode.Parse(row.Resource.Payload)!.AsObject();
         node["articleVersionId"] = row.ArticleVersionId; node["articleId"] = row.ArticleId; return node;
     }
-    public async Task<object> ResourceAsync(string kind, Guid id, Guid? articleVersionId, string language, CancellationToken ct)
+    public async Task<object> ResourceAsync(string kind, Guid id, Guid? articleVersionId, string? language, CancellationToken ct)
     {
         var query = ResourceRows(language).Where(x => x.Resource.Kind == kind && x.Resource.ResourceId == id);
         if (articleVersionId.HasValue) query = query.Where(x => x.ArticleVersionId == articleVersionId);
@@ -157,7 +158,7 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config)
     }
     public async Task<object> SourceAsync(Guid id, Guid revisionId, CancellationToken ct)
     {
-        var p = await Publications().Where(x => db.ArticleVersionSources.Any(l =>
+        var p = await Publications(null).Where(x => db.ArticleVersionSources.Any(l =>
             l.ArticleVersionId == x.Version.Id && l.SourceId == id && l.SourceRevisionId == revisionId))
             .OrderByDescending(x => x.Article.PublishedAt).ThenBy(x => x.Article.Id).FirstOrDefaultAsync(ct) ?? throw ApiException.Missing();
         return SnapshotService.Read(p.Version).Sources.Single(x => x.SourceId == id && x.SourceRevisionId == revisionId);

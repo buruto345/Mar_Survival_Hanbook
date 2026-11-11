@@ -422,936 +422,6 @@
         ]
       }
     },
-    "/api/discover-mars": {
-      "get": {
-        "tags": [
-          "DiscoverMars"
-        ],
-        "summary": "GET /api/discover-mars",
-        "operationId": "DiscoverMars_Module",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "maximum": 100000,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "maximum": 100,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "string"
-            }
-          },
-          {
-            "name": "language",
-            "in": "query",
-            "schema": {
-              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
-              "type": "string",
-              "default": "vi"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ModuleResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "412": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "428": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/discover-mars/categories": {
-      "get": {
-        "tags": [
-          "DiscoverMars"
-        ],
-        "summary": "GET /api/discover-mars/categories",
-        "operationId": "DiscoverMars_Categories",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "maximum": 100000,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "maximum": 100,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "string"
-            }
-          },
-          {
-            "name": "language",
-            "in": "query",
-            "schema": {
-              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
-              "type": "string",
-              "default": "vi"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CategoryResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "412": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "428": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/discover-mars/categories/{slug}": {
-      "get": {
-        "tags": [
-          "DiscoverMars"
-        ],
-        "summary": "GET /api/discover-mars/categories/{slug}",
-        "operationId": "DiscoverMars_Category",
-        "parameters": [
-          {
-            "name": "slug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "maximum": 100000,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "maximum": 100,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "string"
-            }
-          },
-          {
-            "name": "language",
-            "in": "query",
-            "schema": {
-              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
-              "type": "string",
-              "default": "vi"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "412": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "428": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/discover-mars/articles": {
-      "get": {
-        "tags": [
-          "DiscoverMars"
-        ],
-        "summary": "GET /api/discover-mars/articles",
-        "operationId": "DiscoverMars_Articles",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "query",
-            "schema": {
-              "maxLength": 180,
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "schema": {
-              "pattern": "^(relevance|publishedAtDesc)$",
-              "type": "string",
-              "default": "publishedAtDesc"
-            }
-          },
-          {
-            "name": "missionId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "locationId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "factId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "from",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "includePlanned",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "bbox",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/MissionStatus"
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/MissionType"
-            }
-          },
-          {
-            "name": "quantityKind",
-            "in": "query",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
-            "name": "evidenceType",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/EvidenceType"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "maximum": 100000,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "maximum": 100,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "string"
-            }
-          },
-          {
-            "name": "language",
-            "in": "query",
-            "schema": {
-              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
-              "type": "string",
-              "default": "vi"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArticleCardPageResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "412": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "428": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/discover-mars/articles/{slug}": {
-      "get": {
-        "tags": [
-          "DiscoverMars"
-        ],
-        "summary": "GET /api/discover-mars/articles/{slug}",
-        "operationId": "DiscoverMars_Article",
-        "parameters": [
-          {
-            "name": "slug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "maximum": 100000,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "maximum": 100,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "string"
-            }
-          },
-          {
-            "name": "language",
-            "in": "query",
-            "schema": {
-              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
-              "type": "string",
-              "default": "vi"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArticleDetailResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "412": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "428": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Problem Details; code and traceId identify the failure.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/discover-mars/timeline": {
       "get": {
         "tags": [
@@ -3467,6 +2537,936 @@
         }
       }
     },
+    "/api/discover-mars": {
+      "get": {
+        "tags": [
+          "DiscoverMars"
+        ],
+        "summary": "GET /api/discover-mars",
+        "operationId": "DiscoverMars_Module",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "vi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModuleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discover-mars/categories": {
+      "get": {
+        "tags": [
+          "DiscoverMars"
+        ],
+        "summary": "GET /api/discover-mars/categories",
+        "operationId": "DiscoverMars_Categories",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "vi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discover-mars/categories/{slug}": {
+      "get": {
+        "tags": [
+          "DiscoverMars"
+        ],
+        "summary": "GET /api/discover-mars/categories/{slug}",
+        "operationId": "DiscoverMars_Category",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "vi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discover-mars/articles": {
+      "get": {
+        "tags": [
+          "DiscoverMars"
+        ],
+        "summary": "GET /api/discover-mars/articles",
+        "operationId": "DiscoverMars_Articles",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "maxLength": 180,
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "pattern": "^(relevance|publishedAtDesc)$",
+              "type": "string",
+              "default": "publishedAtDesc"
+            }
+          },
+          {
+            "name": "missionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "factId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "includePlanned",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MissionStatus"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MissionType"
+            }
+          },
+          {
+            "name": "quantityKind",
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "evidenceType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EvidenceType"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "vi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCardPageResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discover-mars/articles/{slug}": {
+      "get": {
+        "tags": [
+          "DiscoverMars"
+        ],
+        "summary": "GET /api/discover-mars/articles/{slug}",
+        "operationId": "DiscoverMars_Article",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "vi"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/discover-mars/sources/{id}/revisions/{revisionId}": {
       "get": {
         "tags": [
@@ -3868,14 +3868,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -4535,14 +4527,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -4845,14 +4829,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -5676,14 +5652,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -6339,14 +6307,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -6677,14 +6637,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7044,14 +6996,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7709,14 +7653,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -8040,14 +7976,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -9248,14 +9176,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -9847,6 +9767,180 @@
         ]
       }
     },
+    "/api/admin/discover-mars/content/facts/{id}/decision": {
+      "post": {
+        "tags": [
+          "FactContent"
+        ],
+        "summary": "POST /api/admin/discover-mars/content/facts/{id}/decision",
+        "description": "Requires a current active account. Policies: Cms, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "FactContent_Decision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceDecision"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceDecision"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FactResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/admin/discover-mars/content/facts/{id}/archive": {
       "post": {
         "tags": [
@@ -10062,14 +10156,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -10876,14 +10962,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -11637,7 +11715,7 @@
         ],
         "summary": "GET /api/admin/discover-mars/health",
         "description": "Requires a current active account. Policies: . All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
-        "operationId": "<>c_<<Main>$>b__0_11",
+        "operationId": "Mars_Survival_Hanbook_<<Main>$>b__0_11",
         "responses": {
           "200": {
             "description": "OK"
@@ -11810,14 +11888,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -12624,14 +12694,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -13438,14 +13500,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -14192,6 +14246,3784 @@
         ]
       }
     },
+    "/api/admin/survival-knowledge/articles": {
+      "get": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/articles",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_List",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "publicationStatus",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ArticleStatus"
+            }
+          },
+          {
+            "name": "reviewState",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ArticleVersionReviewState"
+            }
+          },
+          {
+            "name": "requiresReview",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponsePageResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/articles",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply. The only supported languageCode is en. Omitting it selects English.",
+        "operationId": "SurvivalArticles_Create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}": {
+      "get": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/articles/{id}",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/draft": {
+      "put": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "PUT /api/admin/survival-knowledge/articles/{id}/draft",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply. The only supported languageCode is en. Omitting it selects English.",
+        "operationId": "SurvivalArticles_Draft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET article, including submit/restore/publish.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleDraftRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/versions": {
+      "get": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/articles/{id}/versions",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Versions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleVersionSummaryPageResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/versions/{versionId}": {
+      "get": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/articles/{id}/versions/{versionId}",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Version",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleVersionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/versions/{versionId}/preview": {
+      "get": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/articles/{id}/versions/{versionId}/preview",
+        "description": "Requires a current active account. Policies: Cms. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Preview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/versions/{versionId}/submit": {
+      "post": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/articles/{id}/versions/{versionId}/submit",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Submit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET article, including submit/restore/publish.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/publish": {
+      "post": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/articles/{id}/publish",
+        "description": "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Publish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET article, including submit/restore/publish.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/unpublish": {
+      "post": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/articles/{id}/unpublish",
+        "description": "Requires a current active account. Policies: Cms, Admin. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Unpublish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET article, including submit/restore/publish.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/articles/{id}/restore": {
+      "post": {
+        "tags": [
+          "SurvivalArticles"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/articles/{id}/restore",
+        "description": "Requires a current active account. Policies: Cms, Edit. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalArticles_Restore",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET article, including submit/restore/publish.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleAdminResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/survival-knowledge": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge",
+        "operationId": "SurvivalKnowledge_Module",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModuleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/categories": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/categories",
+        "operationId": "SurvivalKnowledge_Categories",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/categories/{slug}": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/categories/{slug}",
+        "operationId": "SurvivalKnowledge_Category",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/articles": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/articles",
+        "operationId": "SurvivalKnowledge_Articles",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "maxLength": 180,
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "pattern": "^(relevance|publishedAtDesc)$",
+              "type": "string",
+              "default": "publishedAtDesc"
+            }
+          },
+          {
+            "name": "missionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "factId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "includePlanned",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MissionStatus"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MissionType"
+            }
+          },
+          {
+            "name": "quantityKind",
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "evidenceType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EvidenceType"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCardPageResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/articles/{slug}": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/articles/{slug}",
+        "operationId": "SurvivalKnowledge_Article",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/sources/{id}/revisions/{revisionId}": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/sources/{id}/revisions/{revisionId}",
+        "operationId": "SurvivalKnowledge_Source",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revisionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Citation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/survival-knowledge/media/{id}/file": {
+      "get": {
+        "tags": [
+          "SurvivalKnowledge"
+        ],
+        "summary": "GET /api/survival-knowledge/media/{id}/file",
+        "operationId": "SurvivalKnowledge_MediaFile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "articleVersionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immutable raw manifest, or a manifest-listed blob. Never an arbitrary filesystem path.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/survival-knowledge/reviews": {
+      "get": {
+        "tags": [
+          "SurvivalReviews"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/reviews",
+        "description": "Requires a current active account. Policies: ReviewRead. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalReviews_List",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "pattern": "^[a-z]{2}(-[A-Za-z]{2})?$",
+              "type": "string",
+              "default": "en"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ReviewState"
+            }
+          },
+          {
+            "name": "reviewerId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "articleId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dueBefore",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponsePageResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/reviews/{id}": {
+      "get": {
+        "tags": [
+          "SurvivalReviews"
+        ],
+        "summary": "GET /api/admin/survival-knowledge/reviews/{id}",
+        "description": "Requires a current active account. Policies: ReviewRead. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalReviews_Get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/reviews/{id}/claim": {
+      "post": {
+        "tags": [
+          "SurvivalReviews"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/reviews/{id}/claim",
+        "description": "Requires a current active account. Policies: ReviewRead, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalReviews_Claim",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/admin/survival-knowledge/reviews/{id}/decision": {
+      "post": {
+        "tags": [
+          "SurvivalReviews"
+        ],
+        "summary": "POST /api/admin/survival-knowledge/reviews/{id}/decision",
+        "description": "Requires a current active account. Policies: ReviewRead, Review. All CMS policies require Admin. Admin can edit, review (including own content), and publish. Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.",
+        "operationId": "SurvivalReviews_Decision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Quoted ETag from GET of the source revision, task, job, connector or working resource being changed.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDecision"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDecision"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDecision"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "ETag": {
+                "description": "Quoted row version for the returned resource.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Problem Details; code and traceId identify the failure.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/admin/discover-mars/content/timeline-events": {
       "get": {
         "tags": [
@@ -14252,14 +18084,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "headers": {
-              "ETag": {
-                "description": "Quoted row version for the returned resource.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -15115,6 +18939,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
           "reviewedAt": {
             "type": "string",
             "format": "date-time",
@@ -15944,6 +19772,9 @@
             "format": "date-time",
             "nullable": true
           },
+          "verificationStatus": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -16399,27 +20230,29 @@
         "additionalProperties": false
       },
       "LoginRequest": {
+        "required": [
+          "password"
+        ],
         "type": "object",
-        "description": "Provide password and exactly one non-blank identifier: email or username. Identifiers are trimmed and matched case-insensitively.",
-        "required": ["password"],
         "properties": {
           "email": {
-            "type": "string",
             "maxLength": 254,
+            "type": "string",
             "nullable": true
           },
           "password": {
-            "type": "string",
+            "maxLength": 1024,
             "minLength": 1,
-            "maxLength": 1024
+            "type": "string"
           },
           "username": {
-            "type": "string",
             "maxLength": 50,
+            "type": "string",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Provide password and exactly one non-blank identifier: email or username. Identifiers are trimmed and matched case-insensitively."
       },
       "LoginResponse": {
         "type": "object",

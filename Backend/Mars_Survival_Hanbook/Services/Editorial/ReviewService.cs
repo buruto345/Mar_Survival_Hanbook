@@ -6,13 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mars_Survival_Hanbook.Services.Editorial;
 
-public sealed class ReviewService(MarsDbContext db, CurrentActor actor, SnapshotService snapshots)
+public sealed class ReviewService(MarsDbContext db, CurrentActor actor, SnapshotService snapshots, ContentModule module)
 {
+    public IQueryable<ReviewTask> Tasks => db.ReviewTasks.Where(x => x.Article.Category.Module.Slug == module.Slug);
+
+    public IQueryable<ReviewTask> List(string language) => module.Slug == ContentModule.Survival
+        ? Tasks.Where(x => x.ArticleVersion.LanguageCode == language) : Tasks;
+
     public async Task<ReviewTask> ClaimAsync(Guid id, string? etag, CancellationToken ct)
     {
-        var task = await db.ReviewTasks.Include(x => x.Article).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
+        var task = await Tasks.Include(x => x.Article).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw ApiException.Missing();
         Concurrency.Check(task, etag);
-        if (task.State != ReviewState.Pending || task.ReviewerId != null) throw ApiException.Conflict("Task đã được nhận hoặc hoàn tất.");
+        if (task.State != ReviewState.Pending || task.ReviewerId != null) throw ApiException.Conflict("This review has already been claimed or completed.");
         task.ReviewerId = actor.Id; task.State = ReviewState.InProgress;
         Audit.Add(db, actor.Id, nameof(ReviewTask), id, AuditAction.Updated, "Review claimed", actor.TraceId);
         await db.SaveChangesAsync(ct); return task;
@@ -20,19 +25,19 @@ public sealed class ReviewService(MarsDbContext db, CurrentActor actor, Snapshot
     public async Task<ReviewTask> DecideAsync(Guid id, ReviewDecision r, string? etag, CancellationToken ct)
     {
         if (r.Decision is not (ReviewState.Approved or ReviewState.ChangesRequested or ReviewState.Rejected))
-            throw ApiException.Invalid("Quyết định review không hợp lệ.");
+            throw ApiException.Invalid("Invalid review decision.");
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         await DatabaseLocks.AcquireAsync(db, "publication", ct);
-        var t = await db.ReviewTasks.Include(x => x.Article).Include(x => x.ArticleVersion).SingleOrDefaultAsync(x => x.Id == id, ct)
+        var t = await Tasks.Include(x => x.Article).Include(x => x.ArticleVersion).SingleOrDefaultAsync(x => x.Id == id, ct)
             ?? throw ApiException.Missing();
         Concurrency.Check(t, etag);
         if (!actor.IsAdmin && t.ReviewerId != actor.Id)
-            throw new ApiException(403, "review_not_assigned", "Task không được giao cho reviewer này.");
+            throw new ApiException(403, "review_not_assigned", "This review is assigned to another reviewer.");
         if (t.State != ReviewState.InProgress || t.Article.CurrentDraftVersionId != t.ArticleVersionId ||
-            t.ArticleVersion.ReviewState != ArticleVersionReviewState.InReview) throw ApiException.Conflict("Bản review đã được thay thế.");
+            t.ArticleVersion.ReviewState != ArticleVersionReviewState.InReview) throw ApiException.Conflict("This review has been superseded.");
         if (r.Decision == ReviewState.Approved)
         {
-            if (!r.Checklist.Complete) throw ApiException.Gate("Cần hoàn thành checklist khoa học.");
+            if (!r.Checklist.Complete) throw ApiException.Gate("Complete the scientific review checklist.");
             await snapshots.ValidateGateAsync(t.ArticleVersion, ct);
         }
         t.ReviewerId = actor.Id;

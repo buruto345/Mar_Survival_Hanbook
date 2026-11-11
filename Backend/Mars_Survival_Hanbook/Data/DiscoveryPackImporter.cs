@@ -60,9 +60,10 @@ public static class DiscoveryPackImporter
                     var path = Path.GetFullPath(Path.Combine(directory, item["path"]!.GetValue<string>()));
                     if (!path.StartsWith(directory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
                         throw new InvalidOperationException("Evidence files must be inside the data pack directory.");
-                    var stored = await raw.PutAsync(await File.ReadAllBytesAsync(path), default);
+                    var mimeType = item["mimeType"]!.GetValue<string>();
+                    var stored = await raw.PutAsync(await File.ReadAllBytesAsync(path), default, mimeType);
                     blobs.Add(new { Name = item["name"]!.GetValue<string>(), Url = item["url"]!.GetValue<string>(),
-                        MimeType = item["mimeType"]!.GetValue<string>(), Blob = stored.Path, Sha256 = stored.Hash });
+                        MimeType = mimeType, Blob = stored.Path, Sha256 = stored.Hash });
                 }
                 var manifest = await raw.PutAsync(Encoding.UTF8.GetBytes(DiscoveryJson.Write(new { Files = blobs })), default);
                 var metadata = entry["metadata"]!.Deserialize<SourceMetadata>(DiscoveryJson.Options)!;

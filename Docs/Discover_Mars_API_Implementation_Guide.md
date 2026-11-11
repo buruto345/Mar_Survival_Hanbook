@@ -392,7 +392,7 @@ Tham khảo cách áp dụng migration và kiểm tra SQL tại [Microsoft EF Co
 
 Lưu base URL, timeout, giới hạn trang/file, retry, chính sách tác giả, storage root, lịch kiểm tra trong configuration. Base URL phải do server quản lý; client không gửi một URL tùy ý để server tải.
 
-Ví dụ tên cấu hình: `Nasa:Images:BaseUrl`, `Nasa:Ntrs:BaseUrl`, `Nasa:Pds:BaseUrl`, `Nasa:MarsTrek:BaseUrl`, `Nasa:Import:MaxItems`, `Storage:RawRoot`, `Jwt:Issuer`, `Jwt:Audience`.
+Ví dụ tên cấu hình: `Nasa:Images:BaseUrl`, `Nasa:Ntrs:BaseUrl`, `Nasa:Pds:BaseUrl`, `Nasa:MarsTrek:BaseUrl`, `Nasa:Import:MaxItems`, `Storage:RawRoot`, `Storage:ImageRoot`, `Jwt:Issuer`, `Jwt:Audience`.
 
 Các endpoint NASA được khảo sát không cần API key cho các thao tác công khai đã thử. Nếu dịch vụ sau này yêu cầu secret, dùng user secrets/environment/secret store; NasaConnector chỉ lưu tên tham chiếu secret.
 

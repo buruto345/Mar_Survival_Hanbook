@@ -57,6 +57,143 @@ public sealed class DiscoveryHttpTests(DiscoveryHttpFixture f) : IClassFixture<D
         await Read(await Send(f.Admin, HttpMethod.Post, $"{Root}/reviews/{taskId}/decision", decision, claimed.ETag));
         return await Read(await f.Admin.GetAsync($"{Root}/articles/{articleId}"));
     }
+    [SqlServerFact] public async Task ModulesIsolateEditorialIdsAndShareOnlyPublishedRevisions()
+    {
+        const string survival = "/api/admin/survival-knowledge";
+        var source = await Source();
+        foreach (var (root, other, category) in new[] {
+            (survival, Root, "dust-storms"), (Root, survival, "exploration-history") })
+        {
+            var publicRoot = root.Replace("/admin", "");
+            var slug = "scope-" + Guid.NewGuid().ToString("N");
+            var draft = Draft(source.Id, slug);
+            draft.CategorySlug = category;
+            var payload = JsonSerializer.SerializeToNode(draft, DiscoveryJson.Options)!.AsObject();
+            payload.Remove("languageCode");
+            var created = await Send(f.Admin, HttpMethod.Post, root + "/articles", payload);
+            Assert.Contains(root, created.Headers.Location!.ToString());
+            var (a, tag) = await Read(created, HttpStatusCode.Created);
+            Assert.Equal(root == survival ? "en" : "vi", a.GetProperty("languageCode").GetString());
+            var id = a.GetProperty("id").GetGuid();
+            var version = a.GetProperty("currentDraftVersionId").GetGuid();
+            var otherArticle = $"{other}/articles/{id}";
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Admin.GetAsync(otherArticle)).StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Admin.GetAsync($"{otherArticle}/versions/{version}/preview")).StatusCode);
+            var submitted = await Send(f.Admin, HttpMethod.Post, $"{root}/articles/{id}/versions/{version}/submit", etag: tag);
+            Assert.Contains(root + "/reviews/", submitted.Headers.Location!.ToString());
+            var (task, reviewTag) = await Read(submitted, HttpStatusCode.Created);
+            var review = $"/reviews/{task.GetProperty("id").GetGuid()}";
+            var decision = new ReviewDecision(ReviewState.Approved, "Software fixture", new(true,true,true,true,true));
+            Assert.Equal(0, (await Read(await f.Admin.GetAsync($"{other}/reviews?articleId={id}"))).Body.GetProperty("total").GetInt32());
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Admin.GetAsync(other + review)).StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (await Send(f.Admin, HttpMethod.Post, other + review + "/claim", etag: reviewTag)).StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (await Send(f.Admin, HttpMethod.Post, other + review + "/decision", decision, reviewTag)).StatusCode);
+            var claimed = await Read(await Send(f.Admin, HttpMethod.Post, root + review + "/claim", etag: reviewTag));
+            await Read(await Send(f.Admin, HttpMethod.Post, root + review + "/decision", decision, claimed.ETag));
+            var current = await Read(await f.Admin.GetAsync($"{root}/articles/{id}"));
+            await Read(await Send(f.Admin, HttpMethod.Post, $"{root}/articles/{id}/publish", new VersionRequest(version), current.ETag));
+            var live = await Read(await f.Guest.GetAsync(publicRoot + "/articles/" + slug));
+            Assert.Equal(publicRoot.Split('/').Last(), live.Body.GetProperty("moduleSlug").GetString());
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync(other.Replace("/admin", "") + "/articles/" + slug)).StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync(publicRoot + "/articles/" + slug + (root == survival ? "?language=vi" : "?language=en"))).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await f.Guest.GetAsync($"{publicRoot}/sources/{source.SourceId}/revisions/{source.Id}")).StatusCode);
+        }
+        var revision = await Read(await f.Admin.GetAsync($"{Root}/source-revisions/{source.Id}"));
+        await Read(await Send(f.Admin, HttpMethod.Post, $"{Root}/source-revisions/{source.Id}/revoke",
+            new ReasonRequest("Cross-module withdrawal test"), revision.ETag));
+        foreach (var module in new[] { "survival-knowledge", "discover-mars" })
+            Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync($"/api/{module}/sources/{source.SourceId}/revisions/{source.Id}")).StatusCode);
+    }
+    [SqlServerFact] public async Task SurvivalFactReviewAndConcurrentDraftSavePreserveOneCurrentVersion()
+    {
+        const string root = "/api/admin/survival-knowledge/articles";
+        var source = await Source();
+        await using var db = f.Database.CreateContext();
+        var unit = await db.Units.SingleAsync(x => x.Symbol == "Pa");
+        var fact = await Read(await Send(f.Admin, HttpMethod.Post, Root + "/content/facts",
+            new FactRequest { Name = "Test pressure", Value = 600, OriginalValue = 6, OriginalUnit = "mb",
+                UnitId = unit.Id, Context = "Test fixture", MeasurementKind = MeasurementKind.Estimate,
+                SourceRevisionId = source.Id, EvidenceType = EvidenceType.Observed, TestEnvironment = TestEnvironment.Mars }),
+            HttpStatusCode.Created);
+        var slug = "test-fact-" + Guid.NewGuid().ToString("N");
+        var draft = Draft(source.Id, slug);
+        draft.CategorySlug = "oxygen-and-low-pressure";
+        draft.LanguageCode = "vi";
+        var rejected = await Send(f.Admin, HttpMethod.Post, root, draft);
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        Assert.Contains("Survival Knowledge drafts require languageCode en.", await rejected.Content.ReadAsStringAsync());
+        draft.LanguageCode = "en";
+        draft.SourceRevisionIds = [Guid.NewGuid()];
+        Assert.Equal(HttpStatusCode.BadRequest, (await Send(f.Admin, HttpMethod.Post, root, draft)).StatusCode);
+        Assert.False(await db.Articles.AnyAsync(x => x.Slug == slug));
+        draft.SourceRevisionIds = [source.Id];
+        draft.ResourceRefs.FactIds = [fact.Body.GetProperty("id").GetGuid()];
+        var created = await Read(await Send(f.Admin, HttpMethod.Post, root, draft), HttpStatusCode.Created);
+        var path = $"{root}/{created.Body.GetProperty("id")}";
+        var v = created.Body.GetProperty("currentDraftVersionId").GetGuid();
+        Assert.Equal(HttpStatusCode.UnprocessableEntity,
+            (await Send(f.Admin, HttpMethod.Post, $"{path}/versions/{v}/submit", etag: created.ETag)).StatusCode);
+        var decision = await Read(await Send(f.Admin, HttpMethod.Post,
+            $"{Root}/content/facts/{draft.ResourceRefs.FactIds[0]}/decision",
+            new SourceDecision(VerificationStatus.Accepted, "Test reviewed value"), fact.ETag));
+        Assert.Equal("Accepted", decision.Body.GetProperty("verificationStatus").GetString());
+        var competing = await Task.WhenAll(Send(f.Admin, HttpMethod.Put, path + "/draft", draft, created.ETag),
+            Send(f.OtherAdmin, HttpMethod.Put, path + "/draft", draft, created.ETag));
+        Assert.Single(competing, r => r.StatusCode == HttpStatusCode.PreconditionFailed);
+        var saved = await Read(Assert.Single(competing, r => r.StatusCode == HttpStatusCode.Created), HttpStatusCode.Created);
+        var next = saved.Body.GetProperty("currentDraftVersionId").GetGuid();
+        var task = await Read(await Send(f.Admin, HttpMethod.Post, $"{path}/versions/{next}/submit", etag: saved.ETag), HttpStatusCode.Created);
+        var current = await Read(await f.Admin.GetAsync(path));
+        await Read(await Send(f.Admin, HttpMethod.Put, path + "/draft", draft, current.ETag), HttpStatusCode.Created);
+        var cancelled = await Read(await f.Admin.GetAsync($"/api/admin/survival-knowledge/reviews/{task.Body.GetProperty("id")}"));
+        Assert.Equal("Cancelled", cancelled.Body.GetProperty("state").GetString());
+    }
+    [SqlServerFact] public async Task SurvivalDraftChangesRequireFreshArticleAndTaskEtags()
+    {
+        const string root = "/api/admin/survival-knowledge";
+        const string pub = "/api/survival-knowledge";
+        var source = await Source();
+        var draft = Draft(source.Id, "english-" + Guid.NewGuid().ToString("N"));
+        draft.CategorySlug = "space-radiation";
+        draft.LanguageCode = "en";
+        draft.Title = "Absorbed dose rate";
+        draft.SourceRevisionIds = [source.Id, (await Source()).Id];
+        var a = await Read(await Send(f.Admin, HttpMethod.Post, root + "/articles", draft), HttpStatusCode.Created);
+        var path = $"{root}/articles/{a.Body.GetProperty("id")}";
+        var v1 = a.Body.GetProperty("currentDraftVersionId").GetGuid();
+        var submit = $"{path}/versions/{v1}/submit";
+        Assert.Equal(HttpStatusCode.PreconditionRequired, (await Send(f.Admin, HttpMethod.Post, submit)).StatusCode);
+        var task = await Read(await Send(f.Admin, HttpMethod.Post, submit, etag: a.ETag), HttpStatusCode.Created);
+        var current = await Read(await f.Admin.GetAsync(path));
+        Assert.Equal(HttpStatusCode.Conflict, (await Send(f.Admin, HttpMethod.Post, submit, etag: current.ETag)).StatusCode);
+        var review = $"{root}/reviews/{task.Body.GetProperty("id")}";
+        var claimed = await Read(await Send(f.Admin, HttpMethod.Post, review + "/claim", etag: task.ETag));
+        var approve = new ReviewDecision(ReviewState.Approved, "Synthetic review.", new(true,true,true,true,true));
+        Assert.Equal(HttpStatusCode.PreconditionFailed, (await Send(f.OtherAdmin, HttpMethod.Post, review + "/decision", approve, task.ETag)).StatusCode);
+        await Read(await Send(f.Admin, HttpMethod.Post, review + "/decision", approve, claimed.ETag));
+        var published = await Read(await Send(f.Admin, HttpMethod.Post, path + "/publish", new VersionRequest(v1), current.ETag));
+        draft.CategorySlug = "dust-storms";
+        draft.Title = "New draft";
+        var edited = await Read(await Send(f.Admin, HttpMethod.Put, path + "/draft", draft, published.ETag), HttpStatusCode.Created);
+        var live = await Read(await f.Guest.GetAsync(pub + "/articles/" + draft.Slug));
+        Assert.Equal("space-radiation", live.Body.GetProperty("categorySlug").GetString());
+        Assert.Equal("Absorbed dose rate", live.Body.GetProperty("title").GetString());
+        var v2 = edited.Body.GetProperty("currentDraftVersionId").GetGuid();
+        var second = await Read(await Send(f.Admin, HttpMethod.Post, $"{path}/versions/{v2}/submit", etag: edited.ETag), HttpStatusCode.Created);
+        var secondPath = $"{root}/reviews/{second.Body.GetProperty("id")}";
+        var secondClaim = await Read(await Send(f.Admin, HttpMethod.Post, secondPath + "/claim", etag: second.ETag));
+        await Read(await Send(f.Admin, HttpMethod.Post, secondPath + "/decision",
+            approve with { Decision = ReviewState.ChangesRequested }, secondClaim.ETag));
+        var fresh = await Read(await f.Admin.GetAsync(path));
+        var restored = await Read(await Send(f.Admin, HttpMethod.Post, path + "/restore",
+            new RestoreRequest(v1, "Restore original"), fresh.ETag), HttpStatusCode.Created);
+        var restoredId = restored.Body.GetProperty("currentDraftVersionId").GetGuid();
+        Assert.NotEqual(v1, restoredId);
+        var preview = await Read(await f.Admin.GetAsync($"{path}/versions/{restoredId}/preview"));
+        Assert.Equal("space-radiation", preview.Body.GetProperty("categorySlug").GetString());
+        await Read(await Send(f.Admin, HttpMethod.Post, path + "/unpublish", new ReasonRequest("Test complete"), restored.ETag));
+        Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync(pub + "/articles/" + draft.Slug)).StatusCode);
+    }
     [SqlServerFact] public async Task FullWorkflowFreezesWorkingDataAndRevocationHidesEveryPublicRepresentation()
     {
         var source = await Source();
@@ -187,23 +324,32 @@ public sealed class DiscoveryHttpTests(DiscoveryHttpFixture f) : IClassFixture<D
         using var scope = f.Services.CreateScope();
         var raw = scope.ServiceProvider.GetRequiredService<Mars_Survival_Hanbook.Services.Sources.RawStorage>();
         var bytes = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jfYQAAAAASUVORK5CYII=");
-        var stored = await raw.PutAsync(bytes, default);
+        var stored = await raw.PutAsync(bytes, default, "image/png");
+        var rawRoot = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>()["Storage:RawRoot"]!;
+        Assert.True(File.Exists(Path.Combine(rawRoot, "ImageMarHanbook", stored.Hash + ".png")));
+        Assert.False(File.Exists(Path.Combine(rawRoot, stored.Hash)));
         var media = await Read(await Send(f.Admin, HttpMethod.Post, Root + "/content/media", new MediaRequest {
             SourceRevisionId = source.Id, Title = "Synthetic pixel", MediaType = MediaType.Image,
             Url = "https://images-assets.nasa.gov/test.png", OriginalUrl = "https://images-assets.nasa.gov/test.png",
             Credit = "Synthetic fixture", UsageNote = "Test only", AltText = "Synthetic pixel", FileChecksum = stored.Hash, MimeType = "image/png"
         }), HttpStatusCode.Created);
         var draft = Draft(source.Id, "media-" + Guid.NewGuid().ToString("N"));
+        draft.LanguageCode = "en";
         draft.ResourceRefs.MediaIds = [media.Body.GetProperty("id").GetGuid()];
         draft.MediaPlacements = [new(draft.ResourceRefs.MediaIds[0], 10, "Frozen test caption")];
         var article = await Read(await Send(f.Admin, HttpMethod.Post, Root + "/articles", draft), HttpStatusCode.Created);
         var id = article.Body.GetProperty("id").GetGuid(); var v = article.Body.GetProperty("currentDraftVersionId").GetGuid();
         var approved = await Approve(id, v, article.ETag);
         await Read(await Send(f.Admin, HttpMethod.Post, $"{Root}/articles/{id}/publish", new VersionRequest(v), approved.ETag));
-        var published = await Read(await f.Guest.GetAsync("/api/discover-mars/articles/" + draft.Slug));
+        var published = await Read(await f.Guest.GetAsync("/api/discover-mars/articles/" + draft.Slug + "?language=en"));
         var url = published.Body.GetProperty("media")[0].GetProperty("url").GetString()!;
         Assert.Equal("Frozen test caption", published.Body.GetProperty("media")[0].GetProperty("caption").GetString());
         Assert.StartsWith("/api/discover-mars/media/", url);
+        Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync(url.Replace("discover-mars", "survival-knowledge"))).StatusCode);
+        var legacyUrl = url.Replace("&language=en", "");
+        Assert.NotEqual(url, legacyUrl);
+        Assert.Equal(HttpStatusCode.OK, (await f.Guest.GetAsync(legacyUrl)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await f.Guest.GetAsync(legacyUrl + "&language=vi")).StatusCode);
         var image = await f.Guest.GetAsync(url);
         Assert.Equal(HttpStatusCode.OK, image.StatusCode); Assert.Equal(bytes, await image.Content.ReadAsByteArrayAsync());
         Assert.True(image.Headers.CacheControl!.NoStore);

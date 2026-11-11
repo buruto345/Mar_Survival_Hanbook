@@ -19,6 +19,13 @@ public sealed class FactContentController(ContentService service) : ControllerBa
     [HttpPut("{id:guid}"), Authorize(Policy = "Edit")] public async Task<IActionResult> Update(Guid id, FactRequest request, CancellationToken ct)
     { var r = await service.SaveAsync("facts", id, request, Request.Headers.IfMatch, ct);
       Response.Headers.ETag = Concurrency.ETag(r.Entity); return Ok(r.Data); }
+    [HttpPost("{id:guid}/decision"), Authorize(Policy = "Review")]
+    public async Task<IActionResult> Decision(Guid id, SourceDecision request, CancellationToken ct)
+    {
+        var result = await service.ReviewFactAsync(id, request, Request.Headers.IfMatch, ct);
+        Response.Headers.ETag = Concurrency.ETag(result.Entity);
+        return Ok(result.Data);
+    }
     [HttpPost("{id:guid}/archive"), Authorize(Policy = "Edit")] public async Task<IActionResult> Archive(Guid id, CancellationToken ct)
     { var r = await service.ArchiveAsync("facts", id, Request.Headers.IfMatch, ct);
       Response.Headers.ETag = Concurrency.ETag(r.Entity); return Ok(r.Data); }

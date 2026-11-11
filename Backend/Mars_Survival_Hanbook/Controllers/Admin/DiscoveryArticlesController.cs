@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mars_Survival_Hanbook.Controllers.Admin;
 
-[ApiController, Route("api/admin/discover-mars/articles"), Authorize(Policy = "Cms")]
-public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor) : ControllerBase
+[ApiController, Authorize(Policy = "Cms")]
+public abstract class ArticlesControllerBase(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor, ContentModule module) : ControllerBase
 {
     private static object Dto(Article a) => new { a.Id, a.Title, a.Slug, a.Summary, a.CategoryId, a.LanguageCode,
         a.Status, a.PublishedVersionId, a.CurrentDraftVersionId, a.RequiresReview, a.CreatedById, a.ReviewedAt, a.PublishedAt };
@@ -20,8 +20,9 @@ public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService
     [HttpGet] public async Task<IActionResult> List([FromQuery] PageQuery queryOptions, string? category,
         ArticleStatus? publicationStatus, ArticleVersionReviewState? reviewState, bool? requiresReview, CancellationToken ct)
     {
-        var query = db.Articles.AsNoTracking().Where(x => x.Category.Module.Slug == "discover-mars" &&
+        var query = db.Articles.AsNoTracking().Where(x => x.Category.Module.Slug == module.Slug &&
             (actor.IsAdmin || x.CreatedById == actor.Id));
+        if (module.Slug == ContentModule.Survival) query = query.Where(x => x.LanguageCode == queryOptions.Language);
         if (category != null) query = query.Where(x => x.Category.Slug == category);
         if (publicationStatus.HasValue) query = query.Where(x => x.Status == publicationStatus);
         if (requiresReview.HasValue) query = query.Where(x => x.RequiresReview == requiresReview);
@@ -59,7 +60,7 @@ public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService
     public async Task<IActionResult> Submit(Guid id, Guid versionId, CancellationToken ct)
     {
         var t = await service.SubmitAsync(id, versionId, Request.Headers.IfMatch, ct); Response.Headers.ETag = Concurrency.ETag(t);
-        return Created("/api/admin/discover-mars/reviews/" + t.Id, DiscoveryReviewsController.Dto(t));
+        return Created($"/api/admin/{module.Slug}/reviews/" + t.Id, ReviewsControllerBase.Dto(t));
     }
     [HttpPost("{id:guid}/publish"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> Publish(Guid id, VersionRequest r, CancellationToken ct) => Result(await service.PublishAsync(id, r.VersionId, Request.Headers.IfMatch, ct));
@@ -72,3 +73,11 @@ public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService
         return CreatedAtAction(nameof(Version), new { id, versionId = a.CurrentDraftVersionId }, Dto(a));
     }
 }
+
+[Route("api/admin/discover-mars/articles")]
+public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor, ContentModule module)
+    : ArticlesControllerBase(db, service, discovery, actor, module);
+
+[SurvivalKnowledge, Route("api/admin/survival-knowledge/articles")]
+public sealed class SurvivalArticlesController(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor, ContentModule module)
+    : ArticlesControllerBase(db, service, discovery, actor, module);
