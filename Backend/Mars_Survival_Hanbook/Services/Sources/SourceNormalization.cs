@@ -15,7 +15,7 @@ public static class SourceNormalization
     public static string CanonicalUrl(string input)
     {
         if (!Uri.TryCreate(input, UriKind.Absolute, out var uri) || uri.Scheme is not ("http" or "https") ||
-            !string.IsNullOrEmpty(uri.UserInfo)) throw ApiException.Invalid("URL phải là HTTP(S) và không chứa tài khoản.");
+            !string.IsNullOrEmpty(uri.UserInfo)) throw ApiException.Invalid("Use an HTTP or HTTPS URL without embedded credentials.");
         var b = new UriBuilder(uri) { Fragment = "", Host = uri.IdnHost.ToLowerInvariant() };
         var query = QueryHelpers.ParseQuery(uri.Query)
             .Where(x => !x.Key.StartsWith("utm_", StringComparison.OrdinalIgnoreCase) &&
@@ -35,9 +35,9 @@ public static class SourceNormalization
             SourceProvider.NasaWeb => "url:" + Hash(CanonicalUrl(url ?? externalId)),
             SourceProvider.MarsTrek => "layer:" + Hash(CanonicalUrl(url!) + "|" + externalId),
             SourceProvider.ManualLegacy => "legacy:" + externalId,
-            _ => throw ApiException.Invalid("Provider không hợp lệ.")
+            _ => throw ApiException.Invalid("Invalid source provider.")
         };
-        if (identity.Length > 450 || string.IsNullOrWhiteSpace(externalId)) throw ApiException.Invalid("Identity quá dài hoặc rỗng.");
+        if (identity.Length > 450 || string.IsNullOrWhiteSpace(externalId)) throw ApiException.Invalid("The source identity is empty or too long.");
         return identity;
     }
     public static string CanonicalJson(string json)

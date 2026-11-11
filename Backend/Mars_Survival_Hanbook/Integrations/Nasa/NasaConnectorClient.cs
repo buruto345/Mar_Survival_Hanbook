@@ -17,7 +17,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
     public static SourceProvider Provider(ConnectorType type) => type switch {
         ConnectorType.Images => SourceProvider.Images, ConnectorType.Ntrs => SourceProvider.Ntrs,
         ConnectorType.Pds => SourceProvider.Pds, ConnectorType.MarsTrek => SourceProvider.MarsTrek,
-        ConnectorType.ManualArchive => SourceProvider.NasaWeb, _ => throw ApiException.Invalid("Connector không được hỗ trợ.")
+        ConnectorType.ManualArchive => SourceProvider.NasaWeb, _ => throw ApiException.Invalid("Unsupported connector.")
     };
     private static Uri Base(NasaConnector connector) => new(connector.BaseUrl.TrimEnd('/') + "/");
     private static string Esc(string value) => Uri.EscapeDataString(value);
@@ -67,7 +67,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
             var total = data.TryGetProperty("stats", out var stats) && stats.TryGetProperty("total", out var count) ? count.GetInt32() : page + rows.Length;
             return new(keys, page + rows.Length < total && rows.Length > 0 ? (page + rows.Length).ToString() : null);
         }
-        throw ApiException.Invalid("Connector này cần recordIds đã xác định.");
+        throw ApiException.Invalid("This connector requires explicit recordIds.");
     }
     public async Task<SourceCandidate> FetchAsync(NasaConnector c, string key, CancellationToken ct)
     {
@@ -76,7 +76,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
         async Task<NasaResponse> Fetch(Uri uri, string name)
         {
             var response = await http.GetAsync(uri, ct);
-            var saved = await storage.PutAsync(response.Bytes, ct);
+            var saved = await storage.PutAsync(response.Bytes, ct, response.MimeType);
             blobs.Add(new { Name = name, Url = response.Url.AbsoluteUri, response.MimeType, Blob = saved.Path, Sha256 = saved.Hash });
             hashes[name] = saved.Hash; return response;
         }
@@ -184,7 +184,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
             }
             case ConnectorType.MarsTrek:
             {
-                var path = config["Nasa:MarsTrek:Layers:" + key] ?? throw ApiException.Invalid("Layer key chưa được cấu hình.");
+                var path = config["Nasa:MarsTrek:Layers:" + key] ?? throw ApiException.Invalid("The layer key has not been configured.");
                 var response = await Fetch(new(Base(c), path), "capabilities");
                 var doc = ParseXml(response.Bytes);
                 var layer = doc.Descendants().FirstOrDefault(x => x.Name.LocalName == "Layer") ?? throw new UpstreamException("invalid_wmts", false);
@@ -201,7 +201,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
                     "NASA/JPL", SourceType.MapLayer, Credit: "NASA/JPL", ExternalRecordId: identifier, ProviderMetadata: provider);
                 key = identifier; break;
             }
-            default: throw ApiException.Invalid("Đăng ký nguồn web bằng /sources/manual.");
+            default: throw ApiException.Invalid("Register web sources through /sources/manual.");
         }
         var manifest = await storage.PutAsync(Encoding.UTF8.GetBytes(DiscoveryJson.Write(new { SchemaVersion = 1, Files = blobs })), ct);
         return new(Provider(c.ConnectorType), key, providerVersion, metadata, manifest.Path, manifest.Hash, DateTimeOffset.UtcNow);

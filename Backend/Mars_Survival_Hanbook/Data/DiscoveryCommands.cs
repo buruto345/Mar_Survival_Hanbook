@@ -12,6 +12,11 @@ public static class DiscoveryCommands
 {
     public static async Task<bool> RunAsync(string[] args, IServiceProvider services)
     {
+        if (args.FirstOrDefault() == "publish-survival-edition")
+        {
+            await Survival.SurvivalRelease.RunAsync(services);
+            return true;
+        }
         if (args.Length > 0 && args[0] == "import-discovery-pack")
         {
             var index = Array.IndexOf(args, "--file");

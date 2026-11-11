@@ -35,7 +35,8 @@ Các cấu hình vận hành:
 | --- | --- |
 | `ConnectionStrings__MarsDatabase` | Ghi đè kết nối runtime/design time |
 | `Jwt__SigningKey`, `Jwt__Issuer`, `Jwt__Audience`, `Jwt__ExpiryMinutes` | Chữ ký và thời hạn token |
-| `Storage__RawRoot` | Kho bytes/manifest content-addressed; mặc định `App_Data/raw` dưới content root |
+| `Storage__RawRoot` | Kho tài liệu và manifest theo checksum; mặc định `App_Data/raw` dưới content root |
+| `Storage__ImageRoot` | Kho ảnh theo checksum, mặc định `ImageMarHanbook` dưới content root. Nếu chỉ đặt `Storage__RawRoot`, thư mục ảnh nằm trong raw root tùy chỉnh. |
 | `Nasa__WorkerEnabled`, `Nasa__PollSeconds` | Worker durable, mặc định bật và poll 5 giây |
 | `Nasa__TimeoutSeconds`, `Nasa__MaxResponseBytes` | Mặc định 20 giây và 20 MB mỗi response |
 | `Nasa__Import__MaxItems` | Mặc định tối đa 500 item/job |
@@ -44,7 +45,7 @@ Các cấu hình vận hành:
 | `Nasa__MarsTrek__Layers` | Allowlist layer key → capabilities path phía server |
 | `Discovery__MaxMeasurementDays` | Mặc định khoảng query measurement tối đa 31 ngày |
 
-Không ghi token/mật khẩu vào Git. `App_Data`, kết quả test và log simulation được ignore. Backup database cùng kho raw; DB giữ checksum tham chiếu các bytes này.
+Không ghi token/mật khẩu vào Git. `App_Data`, kết quả test và log simulation được ignore. Backup database cùng kho raw và thư mục ảnh; DB giữ checksum tham chiếu các bytes này.
 
 ## Tạo tài khoản và sử dụng CMS
 

@@ -16,7 +16,7 @@ public sealed class ApiException(int status, string code, string message) : Exce
 {
     public int Status { get; } = status;
     public string Code { get; } = code;
-    public static ApiException Missing() => new(404, "not_found", "Không tìm thấy tài nguyên.");
+    public static ApiException Missing() => new(404, "not_found", "Resource not found.");
     public static ApiException Invalid(string message) => new(400, "invalid_request", message);
     public static ApiException Gate(string message) => new(422, "publication_gate", message);
     public static ApiException Conflict(string message) => new(409, "conflict", message);
@@ -32,10 +32,10 @@ public class ApiExceptionMiddleware(RequestDelegate next, ILogger<ApiExceptionMi
             var (status, code, detail) = e switch
             {
                 ApiException a => (a.Status, a.Code, a.Message),
-                DbUpdateConcurrencyException => (412, "stale_etag", "Tài nguyên đã thay đổi; tải lại ETag."),
-                DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } } => (409, "duplicate", "Định danh đã tồn tại."),
-                JsonException or ValidationException => (400, "invalid_request", "Dữ liệu không hợp lệ."),
-                _ => (500, "internal_error", "Không thể hoàn tất yêu cầu.")
+                DbUpdateConcurrencyException => (412, "stale_etag", "The resource has changed. Fetch its latest ETag."),
+                DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } } => (409, "duplicate", "The identifier already exists."),
+                JsonException or ValidationException => (400, "invalid_request", "Invalid request data."),
+                _ => (500, "internal_error", "The request could not be completed.")
             };
             if (status == 500) log.LogError(e, "Request failed {TraceId}", context.TraceIdentifier);
             context.Response.StatusCode = status;
@@ -49,9 +49,9 @@ public class ApiExceptionMiddleware(RequestDelegate next, ILogger<ApiExceptionMi
 public sealed class CurrentActor(IHttpContextAccessor accessor)
 {
     public Guid Id => Guid.TryParse(accessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
-        ? id : throw new ApiException(401, "unauthorized", "Yêu cầu đăng nhập.");
+        ? id : throw new ApiException(401, "unauthorized", "Authentication is required.");
     public bool IsAdmin => accessor.HttpContext?.User.IsInRole(nameof(UserRole.Admin)) == true;
-    public void Own(Guid owner) { if (!IsAdmin && owner != Id) throw new ApiException(403, "forbidden", "Không có quyền sửa tài nguyên này."); }
+    public void Own(Guid owner) { if (!IsAdmin && owner != Id) throw new ApiException(403, "forbidden", "You do not have permission to edit this resource."); }
     public void ViewArticle(Article a) { if (!IsAdmin) Own(a.CreatedById); }
     public string? TraceId => accessor.HttpContext?.TraceIdentifier;
 }
@@ -60,9 +60,9 @@ public static class Concurrency
     public static string ETag(Entity entity) => "\"" + Convert.ToBase64String(entity.RowVersion) + "\"";
     public static void Check(Entity entity, string? match)
     {
-        if (string.IsNullOrWhiteSpace(match)) throw new ApiException(428, "if_match_required", "Yêu cầu If-Match.");
+        if (string.IsNullOrWhiteSpace(match)) throw new ApiException(428, "if_match_required", "The If-Match header is required.");
         if (!string.Equals(match, ETag(entity), StringComparison.Ordinal))
-            throw new ApiException(412, "stale_etag", "Tài nguyên đã thay đổi; tải lại ETag.");
+            throw new ApiException(412, "stale_etag", "The resource has changed. Fetch its latest ETag.");
     }
 }
 public static class Audit

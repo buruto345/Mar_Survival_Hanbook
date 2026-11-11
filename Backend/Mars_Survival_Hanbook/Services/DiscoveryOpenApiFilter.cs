@@ -12,7 +12,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         var path = context.ApiDescription.RelativePath ?? "";
         var method = context.ApiDescription.HttpMethod;
         var admin = path.StartsWith("api/admin/", StringComparison.Ordinal);
-        operation.OperationId = context.MethodInfo.DeclaringType!.Name.Replace("Controller", "") + "_" + context.MethodInfo.Name;
+        operation.OperationId = (context.ApiDescription.ActionDescriptor.RouteValues["controller"] ?? context.MethodInfo.DeclaringType!.Name.Replace("Controller", "")) + "_" + context.MethodInfo.Name;
         operation.Summary = method + " /" + path;
         foreach (var parameter in operation.Parameters.Where(x => x.In == ParameterLocation.Query).ToArray())
         {
@@ -21,7 +21,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             parameter.Schema.Default = parameter.Name switch {
                 "page" => new Microsoft.OpenApi.Any.OpenApiInteger(1),
                 "pageSize" => new Microsoft.OpenApi.Any.OpenApiInteger(20),
-                "language" => new Microsoft.OpenApi.Any.OpenApiString("vi"),
+                "language" => new Microsoft.OpenApi.Any.OpenApiString(path.Contains("/survival-knowledge") ? "en" : "vi"),
                 "sort" => new Microsoft.OpenApi.Any.OpenApiString("publishedAtDesc"),
                 "includePlanned" => new Microsoft.OpenApi.Any.OpenApiBoolean(false),
                 _ => parameter.Schema.Default
@@ -45,7 +45,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 Content = new Dictionary<string, OpenApiMediaType> { ["application/problem+json"] = new() {
                     Schema = context.SchemaGenerator.GenerateSchema(typeof(ProblemDetails), context.SchemaRepository) } }
             });
-        var successType = ResponseType(path, method!);
+        var successType = ResponseType(path.Replace("survival-knowledge", "discover-mars"), method!);
         if (successType != null)
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :
@@ -56,7 +56,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             var response = new OpenApiResponse { Description = status == "202" ? "Work persisted; poll Location for status." : "Success",
                 Content = new Dictionary<string, OpenApiMediaType> { ["application/json"] = new() {
                     Schema = context.SchemaGenerator.GenerateSchema(successType, context.SchemaRepository) } } };
-            if (admin) response.Headers["ETag"] = new() { Description = "Quoted row version for the returned resource.", Schema = new() { Type = "string" } };
+            if (admin && (method != "GET" || path.EndsWith("}")) && !path.EndsWith("/health")) response.Headers["ETag"] = new() { Description = "Quoted row version for the returned resource.", Schema = new() { Type = "string" } };
             if (status is "201" or "202") response.Headers["Location"] = new() { Schema = new() { Type = "string" } };
             operation.Responses[status] = response;
             if (path.EndsWith("/sources/manual") || path.EndsWith("/amend")) operation.Responses["200"] = response;
@@ -72,6 +72,8 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 ". All CMS policies require Admin. Admin can edit, review (including own content), and publish. " +
                 "Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.";
         }
+        if (path.Contains("/survival-knowledge/") && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
+            operation.Description += " The only supported languageCode is en. Omitting it selects English.";
         if (path == "api/auth/register") operation.Description = "Create an active Viewer account using username, fullName, email and password. " +
             "Username is 3-50 ASCII letters/digits/dots/underscores/hyphens, starting with a letter or digit; fullName is required (up to 150 characters); " +
             "password is 12-128 characters. Username and email are unique without case distinctions. " +

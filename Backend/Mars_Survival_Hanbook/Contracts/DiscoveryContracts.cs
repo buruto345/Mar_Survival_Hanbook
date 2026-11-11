@@ -105,7 +105,14 @@ public class ArticleDraftRequest
 {
     [Required, MaxLength(180)] public string CategorySlug { get; set; } = "";
     [Required, RegularExpression("^[a-z0-9-]{1,200}$")] public string Slug { get; set; } = "";
-    [Required, RegularExpression("^[a-z]{2}(-[A-Za-z]{2})?$")] public string LanguageCode { get; set; } = "vi";
+    private string languageCode = "vi";
+    internal bool HasExplicitLanguage { get; private set; }
+    [Required, RegularExpression("^[a-z]{2}(-[A-Za-z]{2})?$")]
+    public string LanguageCode
+    {
+        get => languageCode;
+        set { languageCode = value; HasExplicitLanguage = true; }
+    }
     [Required, MaxLength(300)] public string Title { get; set; } = "";
     [Required, MaxLength(2000)] public string Summary { get; set; } = "";
     [Required, MinLength(1), MaxLength(100)] public SectionInput[] Sections { get; set; } = [];

@@ -1,0 +1,205 @@
+{
+  "sources": [
+    {
+      "key": "sheet",
+      "title": "Mars Fact Sheet",
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+      "author": "David R. Williams",
+      "organization": "NASA Goddard Space Flight Center"
+    },
+    {
+      "key": "mars",
+      "title": "Mars Facts",
+      "url": "https://science.nasa.gov/mars/facts/",
+      "author": "NASA Science",
+      "organization": "NASA"
+    },
+    {
+      "key": "rad",
+      "title": "Radiation Measurements on Mars",
+      "url": "https://science.nasa.gov/resource/radiation-measurements-on-mars/",
+      "author": "NASA/JPL-Caltech/SwRI",
+      "organization": "NASA/JPL-Caltech/SwRI"
+    },
+    {
+      "key": "dust",
+      "title": "Mars Rover Mission Comes to an End, But Science, Legacy Live on",
+      "url": "https://www.jpl.nasa.gov/edu/resources/teachable-moment/mars-rover-mission-comes-to-an-end-but-science-legacy-live-on/",
+      "author": "Ota Lutz",
+      "organization": "NASA Jet Propulsion Laboratory"
+    },
+    {
+      "key": "ames",
+      "title": "The Partial Gravity of the Moon and Mars Appears Insufficient to Maintain Human Health",
+      "url": "https://ntrs.nasa.gov/citations/20210019591",
+      "author": "Harry W. Jones",
+      "organization": "NASA Ames Research Center"
+    }
+  ],
+  "articles": [
+    {
+      "category": "oxygen-and-low-pressure",
+      "slug": "oxygen-and-surface-pressure",
+      "title": "Why is there so little oxygen to breathe on Mars?",
+      "summary": "Surface pressure tells us how much gas is present. The oxygen fraction tells us how much of that gas is oxygen.",
+      "sections": [
+        {
+          "anchor": "surface-pressure",
+          "heading": "Pressure at the mean radius",
+          "text": "At the mean radius of Mars, NASA lists a surface pressure of 6.36 millibars, equivalent to 636 pascals. Seasonal values range from 4.0 to 8.7 millibars.",
+          "source": "sheet",
+          "locator": "Martian Atmosphere — Surface pressure",
+          "fact": {
+            "name": "Surface pressure at mean radius",
+            "value": 636,
+            "unit": "Pa",
+            "kind": "Estimate",
+            "originalValue": 6.36,
+            "originalUnit": "mb"
+          }
+        },
+        {
+          "anchor": "oxygen-fraction",
+          "heading": "Oxygen by volume",
+          "text": "Oxygen accounts for 0.16% of the atmosphere by volume. Carbon dioxide accounts for 95.1%. To estimate the partial pressure of oxygen, multiply the total pressure by the oxygen fraction.",
+          "source": "sheet",
+          "locator": "Martian Atmosphere — Atmospheric composition (by volume), Major",
+          "fact": {
+            "name": "Oxygen by volume",
+            "value": 0.16,
+            "unit": "%",
+            "kind": "Estimate"
+          }
+        }
+      ]
+    },
+    {
+      "category": "extreme-temperatures",
+      "slug": "temperatures-at-viking-1",
+      "title": "How cold was a day at the Viking 1 landing site?",
+      "summary": "A daily temperature range describes one location. Planetary extremes describe a much wider set of conditions.",
+      "sections": [
+        {
+          "anchor": "daily-range",
+          "heading": "A day at Viking 1",
+          "text": "NASA reports a daily temperature range of 184 to 242 K at the Viking 1 landing site, approximately −89 to −31 °C. Both ends of this range refer to the same location.",
+          "source": "sheet",
+          "locator": "Martian Atmosphere — Diurnal temperature range (Viking 1 Lander site)",
+          "fact": {
+            "name": "Diurnal temperature range at Viking 1 Lander site",
+            "value": 184,
+            "unit": "K",
+            "kind": "Range",
+            "upperValue": 242
+          }
+        },
+        {
+          "anchor": "average",
+          "heading": "Average atmospheric temperature",
+          "text": "The atmospheric fact sheet gives an average of about 214 K (−59 °C). A device at the Viking 1 site would experience temperatures that vary over the course of a day.",
+          "source": "sheet",
+          "locator": "Martian Atmosphere — Average temperature",
+          "fact": {
+            "name": "Average atmospheric temperature",
+            "value": 214,
+            "unit": "K",
+            "kind": "Estimate"
+          }
+        },
+        {
+          "anchor": "global-extremes",
+          "heading": "Temperatures across Mars",
+          "text": "Across Mars, NASA describes temperatures reaching about 20 °C and falling to about −153 °C. Applying those extremes to a particular site requires local observations.",
+          "source": "mars",
+          "locator": "Atmosphere — paragraph on temperature extremes"
+        }
+      ]
+    },
+    {
+      "category": "space-radiation",
+      "slug": "radiation-at-curiosity",
+      "title": "What does Curiosity measure when it records radiation?",
+      "summary": "The Radiation Assessment Detector tracks absorbed dose over time. Early surface observations show the contribution from galactic cosmic rays.",
+      "sections": [
+        {
+          "anchor": "dose-rate",
+          "heading": "Reading the dose rate",
+          "text": "During its first ten months on Mars, from August 2012 to June 2013, Curiosity’s Radiation Assessment Detector recorded about 210 micrograys per day from galactic cosmic rays. The vertical axis measures absorbed dose per day (µGy/day).",
+          "source": "rad",
+          "locator": "Graph description, paragraphs 1–3 (axes and galactic cosmic rays)",
+          "fact": {
+            "name": "Galactic cosmic ray absorbed dose rate at Curiosity",
+            "value": 210,
+            "unit": "µGy/day",
+            "kind": "Estimate"
+          }
+        },
+        {
+          "anchor": "solar-events",
+          "heading": "Limits of the observation period",
+          "text": "RAD observed one relatively weak solar particle event during this period. The frequency and intensity of such events add uncertainty to estimates of radiation exposure on a crewed mission.",
+          "source": "rad",
+          "locator": "Graph description, paragraph beginning “Only one solar particle event”"
+        }
+      ]
+    },
+    {
+      "category": "dust-storms",
+      "slug": "dust-storms-and-solar-power",
+      "title": "How did the 2018 dust storm affect Opportunity’s power supply?",
+      "summary": "Opportunity relied on sunlight to recharge its batteries. Dust suspended in the atmosphere reduced the light reaching its solar panels.",
+      "sections": [
+        {
+          "anchor": "solar-power",
+          "heading": "When less sunlight reaches the panels",
+          "text": "The 2018 storm obscured sunlight at Opportunity’s location for about four months. For a solar-powered rover, the duration of low light matters because its batteries can supply power for only a limited time.",
+          "source": "dust",
+          "locator": "The Final Act — paragraph beginning “Dust storm season”"
+        },
+        {
+          "anchor": "optical-depth",
+          "heading": "Reading optical depth",
+          "text": "Optical depth, written τ, is dimensionless. A higher value means less sunlight reaches the surface to recharge the rover. JPL gives an average of 0.5 at Opportunity’s location and a peak of 10.8 during the 2018 storm.",
+          "source": "dust",
+          "locator": "The Final Act — paragraph beginning “The transparency”",
+          "fact": {
+            "name": "Peak optical depth during the 2018 dust storm",
+            "value": 10.8,
+            "unit": "1",
+            "kind": "Maximum"
+          }
+        }
+      ]
+    },
+    {
+      "category": "partial-gravity",
+      "slug": "partial-gravity-and-human-health",
+      "title": "Could Martian gravity maintain human fitness?",
+      "summary": "Surface gravity on Mars is well characterized. Evidence about the long-term effects on humans comes from other environments.",
+      "sections": [
+        {
+          "anchor": "surface-gravity",
+          "heading": "Mean surface gravity",
+          "text": "Mean surface gravity on Mars is 3.73 m/s², about 38% of the mean value on Earth. The planetary comparison table reports this separately from the equatorial value.",
+          "source": "sheet",
+          "locator": "Mars/Earth Comparison — Bulk parameters, Surface gravity (mean)",
+          "fact": {
+            "name": "Surface gravity (mean)",
+            "value": 3.73,
+            "unit": "m/s²",
+            "kind": "Estimate"
+          }
+        },
+        {
+          "anchor": "human-evidence",
+          "heading": "Indirect evidence about human health",
+          "text": "A NASA Ames report reviews simulated gravity studies and spaceflight observations. The author suggests that gravity below 0.4 g may be insufficient to maintain musculoskeletal and cardiopulmonary conditioning over the long term. Direct evidence from humans living for extended periods in partial gravity was unavailable.",
+          "source": "ames",
+          "locator": "NTRS 20210019591 — Abstract, sentences on indirect evidence and simulated gravity",
+          "evidence": "Proposed",
+          "environment": "Simulation"
+        }
+      ]
+    }
+  ]
+}

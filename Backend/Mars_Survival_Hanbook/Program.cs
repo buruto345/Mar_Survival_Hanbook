@@ -24,6 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MarsDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("MarsDatabase")
     ?? throw new InvalidOperationException("Connection string 'MarsDatabase' is required.")));
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped(ContentModule.FromEndpoint);
 builder.Services.AddScoped<CurrentActor>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -46,7 +47,7 @@ builder.Services.AddHttpClient<SafeNasaHttp>(c => {
 builder.Services.AddScoped<NasaConnectorClient>();
 builder.Services.AddHostedService<IngestionWorker>();
 var key = builder.Configuration["Jwt:SigningKey"];
-var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-discovery-pack";
+var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-discovery-pack" or "publish-survival-edition";
 if (string.IsNullOrEmpty(key) && (builder.Environment.IsDevelopment() || commandMode))
     key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 if (key == null || Encoding.UTF8.GetByteCount(key) < 32)
@@ -94,7 +95,7 @@ builder.Services.AddControllers(o => o.ModelBinderProviders.Insert(0, new Strict
 });
 builder.Services.Configure<ApiBehaviorOptions>(o => o.InvalidModelStateResponseFactory = ctx =>
 {
-    var problem = new ValidationProblemDetails(ctx.ModelState) { Status = 400, Title = "Dữ liệu không hợp lệ." };
+    var problem = new ValidationProblemDetails(ctx.ModelState) { Status = 400, Title = "Invalid request data." };
     problem.Extensions["code"] = "invalid_request"; problem.Extensions["traceId"] = ctx.HttpContext.TraceIdentifier;
     return new BadRequestObjectResult(problem);
 });
@@ -113,7 +114,7 @@ if (await DiscoveryCommands.RunAsync(args, app.Services)) return;
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.StartsWithSegments("/api/discover-mars"))
+    if (context.Request.Path.StartsWithSegments("/api/discover-mars") || context.Request.Path.StartsWithSegments("/api/survival-knowledge"))
         context.Response.Headers.CacheControl = "no-store";
     await next(context);
 });

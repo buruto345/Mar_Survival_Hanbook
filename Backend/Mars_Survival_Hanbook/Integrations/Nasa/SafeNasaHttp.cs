@@ -22,7 +22,7 @@ public sealed class NasaUrlPolicy(IConfiguration config, IWebHostEnvironment env
         if (!uri.IsAbsoluteUri || !string.IsNullOrEmpty(uri.UserInfo) ||
             (!local && (uri.Scheme != "https" || !uri.IsDefaultPort ||
              !Hosts.Concat(partners).Contains(uri.IdnHost, StringComparer.OrdinalIgnoreCase))))
-            throw ApiException.Invalid("URL không thuộc NASA/partner allowlist đã được quản trị cấu hình.");
+            throw ApiException.Invalid("The URL is outside the configured NASA and partner allowlist.");
     }
     public static bool IsPublic(IPAddress address)
     {
