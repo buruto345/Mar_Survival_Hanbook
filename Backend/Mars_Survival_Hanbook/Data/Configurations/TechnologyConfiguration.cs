@@ -7,6 +7,11 @@ internal static class TechnologyConfiguration
 {
     public static void Configure(ModelBuilder builder)
     {
+        var profile = builder.Entity<ScienceTechnologyProfile>();
+        profile.HasKey(x => x.ArticleId);
+        profile.HasIndex(x => x.TechnologyId).IsUnique();
+        profile.HasOne<Article>().WithOne().HasForeignKey<ScienceTechnologyProfile>(x => x.ArticleId).OnDelete(DeleteBehavior.NoAction);
+        profile.HasOne<Technology>().WithOne().HasForeignKey<ScienceTechnologyProfile>(x => x.TechnologyId).OnDelete(DeleteBehavior.NoAction);
         builder.Entity<Technology>().HasIndex(x => x.Slug).IsUnique();
         builder.Entity<Technology>().HasIndex(x => new { x.Status, x.EnvironmentTested });
         builder.Entity<Resource>().HasIndex(x => x.Slug).IsUnique();

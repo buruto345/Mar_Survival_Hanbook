@@ -24,10 +24,18 @@ public sealed class PublicResourceRow
 }
 public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, ContentModule module)
 {
+    private static readonly string[] ScienceSlugs = DiscoverySeed.ScienceCategories.Select(c => c.Slug).ToArray();
+
     public IQueryable<Publication> Publications(string? language) =>
         from a in db.Articles.AsNoTracking()
         join v in db.ArticleVersions.AsNoTracking() on a.PublishedVersionId equals v.Id
         where a.Status == ArticleStatus.Published && a.ArchivedAt == null && a.Category.Module.Slug == module.Slug &&
+            (module.Slug != ContentModule.Science || (v.LanguageCode == "en" && v.ArticleId == a.Id &&
+                ScienceSlugs.Contains(v.CategorySlug) && db.ScienceTechnologyProfiles.Any(p => p.ArticleId == a.Id &&
+                    p.TechnologyId.ToString().ToLower() == MarsDbContext.JsonValue(v.Snapshot, "$.technologyProfile.technologyId")) &&
+                db.ArticleVersionSources.Any(l => l.ArticleVersionId == v.Id) &&
+                MarsDbContext.JsonValue(v.Snapshot, "$.moduleSlug") == ContentModule.Science &&
+                MarsDbContext.JsonValue(v.Snapshot, "$.languageCode") == "en")) &&
             (module.Slug != ContentModule.Survival || v.LanguageCode == "en") &&
             (module.Slug != ContentModule.Living || (v.LanguageCode == "en" &&
                 db.LivingEnglishReviews.Any(review => review.ArticleVersionId == v.Id && review.SnapshotHash == v.SnapshotHash))) &&
@@ -52,7 +60,8 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
     {
         var counts = await Publications(language).GroupBy(x => x.Version.CategorySlug)
             .Select(x => new { Slug = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.Slug, x => x.Count, ct);
-        var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.ArchivedAt == null)
+        var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.ArchivedAt == null &&
+            (module.Slug != ContentModule.Science || ScienceSlugs.Contains(x.Slug)))
             .OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id).ToListAsync(ct);
         return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug) }).ToArray();
     }
@@ -78,6 +87,16 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
                 MarsDbContext.JsonValue(p.Payload, "$.mediaType") == "Image").OrderBy(p => p.ResourceId)
                 .Select(p => MarsDbContext.JsonValue(p.Payload, "$.url")).FirstOrDefault()
         }).PageAsync(q, ct);
+    }
+    public Task<PageResult<TechnologyCard>> TechnologyCardsAsync(PageQuery query, string? category, CancellationToken ct)
+    {
+        if (category != null && !DiscoverySeed.ScienceCategories.Any(c => c.Slug == category))
+            throw ApiException.Invalid("Unknown science category.");
+        return Publications("en").Where(p => category == null || p.Version.CategorySlug == category)
+            .OrderByDescending(p => p.Article.PublishedAt).ThenBy(p => p.Article.Id)
+            .Select(p => new TechnologyCard(p.Article.Id, p.Article.Slug, p.Version.Title, p.Version.Summary, p.Version.CategorySlug,
+                MarsDbContext.JsonValue(p.Version.Snapshot, "$.technologyProfile.technologyStatus")!,
+                MarsDbContext.JsonValue(p.Version.Snapshot, "$.technologyProfile.testEnvironment")!)).PageAsync(query, ct);
     }
     public async Task<object> ArticleAsync(string slug, string language, CancellationToken ct)
     {
@@ -106,6 +125,24 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
             var survival = new DiscoveryService(db, config, new ContentModule(ContentModule.Survival));
             if (relatedSlug != null && await survival.Publications("en").AnyAsync(x => x.Article.Slug == relatedSlug, ct))
                 node["survivalKnowledgeUrl"] = "/api/survival-knowledge/articles/" + relatedSlug + "?language=en";
+        }
+        if (module.Slug == ContentModule.Science && s.RelatedArticleIds.Length > 0)
+        {
+            var accessible = new JsonArray();
+            foreach (var target in new[] { ContentModule.Science, ContentModule.Discovery, ContentModule.Living, ContentModule.Survival })
+            {
+                var targetService = new DiscoveryService(db, config, new ContentModule(target));
+                var rows = await targetService.Publications(null).Where(p => s.RelatedArticleIds.Contains(p.Article.Id))
+                    .Select(p => new { p.Article.Id, p.Article.Slug, p.Version.Title, ArticleVersionId = p.Version.Id, p.Version.LanguageCode }).ToListAsync(ct);
+                foreach (var row in rows)
+                {
+                    var link = JsonSerializer.SerializeToNode(row, DiscoveryJson.Options)!.AsObject();
+                    var route = target == ContentModule.Science ? "technologies" : "articles";
+                    link["url"] = $"/api/{target}/{route}/{row.Slug}?language={row.LanguageCode}";
+                    accessible.Add(link);
+                }
+            }
+            node["relatedArticles"] = accessible;
         }
         node.Remove("relatedArticleIds");
         node["bodyFormat"] = "plainText";

@@ -4,6 +4,7 @@ namespace Mars_Survival_Hanbook.Contracts;
 
 public record ArticleCard(Guid Id, string Slug, string Title, string Summary, string CategorySlug, string LanguageCode,
     Guid ArticleVersionId, int Version, DateTimeOffset? ReviewedAt, DateTimeOffset? PublishedAt, string? ThumbnailUrl);
+public record TechnologyCard(Guid Id, string Slug, string Title, string Summary, string CategorySlug, string TechnologyStatus, string TestEnvironment);
 public record CategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount);
 public record ModuleResponse(Guid Id, string Name, string Slug, string? Description, CategoryResponse[] Categories,
     int PublishedArticleCount, string? CoverUrl);
@@ -17,7 +18,7 @@ public record ArticleVersionResponse(Guid Id, Guid ArticleId, int Version, Artic
     DateTimeOffset? ReviewedAt, Guid? ReviewedById);
 public record ArticleVersionSummary(Guid Id, int Version, ArticleVersionReviewState ReviewState, int SnapshotSchemaVersion,
     string SnapshotHash, string? ChangeSummary, DateTimeOffset ChangedAt, DateTimeOffset? ReviewedAt);
-public record RelatedArticle(Guid Id, string Slug, string Title, Guid ArticleVersionId);
+public record RelatedArticle(Guid Id, string Slug, string Title, Guid ArticleVersionId, string? Url = null, string? LanguageCode = null);
 public record TableOfContentsEntry(string Anchor, string Heading);
 public sealed class ArticleDetailResponse : ArticleSnapshot
 {

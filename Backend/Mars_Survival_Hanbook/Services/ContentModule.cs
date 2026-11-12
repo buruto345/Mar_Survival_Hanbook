@@ -37,8 +37,19 @@ public sealed class LivingOnMarsAttribute : ActionFilterAttribute
     }
 }
 
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ScienceTechnologyAttribute : ActionFilterAttribute
+{
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        foreach (var query in context.ActionArguments.Values.OfType<PageQuery>())
+            if (!context.HttpContext.Request.Query.ContainsKey("language")) query.Language = "en";
+    }
+}
+
 public sealed record ContentModule(string Slug)
 {
+    public const string Science = "science-technology";
     public const string Living = "living-on-mars";
     public const string Discovery = "discover-mars";
     public const string Survival = "survival-knowledge";
@@ -46,6 +57,7 @@ public sealed record ContentModule(string Slug)
     public static ContentModule FromEndpoint(IServiceProvider services)
     {
         var endpoint = services.GetRequiredService<IHttpContextAccessor>().HttpContext?.GetEndpoint();
+        if (endpoint?.Metadata.GetMetadata<ScienceTechnologyAttribute>() != null) return new(Science);
         if (endpoint?.Metadata.GetMetadata<LivingOnMarsAttribute>() != null) return new(Living);
         return new(endpoint?.Metadata.GetMetadata<SurvivalKnowledgeAttribute>() == null ? Discovery : Survival);
     }

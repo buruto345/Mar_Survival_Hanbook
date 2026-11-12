@@ -12,10 +12,18 @@ public static class DiscoverySeed
         ("water-and-life", "Nước và dấu hiệu sự sống"),
         ("missions-and-rovers", "Sứ mệnh NASA và tàu thăm dò")
     ];
+    internal static readonly (string Slug, string Name, string? Description)[] ScienceCategories = [
+        ("in-situ-resource-utilization", "In-Situ Resource Utilization (ISRU)", "Extracting useful materials from local resources."),
+        ("robotics-and-ai", "Robotics and Artificial Intelligence", "Robot control, perception and autonomous decisions."),
+        ("greenhouses-and-space-agriculture", "Greenhouses and Space Agriculture", "Growing crops in controlled environments."),
+        ("water-recycling-systems", "Water Recycling Systems", "Recovering and treating used water."),
+        ("radiation-protection", "Radiation Protection Technologies", "Reducing exposure to ionizing radiation.")
+    ];
     public static async Task RunAsync(MarsDbContext db, CancellationToken ct = default)
     {
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         await DatabaseLocks.AcquireAsync(db, "discovery-seed", ct);
+        await SeedModuleAsync(db, Services.ContentModule.Science, "Science and Technology", "How exploration technologies work and where they have been tested.", ScienceCategories, ct);
         await SeedModuleAsync(db, "discover-mars", "Discover Mars", "Khám phá Sao Hỏa từ các nguồn khoa học được kiểm chứng.",
             Categories.Select(c => (c.Slug, c.Name, (string?)null)).ToArray(), ct);
         await SeedModuleAsync(db, "survival-knowledge", "Survival Knowledge", "Conditions for living on Mars, explained through NASA observations and research.", [
@@ -57,7 +65,7 @@ public static class DiscoverySeed
             module = new() { Name = moduleName, Slug = moduleSlug, Description = description };
             db.Modules.Add(module); await db.SaveChangesAsync(ct);
         }
-        if (moduleSlug is "survival-knowledge" or "living-on-mars")
+        if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science)
         {
             module.Name = moduleName;
             module.Description = description;
@@ -68,9 +76,9 @@ public static class DiscoverySeed
             var category = await db.Categories.SingleOrDefaultAsync(x => x.ModuleId == module.Id && x.Slug == slug, ct);
             if (category == null)
                 db.Categories.Add(new() { ModuleId = module.Id, Name = name, Slug = slug, Description = topicDescription, DisplayOrder = i });
-            else if (moduleSlug is "survival-knowledge" or "living-on-mars")
+            else if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science)
             {
-                if (moduleSlug == "living-on-mars") category.DisplayOrder = i;
+                if (moduleSlug is "living-on-mars" or Services.ContentModule.Science) category.DisplayOrder = i;
                 category.Name = name;
                 category.Description = topicDescription;
             }

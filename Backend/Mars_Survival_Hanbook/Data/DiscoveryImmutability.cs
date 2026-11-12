@@ -18,7 +18,7 @@ internal static class DiscoveryImmutability
                 LivingEnglishReview or ScenarioParameter or ScenarioResource or FacilityDefinition or FacilityFlow => [],
                 ArticleVersion => ["ReviewState", "ReviewedById", "ReviewedAt", "UpdatedAt", "RowVersion"],
                 SourceRevision => ["VerificationStatus", "VerifiedById", "VerifiedAt", "VerificationNotes", "RevokedAt", "RevocationReason", "UpdatedAt", "RowVersion"],
-                ArticleVersionSource or PublicationResource or AuditLog => [],
+                ScienceTechnologyProfile or ArticleVersionSource or PublicationResource or AuditLog => [],
                 _ => null
             };
             if (mutable is not null && (e.State == EntityState.Deleted ||

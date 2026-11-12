@@ -47,6 +47,7 @@ public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(
     public DbSet<ArticleTag> ArticleTags => Set<ArticleTag>();
     public DbSet<ArticleSource> ArticleSources => Set<ArticleSource>();
     public DbSet<ArticleFact> ArticleFacts => Set<ArticleFact>();
+    public DbSet<ScienceTechnologyProfile> ScienceTechnologyProfiles => Set<ScienceTechnologyProfile>();
     public DbSet<ArticleTechnology> ArticleTechnologies => Set<ArticleTechnology>();
     public DbSet<TechnologySource> TechnologySources => Set<TechnologySource>();
     public DbSet<TechnologyFact> TechnologyFacts => Set<TechnologyFact>();

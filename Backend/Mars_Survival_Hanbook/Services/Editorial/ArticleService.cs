@@ -28,9 +28,29 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         if (module.Slug == ContentModule.Survival && r.LanguageCode != "en")
             throw ApiException.Invalid("Survival Knowledge drafts require languageCode en.");
         if (module.Slug == ContentModule.Living && r.LanguageCode != "en") throw ApiException.Invalid("languageCode must be en.");
+        if (module.Slug == ContentModule.Science)
+        {
+            if (!r.HasExplicitLanguage) r.LanguageCode = "en";
+            if (r.LanguageCode != "en" || !DiscoverySeed.ScienceCategories.Any(c => c.Slug == r.CategorySlug) || r.TechnologyProfile == null)
+                throw ApiException.Invalid("Science profiles require English, one catalog category and technologyProfile.");
+        }
+        else if (r.TechnologyProfile != null) throw ApiException.Invalid("technologyProfile requires Science and Technology.");
         Validator.ValidateObject(r, new ValidationContext(r), true);
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await DatabaseLocks.AcquireAsync(db, "article:" + (id?.ToString() ?? r.Slug), ct);
+        if (r.TechnologyProfile is { } profile)
+        {
+            await DatabaseLocks.AcquireAsync(db, "official-profile:" + profile.TechnologyId, ct);
+            if (!await db.Technologies.AnyAsync(t => t.Id == profile.TechnologyId && t.ArchivedAt == null, ct))
+                throw ApiException.Invalid("Unknown or archived technology.");
+            if (id.HasValue && !await db.ScienceTechnologyProfiles.AnyAsync(p => p.ArticleId == id && p.TechnologyId == profile.TechnologyId, ct))
+            {
+                _ = await GetAsync(id.Value, ct);
+                throw ApiException.Conflict("The official technology cannot change.");
+            }
+            if (!id.HasValue && await db.ScienceTechnologyProfiles.AnyAsync(p => p.TechnologyId == profile.TechnologyId, ct))
+                throw ApiException.Conflict("This technology already has an official profile.");
+        }
         Article? a = null;
         if (id.HasValue)
         {
@@ -45,6 +65,7 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
             a = new() { CategoryId = category.Id, CreatedById = actor.Id,
                 Title = r.Title, Slug = r.Slug, Summary = r.Summary, Content = "", LanguageCode = r.LanguageCode };
             db.Articles.Add(a); await db.SaveChangesAsync(ct);
+            if (r.TechnologyProfile != null) db.ScienceTechnologyProfiles.Add(new() { ArticleId = a.Id, TechnologyId = r.TechnologyProfile.TechnologyId });
         }
         a.CategoryId = category.Id; a.Title = r.Title; a.Slug = r.Slug; a.Summary = r.Summary;
         a.LanguageCode = r.LanguageCode; a.Content = string.Join("\n\n", r.Sections.Select(x => x.Heading + "\n" + x.Body)); a.UpdatedById = actor.Id;
@@ -183,8 +204,15 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         var sourceVersion = await VersionAsync(id, r.SourceVersionId, ct);
         if (module.Slug == ContentModule.Living) await snapshots.ValidateGateAsync(sourceVersion, ct);
         var s = SnapshotService.Read(sourceVersion);
+        if (module.Slug == ContentModule.Science && sourceVersion.SnapshotHash != SourceNormalization.Hash(sourceVersion.Snapshot))
+            throw ApiException.Gate("The snapshot hash does not match.");
         if (module.Slug == ContentModule.Survival && s.LanguageCode != "en")
             throw ApiException.Invalid("Only English versions can be restored as Survival Knowledge drafts.");
+        if (module.Slug == ContentModule.Science && (s.LanguageCode != "en" || s.ModuleSlug != module.Slug ||
+            !DiscoverySeed.ScienceCategories.Any(c => c.Slug == s.CategorySlug) ||
+            !await db.Categories.AnyAsync(c => c.Slug == s.CategorySlug && c.Module.Slug == module.Slug && c.ArchivedAt == null, ct) || s.TechnologyProfile == null ||
+            !await db.ScienceTechnologyProfiles.AnyAsync(p => p.ArticleId == id && p.TechnologyId == s.TechnologyProfile.TechnologyId, ct)))
+            throw ApiException.Invalid("The version cannot be restored to this official profile.");
         a.Title = s.Title; a.Summary = s.Summary; a.LanguageCode = s.LanguageCode;
         a.Content = string.Join("\n\n", s.Sections.Select(x => x.Heading + "\n" + x.Body));
         a.CategoryId = await db.Categories.Where(x => x.Slug == s.CategorySlug && x.Module.Slug == module.Slug).Select(x => x.Id).SingleAsync(ct);

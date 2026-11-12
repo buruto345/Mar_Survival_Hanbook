@@ -12,6 +12,12 @@ public static class DiscoveryCommands
 {
     public static async Task<bool> RunAsync(string[] args, IServiceProvider services)
     {
+        if (args.FirstOrDefault() == "import-science-pack")
+        {
+            if (!(args.Length == 1 || args.Length == 3 && args[1] == "--file")) throw ApiException.Invalid("Usage: import-science-pack [--file PATH]");
+            await Science.ScienceImport.RunAsync(services, args.Length == 3 ? args[2] : null);
+            return true;
+        }
         if (args.FirstOrDefault() == "export-living-review")
         {
             if (args.Length != 3 || !Guid.TryParse(args[1], out var id))

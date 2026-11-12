@@ -8,14 +8,12 @@ using System.Text.Json.Nodes;
 namespace Mars_Survival_Hanbook.Controllers;
 
 [ApiController]
-public abstract class KnowledgeControllerBase(DiscoveryService service, RawStorage raw) : ControllerBase
+public abstract class PublicationControllerBase(DiscoveryService service, RawStorage raw) : ControllerBase
 {
     protected DiscoveryService Service { get; } = service;
     [HttpGet] public async Task<IActionResult> Module([FromQuery] PageQuery queryOptions, CancellationToken ct) => Ok(await Service.ModuleAsync(queryOptions.Language, ct));
     [HttpGet("categories")] public async Task<IActionResult> Categories([FromQuery] PageQuery queryOptions, CancellationToken ct) => Ok(await Service.CategoriesAsync(queryOptions.Language, ct));
     [HttpGet("categories/{slug}")] public async Task<IActionResult> Category(string slug, [FromQuery] PageQuery queryOptions, CancellationToken ct) => Ok(await Service.CategoryAsync(slug, queryOptions.Language, ct));
-    [HttpGet("articles")] public async Task<IActionResult> Articles([FromQuery] DiscoveryQuery queryOptions, CancellationToken ct) => Ok(await Service.ArticlesAsync(queryOptions, ct));
-    [HttpGet("articles/{slug}")] public async Task<IActionResult> Article(string slug, [FromQuery] PageQuery queryOptions, CancellationToken ct) => Ok(await Service.ArticleAsync(slug, queryOptions.Language, ct));
     [HttpGet("sources/{id:guid}/revisions/{revisionId:guid}")] public async Task<IActionResult> Source(Guid id, Guid revisionId, CancellationToken ct)
         => Ok(await Service.SourceAsync(id, revisionId, ct));
     [HttpGet("media/{id:guid}/file")]
@@ -30,6 +28,12 @@ public abstract class KnowledgeControllerBase(DiscoveryService service, RawStora
         Response.Headers.CacheControl = "no-store";
         return File(bytes, media["mimeType"]?.GetValue<string>() ?? "application/octet-stream");
     }
+}
+
+public abstract class KnowledgeControllerBase(DiscoveryService service, RawStorage raw) : PublicationControllerBase(service, raw)
+{
+    [HttpGet("articles")] public async Task<IActionResult> Articles([FromQuery] DiscoveryQuery queryOptions, CancellationToken ct) => Ok(await Service.ArticlesAsync(queryOptions, ct));
+    [HttpGet("articles/{slug}")] public async Task<IActionResult> Article(string slug, [FromQuery] PageQuery queryOptions, CancellationToken ct) => Ok(await Service.ArticleAsync(slug, queryOptions.Language, ct));
 }
 
 [SurvivalKnowledge, Route("api/survival-knowledge")]

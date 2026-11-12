@@ -1,0 +1,759 @@
+{
+  "info": {
+    "name": "Science and Technology",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5086"
+    },
+    {
+      "key": "slug",
+      "value": "iss-water-recovery-system"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "technologyId",
+      "value": ""
+    },
+    {
+      "key": "sourceRevisionId",
+      "value": ""
+    },
+    {
+      "key": "articleId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Overview",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/science-technology",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "science-technology"
+          ]
+        },
+        "header": []
+      }
+    },
+    {
+      "name": "Categories",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/science-technology/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "science-technology",
+            "categories"
+          ]
+        },
+        "header": []
+      }
+    },
+    {
+      "name": "Water recycling cards",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/science-technology/technologies?category=water-recycling-systems&page=1&pageSize=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "science-technology",
+            "technologies"
+          ],
+          "query": [
+            {
+              "key": "category",
+              "value": "water-recycling-systems"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "20"
+            }
+          ]
+        },
+        "header": []
+      }
+    },
+    {
+      "name": "Water recovery profile",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/science-technology/technologies/{{slug}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "science-technology",
+            "technologies",
+            "{{slug}}"
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const c = pm.response.json().sources[0];",
+              "pm.collectionVariables.set('sourceId', c.sourceId); pm.collectionVariables.set('sourceRevisionId', c.sourceRevisionId);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cited source revision",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/science-technology/sources/{{sourceId}}/revisions/{{sourceRevisionId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "science-technology",
+            "sources",
+            "{{sourceId}}",
+            "revisions",
+            "{{sourceRevisionId}}"
+          ]
+        },
+        "header": []
+      }
+    },
+    {
+      "name": "Choose an existing technology",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/catalog",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "catalog"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create official draft (unlinked identity only)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categorySlug\": \"water-recycling-systems\",\n  \"slug\": \"{{slug}}\",\n  \"title\": \"ISS Water Recovery System\",\n  \"summary\": \"The combined assemblies recover water from multiple waste streams on the space station.\",\n  \"sections\": [\n    {\n      \"anchor\": \"problem\",\n      \"heading\": \"Problem\",\n      \"body\": \"Carrying fresh water for every use makes a crew dependent on resupply.\"\n    },\n    {\n      \"anchor\": \"principle\",\n      \"heading\": \"Principle\",\n      \"body\": \"The urine processor distils wastewater. A brine processor draws more water from the residue into humid air; the station collects condensate and the water processor treats it.\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"key\": \"process\",\n      \"text\": \"The urine processor distils wastewater. A brine processor draws more water from the residue into humid air; the station collects condensate and the water processor treats it.\",\n      \"testEnvironment\": \"InternationalSpaceStation\",\n      \"evidenceType\": \"Tested\",\n      \"sourceRevisionIds\": [\n        \"{{sourceRevisionId}}\"\n      ],\n      \"locator\": {\n        \"section\": \"Discussion of the Urine Processor Assembly, Brine Processor Assembly and Water Processor Assembly\"\n      }\n    }\n  ],\n  \"technologyProfile\": {\n    \"technologyId\": \"{{technologyId}}\",\n    \"technologyStatus\": \"Demonstrated\",\n    \"testEnvironment\": \"InternationalSpaceStation\",\n    \"evidenceType\": \"Tested\",\n    \"capabilities\": \"The combined assemblies recover water from multiple waste streams on the space station.\",\n    \"limitations\": \"The demonstration used the station air and water loops. It does not establish how a stand-alone Mars habitat would perform.\",\n    \"sourceRevisionIds\": [\n      \"{{sourceRevisionId}}\"\n    ],\n    \"resources\": [],\n    \"hazards\": []\n  }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh article and ETag",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Save new draft",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/draft",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "draft"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categorySlug\": \"water-recycling-systems\",\n  \"slug\": \"{{slug}}\",\n  \"title\": \"ISS Water Recovery System\",\n  \"summary\": \"The combined assemblies recover water from multiple waste streams on the space station.\",\n  \"sections\": [\n    {\n      \"anchor\": \"problem\",\n      \"heading\": \"Problem\",\n      \"body\": \"Carrying fresh water for every use makes a crew dependent on resupply.\"\n    },\n    {\n      \"anchor\": \"principle\",\n      \"heading\": \"Principle\",\n      \"body\": \"The urine processor distils wastewater. A brine processor draws more water from the residue into humid air; the station collects condensate and the water processor treats it.\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"key\": \"process\",\n      \"text\": \"The urine processor distils wastewater. A brine processor draws more water from the residue into humid air; the station collects condensate and the water processor treats it.\",\n      \"testEnvironment\": \"InternationalSpaceStation\",\n      \"evidenceType\": \"Tested\",\n      \"sourceRevisionIds\": [\n        \"{{sourceRevisionId}}\"\n      ],\n      \"locator\": {\n        \"section\": \"Discussion of the Urine Processor Assembly, Brine Processor Assembly and Water Processor Assembly\"\n      }\n    }\n  ],\n  \"technologyProfile\": {\n    \"technologyId\": \"{{technologyId}}\",\n    \"technologyStatus\": \"Demonstrated\",\n    \"testEnvironment\": \"InternationalSpaceStation\",\n    \"evidenceType\": \"Tested\",\n    \"capabilities\": \"The combined assemblies recover water from multiple waste streams on the space station.\",\n    \"limitations\": \"The demonstration used the station air and water loops. It does not establish how a stand-alone Mars habitat would perform.\",\n    \"sourceRevisionIds\": [\n      \"{{sourceRevisionId}}\"\n    ],\n    \"resources\": [],\n    \"hazards\": []\n  }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preview selected version",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/versions/{{versionId}}/preview",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "versions",
+            "{{versionId}}",
+            "preview"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Submit current draft",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/versions/{{versionId}}/submit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "versions",
+            "{{versionId}}",
+            "submit"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "pm.collectionVariables.set('taskId', pm.response.json().id); pm.collectionVariables.set('taskETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claim review",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/reviews/{{taskId}}/claim",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "reviews",
+            "{{taskId}}",
+            "claim"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{taskETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "pm.collectionVariables.set('taskETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Approve after checking the snapshot",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/reviews/{{taskId}}/decision",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "reviews",
+            "{{taskId}}",
+            "decision"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{taskETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"decision\": \"Approved\",\n  \"notes\": \"Checked the frozen English text and primary evidence.\",\n  \"checklist\": {\n    \"sourcesChecked\": true,\n    \"claimsChecked\": true,\n    \"unitsChecked\": true,\n    \"evidenceChecked\": true,\n    \"mediaRightsChecked\": true\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Refresh article before publishing",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Publish approved version",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/publish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "publish"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"versionId\": \"{{versionId}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unpublish",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/unpublish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "unpublish"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Withdraw this edition for correction.\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restore selected version as draft",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/science-technology/articles/{{articleId}}/restore",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "science-technology",
+            "articles",
+            "{{articleId}}",
+            "restore"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceVersionId\": \"{{versionId}}\",\n  \"changeSummary\": \"Restore the selected frozen snapshot.\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
