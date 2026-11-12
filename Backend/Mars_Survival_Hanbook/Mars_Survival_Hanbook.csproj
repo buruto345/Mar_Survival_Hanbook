@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Data/Living/outpost.en.json" WithCulture="false" LogicalName="Mars_Survival_Hanbook.Data.Living.outpost.en.json" />
     <None Update="ImageMarHanbook/*" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.33" />

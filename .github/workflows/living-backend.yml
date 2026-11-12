@@ -1,0 +1,18 @@
+name: Living on Mars backend
+on:
+  pull_request:
+    paths: ['Backend/**', '.github/workflows/living-backend.yml']
+  push:
+    paths: ['Backend/**', '.github/workflows/living-backend.yml']
+jobs:
+  integration:
+    runs-on: windows-2022
+    env:
+      MARS_RUN_SQLSERVER_TESTS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: sqllocaldb start MSSQLLocalDB
+      - run: dotnet test Backend/Mars_Survival_Hanbook.Tests --configuration Release

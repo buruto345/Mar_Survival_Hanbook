@@ -21,7 +21,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             parameter.Schema.Default = parameter.Name switch {
                 "page" => new Microsoft.OpenApi.Any.OpenApiInteger(1),
                 "pageSize" => new Microsoft.OpenApi.Any.OpenApiInteger(20),
-                "language" => new Microsoft.OpenApi.Any.OpenApiString(path.Contains("/survival-knowledge") ? "en" : "vi"),
+                "language" => new Microsoft.OpenApi.Any.OpenApiString((path.Contains("/survival-knowledge") || path.Contains("/living-on-mars")) ? "en" : "vi"),
                 "sort" => new Microsoft.OpenApi.Any.OpenApiString("publishedAtDesc"),
                 "includePlanned" => new Microsoft.OpenApi.Any.OpenApiBoolean(false),
                 _ => parameter.Schema.Default
@@ -45,7 +45,20 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 Content = new Dictionary<string, OpenApiMediaType> { ["application/problem+json"] = new() {
                     Schema = context.SchemaGenerator.GenerateSchema(typeof(ProblemDetails), context.SchemaRepository) } }
             });
-        var successType = ResponseType(path.Replace("survival-knowledge", "discover-mars"), method!);
+        if (path == "api/living-on-mars/simulations/preview")
+        {
+            operation.RequestBody.Content["application/json"].Example = Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(
+                """{"scenarioKey":"outpost","scenarioVersion":1,"durationSols":1,"facilities":{"solar":1,"habitat":2,"electrolyzer":0}}""");
+            var fixture = new PreviewRequest("outpost", 1, DurationSols: 1,
+                Facilities: new() { ["solar"] = 1, ["habitat"] = 2, ["electrolyzer"] = 0 });
+            var example = Living.LivingSimulationService.Run(Living.LivingScenarioService.Baseline(), fixture);
+            foreach (var media in operation.Responses["200"].Content.Values)
+                media.Example = OpenApiAnyFactory.CreateFromJson(DiscoveryJson.Write(example));
+            operation.Responses["400"].Content["application/problem+json"].Example = Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(
+                """{"status":400,"title":"Invalid value for initialStocks.","code":"invalid_request"}""");
+        }
+        var contractPath = path.StartsWith("api/living-on-mars") ? path.Replace("living-on-mars", "discover-mars") : path;
+        var successType = ResponseType(contractPath.Replace("survival-knowledge", "discover-mars"), method!);
         if (successType != null)
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :

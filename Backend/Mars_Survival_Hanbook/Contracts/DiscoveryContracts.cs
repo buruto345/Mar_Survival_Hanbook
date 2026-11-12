@@ -101,6 +101,9 @@ public class ResourceRefs
     [MaxLength(100)] public Guid[] MediaIds { get; set; } = [];
     [MaxLength(100)] public Guid[] MapLayerIds { get; set; } = [];
 }
+public record EnglishCitationDisplay([Required, MaxLength(500)] string Title,
+    [MaxLength(1000)] string? Credit, [MaxLength(4000)] string? UsageNote);
+
 public class ArticleDraftRequest
 {
     [Required, MaxLength(180)] public string CategorySlug { get; set; } = "";
@@ -120,6 +123,7 @@ public class ArticleDraftRequest
     [Required] public ResourceRefs ResourceRefs { get; set; } = new();
     [Required, MaxLength(100)] public MediaPlacement[] MediaPlacements { get; set; } = [];
     [Required, MaxLength(100)] public Guid[] SourceRevisionIds { get; set; } = [];
+    [MaxLength(100)] public Dictionary<Guid, EnglishCitationDisplay>? EnglishCitations { get; set; }
     [Required, MaxLength(50)] public Guid[] RelatedArticleIds { get; set; } = [];
     [MaxLength(2000)] public string? ChangeSummary { get; set; }
 }

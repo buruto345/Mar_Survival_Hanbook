@@ -11,6 +11,8 @@ namespace Mars_Survival_Hanbook.Data;
 /// </summary>
 public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(options)
 {
+    public DbSet<LivingScenarioVersion> LivingScenarios => Set<LivingScenarioVersion>();
+    public DbSet<LivingEnglishReview> LivingEnglishReviews => Set<LivingEnglishReview>();
     public DbSet<SourceRevision> SourceRevisions => Set<SourceRevision>();
     public DbSet<IngestionItem> IngestionItems => Set<IngestionItem>();
     public DbSet<ArticleVersionSource> ArticleVersionSources => Set<ArticleVersionSource>();
@@ -67,6 +69,7 @@ public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(
         TechnologyConfiguration.Configure(modelBuilder);
         OperationsConfiguration.Configure(modelBuilder);
         DiscoveryConfiguration.Configure(modelBuilder);
+        LivingConfiguration.Configure(modelBuilder);
         CommonConfiguration.Configure(modelBuilder);
     }
 
@@ -105,4 +108,3 @@ public class MarsDbContext(DbContextOptions<MarsDbContext> options) : DbContext(
         }
     }
 }
-
