@@ -8,7 +8,8 @@ namespace Mars_Survival_Hanbook.Services.Editorial;
 
 public sealed class ReviewService(MarsDbContext db, CurrentActor actor, SnapshotService snapshots, ContentModule module)
 {
-    public IQueryable<ReviewTask> Tasks => db.ReviewTasks.Where(x => x.Article.Category.Module.Slug == module.Slug);
+    public IQueryable<ReviewTask> Tasks => db.ReviewTasks.Where(x => x.Article.Category.Module.Slug == module.Slug &&
+        (module.Slug != ContentModule.Living || x.ArticleVersion.LanguageCode == "en"));
 
     public IQueryable<ReviewTask> List(string language) => module.Slug == ContentModule.Survival
         ? Tasks.Where(x => x.ArticleVersion.LanguageCode == language) : Tasks;

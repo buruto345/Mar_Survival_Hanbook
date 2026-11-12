@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Mars_Survival_Hanbook.BackgroundJobs;
+using Mars_Survival_Hanbook.Contracts;
 using Mars_Survival_Hanbook.Data;
 using Mars_Survival_Hanbook.Integrations.Nasa;
 using Mars_Survival_Hanbook.Models;
@@ -35,6 +36,7 @@ builder.Services.AddScoped<SnapshotService>();
 builder.Services.AddScoped<ArticleService>();
 builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<DiscoveryService>();
+builder.Services.AddScoped<Mars_Survival_Hanbook.Services.Living.LivingScenarioService>();
 builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<IngestionProcessor>();
 builder.Services.AddSingleton<NasaUrlPolicy>();
@@ -47,7 +49,7 @@ builder.Services.AddHttpClient<SafeNasaHttp>(c => {
 builder.Services.AddScoped<NasaConnectorClient>();
 builder.Services.AddHostedService<IngestionWorker>();
 var key = builder.Configuration["Jwt:SigningKey"];
-var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-discovery-pack" or "publish-survival-edition";
+var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-discovery-pack" or "publish-survival-edition" or "publish-living-scenario" or "withdraw-living-scenario" or "export-living-review";
 if (string.IsNullOrEmpty(key) && (builder.Environment.IsDevelopment() || commandMode))
     key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 if (key == null || Encoding.UTF8.GetByteCount(key) < 32)
@@ -95,7 +97,10 @@ builder.Services.AddControllers(o => o.ModelBinderProviders.Insert(0, new Strict
 });
 builder.Services.Configure<ApiBehaviorOptions>(o => o.InvalidModelStateResponseFactory = ctx =>
 {
-    var problem = new ValidationProblemDetails(ctx.ModelState) { Status = 400, Title = "Invalid request data." };
+    var living = ctx.HttpContext.GetEndpoint()?.Metadata.GetMetadata<LivingOnMarsAttribute>() != null;
+    var problem = living ? LivingRequestErrors.From(ctx.ModelState) : new ValidationProblemDetails(ctx.ModelState);
+    problem.Status = 400;
+    problem.Title = "Invalid request data.";
     problem.Extensions["code"] = "invalid_request"; problem.Extensions["traceId"] = ctx.HttpContext.TraceIdentifier;
     return new BadRequestObjectResult(problem);
 });
@@ -114,6 +119,13 @@ if (await DiscoveryCommands.RunAsync(args, app.Services)) return;
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.Use(async (context, next) =>
 {
+    if (context.Request.Path.StartsWithSegments("/api/living-on-mars") || context.Request.Path.StartsWithSegments("/api/admin/living-on-mars"))
+    {
+        context.Response.Headers.ContentLanguage = "en";
+        context.Response.Headers.CacheControl = "no-store";
+        if (new[] { "language", "languageCode" }.Any(key => context.Request.Query.TryGetValue(key, out var values) &&
+            values.Any(value => value != "en"))) throw ApiException.Invalid("language and languageCode must be en.");
+    }
     if (context.Request.Path.StartsWithSegments("/api/discover-mars") || context.Request.Path.StartsWithSegments("/api/survival-knowledge"))
         context.Response.Headers.CacheControl = "no-store";
     await next(context);
@@ -121,6 +133,17 @@ app.Use(async (context, next) =>
 if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
 if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseRateLimiter();
+app.UseWhen(context => context.GetEndpoint()?.Metadata.GetMetadata<LivingOnMarsAttribute>() != null, branch =>
+    branch.UseStatusCodePages(async pages =>
+    {
+        var ctx = pages.HttpContext;
+        var (code, title) = ctx.Response.StatusCode switch {
+            401 => ("unauthorized", "Authentication is required."), 403 => ("forbidden", "Administrator access is required."),
+            _ => ("request_failed", "The request could not be completed.")
+        };
+        await ctx.Response.WriteAsJsonAsync(new ProblemDetails { Status = ctx.Response.StatusCode, Title = title,
+            Extensions = { ["code"] = code, ["traceId"] = ctx.TraceIdentifier } }, options: DiscoveryJson.Options, contentType: "application/problem+json");
+    }));
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -15,18 +15,19 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
     {
         var a = await db.Articles.Include(x => x.Category).ThenInclude(x => x.Module).SingleOrDefaultAsync(x => x.Id == id, ct)
             ?? throw ApiException.Missing();
-        if (a.Category.Module.Slug != module.Slug) throw ApiException.Missing();
+        if (a.Category.Module.Slug != module.Slug || (module.Slug == ContentModule.Living && a.LanguageCode != "en")) throw ApiException.Missing();
         actor.ViewArticle(a); return a;
     }
     public async Task<ArticleVersion> VersionAsync(Guid articleId, Guid versionId, CancellationToken ct)
     {
         _ = await GetAsync(articleId, ct);
-        return await db.ArticleVersions.SingleOrDefaultAsync(x => x.Id == versionId && x.ArticleId == articleId, ct) ?? throw ApiException.Missing();
+        return await db.ArticleVersions.SingleOrDefaultAsync(x => x.Id == versionId && x.ArticleId == articleId && (module.Slug != ContentModule.Living || x.LanguageCode == "en"), ct) ?? throw ApiException.Missing();
     }
     public async Task<Article> SaveDraftAsync(Guid? id, ArticleDraftRequest r, string? etag, CancellationToken ct)
     {
         if (module.Slug == ContentModule.Survival && r.LanguageCode != "en")
             throw ApiException.Invalid("Survival Knowledge drafts require languageCode en.");
+        if (module.Slug == ContentModule.Living && r.LanguageCode != "en") throw ApiException.Invalid("languageCode must be en.");
         Validator.ValidateObject(r, new ValidationContext(r), true);
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await DatabaseLocks.AcquireAsync(db, "article:" + (id?.ToString() ?? r.Slug), ct);
@@ -179,7 +180,9 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await DatabaseLocks.AcquireAsync(db, "article:" + id, ct);
         var a = await GetAsync(id, ct); actor.Own(a.CreatedById); Concurrency.Check(a, etag);
-        var s = SnapshotService.Read(await VersionAsync(id, r.SourceVersionId, ct));
+        var sourceVersion = await VersionAsync(id, r.SourceVersionId, ct);
+        if (module.Slug == ContentModule.Living) await snapshots.ValidateGateAsync(sourceVersion, ct);
+        var s = SnapshotService.Read(sourceVersion);
         if (module.Slug == ContentModule.Survival && s.LanguageCode != "en")
             throw ApiException.Invalid("Only English versions can be restored as Survival Knowledge drafts.");
         a.Title = s.Title; a.Summary = s.Summary; a.LanguageCode = s.LanguageCode;

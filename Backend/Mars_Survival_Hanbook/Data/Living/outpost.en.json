@@ -1,0 +1,322 @@
+{
+  "scenarioKey": "outpost",
+  "version": 1,
+  "engineVersion": "1",
+  "languageCode": "en",
+  "title": "Four-person surface outpost",
+  "defaultCrewSize": 4,
+  "durationSols": 7,
+  "maxCrewSize": 16,
+  "maxDurationSols": 60,
+  "stocks": {
+    "water": {
+      "initial": 8,
+      "capacity": 100,
+      "unit": "kg"
+    },
+    "wastewater": {
+      "initial": 4,
+      "capacity": 50,
+      "unit": "kg"
+    },
+    "oxygen": {
+      "initial": 8,
+      "capacity": 50,
+      "unit": "kg"
+    },
+    "food": {
+      "initial": 20,
+      "capacity": 100,
+      "unit": "kg"
+    },
+    "materials": {
+      "initial": 12,
+      "capacity": 100,
+      "unit": "kg"
+    },
+    "solidWaste": {
+      "initial": 0,
+      "capacity": 20,
+      "unit": "kg"
+    },
+    "battery": {
+      "initial": 0,
+      "capacity": 20,
+      "unit": "kWh"
+    }
+  },
+  "facilities": {
+    "recycler": {
+      "defaultCount": 1,
+      "maxCount": 8,
+      "operatingMode": "Continuous",
+      "flows": [
+        {
+          "resource": "wastewater",
+          "direction": "Input",
+          "phase": "Operation",
+          "parameter": "recycleRate"
+        },
+        {
+          "resource": "battery",
+          "direction": "Input",
+          "phase": "Operation",
+          "parameter": "recyclePower"
+        },
+        {
+          "resource": "water",
+          "direction": "Output",
+          "phase": "Operation",
+          "parameter": "recovery"
+        }
+      ]
+    },
+    "electrolyzer": {
+      "defaultCount": 1,
+      "maxCount": 8,
+      "operatingMode": "Continuous",
+      "flows": [
+        {
+          "resource": "water",
+          "direction": "Input",
+          "phase": "Operation",
+          "parameter": "electrolysisRate"
+        },
+        {
+          "resource": "battery",
+          "direction": "Input",
+          "phase": "Operation",
+          "parameter": "electrolysisPower"
+        },
+        {
+          "resource": "oxygen",
+          "direction": "Output",
+          "phase": "Operation",
+          "parameter": "oxygenYield"
+        }
+      ]
+    },
+    "solar": {
+      "defaultCount": 2,
+      "maxCount": 8,
+      "operatingMode": "Continuous",
+      "flows": [
+        {
+          "resource": "battery",
+          "direction": "Output",
+          "phase": "Operation",
+          "parameter": "solar"
+        }
+      ]
+    },
+    "habitat": {
+      "defaultCount": 1,
+      "maxCount": 8,
+      "operatingMode": "Continuous",
+      "flows": [
+        {
+          "resource": "materials",
+          "direction": "Input",
+          "phase": "Construction",
+          "parameter": "buildMaterials"
+        },
+        {
+          "resource": "battery",
+          "direction": "Input",
+          "phase": "Operation",
+          "parameter": "baseLoad"
+        }
+      ]
+    }
+  },
+  "powerPriority": [
+    "recycler",
+    "electrolyzer",
+    "crops"
+  ],
+  "activityHoursPerPerson": {
+    "sleep": 8,
+    "hygiene": 1,
+    "maintenance": 2,
+    "cultivation": 1,
+    "construction": 1,
+    "community": 2
+  },
+  "parameters": {
+    "drink": {
+      "value": 2,
+      "unit": "kg",
+      "basis": "person/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "wash": {
+      "value": 0.5,
+      "unit": "kg",
+      "basis": "person/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "oxygen": {
+      "value": 0.86,
+      "unit": "kg",
+      "basis": "person/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "ration": {
+      "value": 0.7,
+      "unit": "kg",
+      "basis": "person/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "collection": {
+      "value": 0.6,
+      "unit": "kg",
+      "basis": "kg water supplied",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "solid": {
+      "value": 0.15,
+      "unit": "kg",
+      "basis": "kg food supplied",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "solar": {
+      "value": 4,
+      "unit": "kWh",
+      "basis": "array/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "baseLoad": {
+      "value": 1,
+      "unit": "kWh",
+      "basis": "habitat/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "charge": {
+      "value": 4,
+      "unit": "kWh",
+      "basis": "sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "discharge": {
+      "value": 4,
+      "unit": "kWh",
+      "basis": "sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "recycleRate": {
+      "value": 4,
+      "unit": "kg",
+      "basis": "recycler/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "recyclePower": {
+      "value": 1,
+      "unit": "kWh",
+      "basis": "kg processed",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "recovery": {
+      "value": 0.75,
+      "unit": "kg",
+      "basis": "kg processed",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "electrolysisRate": {
+      "value": 2,
+      "unit": "kg",
+      "basis": "electrolyzer/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "electrolysisPower": {
+      "value": 3,
+      "unit": "kWh",
+      "basis": "kg processed",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "oxygenYield": {
+      "value": 0.88,
+      "unit": "kg",
+      "basis": "kg processed",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "operator": {
+      "value": 0.25,
+      "unit": "h",
+      "basis": "kg processed",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "beds": {
+      "value": 4,
+      "unit": "places",
+      "basis": "habitat",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "buildHours": {
+      "value": 12,
+      "unit": "h",
+      "basis": "habitat",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "buildMaterials": {
+      "value": 6,
+      "unit": "kg",
+      "basis": "habitat",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropDays": {
+      "value": 3,
+      "unit": "sol",
+      "basis": "batch",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropWater": {
+      "value": 0.5,
+      "unit": "kg",
+      "basis": "m2/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropPower": {
+      "value": 1,
+      "unit": "kWh",
+      "basis": "m2/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropLabor": {
+      "value": 0.5,
+      "unit": "h",
+      "basis": "m2/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropYield": {
+      "value": 1,
+      "unit": "kg",
+      "basis": "m2 harvested",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "cropThreshold": {
+      "value": 0.5,
+      "unit": "fraction",
+      "basis": "sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "budget": {
+      "value": 24,
+      "unit": "h",
+      "basis": "person/sol",
+      "assumptionNote": "Illustrative baseline for the fixed teaching scenario."
+    },
+    "buildDurationSols": {
+      "value": 2,
+      "unit": "sol",
+      "basis": "habitat",
+      "assumptionNote": "Allow at least two sols for habitat assembly."
+    }
+  },
+  "solRules": [
+    "Available solar energy and bounded battery discharge serve housing first, then the selected priority order.",
+    "Recycled water is available immediately. Newly collected wastewater is available next sol.",
+    "Construction advances one habitat at a time. A completed habitat operates next sol.",
+    "One crop batch is planted at the start. Growth advances by the supplied fraction when the minimum fraction is met. Harvest enters storage after crew meals.",
+    "All food quantities use edible mass. Electrical balances cover the entire sol."
+  ]
+}

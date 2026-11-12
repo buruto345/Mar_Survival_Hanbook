@@ -29,6 +29,8 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
         join v in db.ArticleVersions.AsNoTracking() on a.PublishedVersionId equals v.Id
         where a.Status == ArticleStatus.Published && a.ArchivedAt == null && a.Category.Module.Slug == module.Slug &&
             (module.Slug != ContentModule.Survival || v.LanguageCode == "en") &&
+            (module.Slug != ContentModule.Living || (v.LanguageCode == "en" &&
+                db.LivingEnglishReviews.Any(review => review.ArticleVersionId == v.Id && review.SnapshotHash == v.SnapshotHash))) &&
             (language == null || v.LanguageCode == language) && v.SnapshotSchemaVersion == 1 &&
             !db.ArticleVersionSources.Any(l => l.ArticleVersionId == v.Id &&
                 (l.SourceRevision.RevokedAt != null || l.SourceRevision.VerificationStatus != VerificationStatus.Accepted))
@@ -95,6 +97,16 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
         var related = await Publications(s.LanguageCode).Where(x => s.RelatedArticleIds.Contains(x.Article.Id))
             .Select(x => new { x.Article.Id, x.Article.Slug, x.Version.Title, ArticleVersionId = x.Version.Id }).ToListAsync(ct);
         node["relatedArticles"] = JsonSerializer.SerializeToNode(related, DiscoveryJson.Options);
+        if (module.Slug == ContentModule.Living)
+        {
+            var relatedSlug = s.CategorySlug switch {
+                "energy" => "dust-storms-and-solar-power", "water-and-oxygen" => "oxygen-and-surface-pressure",
+                "housing" => "radiation-at-curiosity", "community" => "partial-gravity-and-human-health", _ => null
+            };
+            var survival = new DiscoveryService(db, config, new ContentModule(ContentModule.Survival));
+            if (relatedSlug != null && await survival.Publications("en").AnyAsync(x => x.Article.Slug == relatedSlug, ct))
+                node["survivalKnowledgeUrl"] = "/api/survival-knowledge/articles/" + relatedSlug + "?language=en";
+        }
         node.Remove("relatedArticleIds");
         node["bodyFormat"] = "plainText";
         return node;

@@ -25,6 +25,14 @@ public static class DiscoverySeed
             ("dust-storms", "Dust storms", "How airborne dust affects sunlight and solar power."),
             ("partial-gravity", "Partial gravity and the human body", "Surface gravity and evidence about long-term human health.")
         ], ct);
+        await SeedModuleAsync(db, "living-on-mars", "Living on Mars", "Plan a surface outpost and compare resource use across sols.", [
+            ("housing", "Housing", "Construction, crew time and habitat capacity."),
+            ("water-and-oxygen", "Water and oxygen", "Water recovery and oxygen production."),
+            ("food", "Food", "Rations, crop inputs and harvests."),
+            ("energy", "Energy", "Solar generation, battery storage and power priorities."),
+            ("sanitation-and-waste", "Sanitation and waste", "Hygiene water, collection and tank overflow."),
+            ("community", "Community life", "Crew hours and shared activities.")
+        ], ct);
         foreach (var (symbol, quantity, si) in new[] { ("K", "Temperature", true), ("°C", "Temperature", false),
             ("µGy/day", "AbsorbedDoseRate", false), ("1", "OpticalDepth", true), ("%", "VolumeFraction", false), ("Pa", "Pressure", true), ("hPa", "Pressure", false), ("m/s²", "Acceleration", true), ("m", "Length", true), ("km", "Length", false) })
             if (!await db.Units.AnyAsync(x => x.Symbol == symbol && x.QuantityKind == quantity, ct))
@@ -49,7 +57,7 @@ public static class DiscoverySeed
             module = new() { Name = moduleName, Slug = moduleSlug, Description = description };
             db.Modules.Add(module); await db.SaveChangesAsync(ct);
         }
-        if (moduleSlug == "survival-knowledge")
+        if (moduleSlug is "survival-knowledge" or "living-on-mars")
         {
             module.Name = moduleName;
             module.Description = description;
@@ -60,8 +68,9 @@ public static class DiscoverySeed
             var category = await db.Categories.SingleOrDefaultAsync(x => x.ModuleId == module.Id && x.Slug == slug, ct);
             if (category == null)
                 db.Categories.Add(new() { ModuleId = module.Id, Name = name, Slug = slug, Description = topicDescription, DisplayOrder = i });
-            else if (moduleSlug == "survival-knowledge")
+            else if (moduleSlug is "survival-knowledge" or "living-on-mars")
             {
+                if (moduleSlug == "living-on-mars") category.DisplayOrder = i;
                 category.Name = name;
                 category.Description = topicDescription;
             }

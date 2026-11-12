@@ -14,6 +14,8 @@ internal static class DiscoveryImmutability
             if (e.State is not (EntityState.Modified or EntityState.Deleted)) continue;
             string[]? mutable = e.Entity switch
             {
+                LivingScenarioVersion => ["ArchivedAt", "UpdatedAt", "RowVersion"],
+                LivingEnglishReview or ScenarioParameter or ScenarioResource or FacilityDefinition or FacilityFlow => [],
                 ArticleVersion => ["ReviewState", "ReviewedById", "ReviewedAt", "UpdatedAt", "RowVersion"],
                 SourceRevision => ["VerificationStatus", "VerifiedById", "VerifiedAt", "VerificationNotes", "RevokedAt", "RevocationReason", "UpdatedAt", "RowVersion"],
                 ArticleVersionSource or PublicationResource or AuditLog => [],
@@ -22,6 +24,17 @@ internal static class DiscoveryImmutability
             if (mutable is not null && (e.State == EntityState.Deleted ||
                 e.Properties.Any(p => p.IsModified && !mutable.Contains(p.Metadata.Name))))
                 throw new InvalidOperationException("Immutable history cannot be edited or deleted; append a new version.");
+        }
+        var newScenarios = tracker.Entries<LivingScenarioVersion>().Where(v => v.State == EntityState.Added)
+            .Select(v => v.Entity.Id).ToHashSet();
+        foreach (var added in tracker.Entries().Where(x => x.State == EntityState.Added))
+        {
+            Guid? parent = added.Entity switch {
+                ScenarioParameter p => p.ScenarioVersionId, ScenarioResource r => r.ScenarioVersionId,
+                FacilityDefinition f => f.ScenarioVersionId, FacilityFlow f => f.ScenarioVersionId, _ => null
+            };
+            if (parent.HasValue && !newScenarios.Contains(parent.Value))
+                throw new InvalidOperationException("Scenario configuration must be created with its version.");
         }
         foreach (var e in tracker.Entries<ArticleVersionSource>().Where(x => x.State == EntityState.Added))
         {

@@ -12,6 +12,58 @@ public static class DiscoveryCommands
 {
     public static async Task<bool> RunAsync(string[] args, IServiceProvider services)
     {
+        if (args.FirstOrDefault() == "export-living-review")
+        {
+            if (args.Length != 3 || !Guid.TryParse(args[1], out var id))
+                throw ApiException.Invalid("Specify the English article version ID and a new local output file.");
+            using var exportScope = services.CreateScope();
+            var dbForExport = exportScope.ServiceProvider.GetRequiredService<MarsDbContext>();
+            var version = await dbForExport.ArticleVersions.AsNoTracking().SingleOrDefaultAsync(v => v.Id == id &&
+                v.Article.Category.Module.Slug == ContentModule.Living && v.LanguageCode == "en") ?? throw ApiException.Missing();
+            await using var file = new FileStream(args[2], FileMode.CreateNew, FileAccess.Write);
+            await file.WriteAsync(System.Text.Encoding.UTF8.GetBytes(version.Snapshot));
+            Console.WriteLine(version.SnapshotHash);
+            return true;
+        }
+        if (args.FirstOrDefault() is "publish-living-scenario" or "withdraw-living-scenario")
+        {
+            using var livingScope = services.CreateScope();
+            var livingDb = livingScope.ServiceProvider.GetRequiredService<MarsDbContext>();
+            if (args[0] == "withdraw-living-scenario")
+            {
+                if (args.Length != 3 || !int.TryParse(args[2], out var version)) throw ApiException.Invalid("Specify the scenario key and version.");
+                var row = await livingDb.LivingScenarios.SingleOrDefaultAsync(v => v.ScenarioKey == args[1] && v.Version == version)
+                    ?? throw ApiException.Missing();
+                row.ArchivedAt ??= DateTimeOffset.UtcNow;
+                await livingDb.SaveChangesAsync();
+            }
+            else
+            {
+                Guid? revision = null;
+                int edition = 2;
+                if (args.Length is 3 or 5 && args[1] == "--bvad-revision" && Guid.TryParse(args[2], out var id)) revision = id;
+                else if (args.Length != 1) throw ApiException.Invalid("Use publish-living-scenario [--bvad-revision ID [--version N]].");
+                if (args.Length == 5 && (args[3] != "--version" || !int.TryParse(args[4], out edition) || edition < 2))
+                    throw ApiException.Invalid("Specify an integer version of at least 2.");
+                using var lockScope = services.CreateScope();
+                var lockDb = lockScope.ServiceProvider.GetRequiredService<MarsDbContext>();
+                // A second local release waits for the whole edition, including the six CMS reviews.
+                lockDb.Database.SetCommandTimeout(0);
+                await using var releaseLock = await lockDb.Database.BeginTransactionAsync();
+                await DatabaseLocks.AcquireAsync(lockDb, "living-release-command", default, timeoutMilliseconds: -1);
+                await DiscoverySeed.RunAsync(livingDb);
+                var service = livingScope.ServiceProvider.GetRequiredService<Services.Living.LivingScenarioService>();
+                if (revision == null)
+                {
+                    await service.PublishAsync(null, default);
+                    revision = await Living.LivingEdition.PublishAsync(livingScope.ServiceProvider, default);
+                }
+                await service.PublishAsync(revision, default, edition);
+                await releaseLock.CommitAsync();
+                Console.WriteLine($"Published outpost version {edition}.");
+            }
+            return true;
+        }
         if (args.FirstOrDefault() == "publish-survival-edition")
         {
             await Survival.SurvivalRelease.RunAsync(services);

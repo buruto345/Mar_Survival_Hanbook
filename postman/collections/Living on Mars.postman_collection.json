@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "Living on Mars",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5086"
+    }
+  ],
+  "item": [
+    {
+      "name": "Available scenarios",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/living-on-mars/scenarios"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Expected status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"English response\", () => pm.expect(pm.response.headers.get(\"Content-Language\")).to.equal(\"en\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scenario rules and sources",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/living-on-mars/scenarios/outpost/versions/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Expected status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"English response\", () => pm.expect(pm.response.headers.get(\"Content-Language\")).to.equal(\"en\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Water balance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/living-on-mars/simulations/preview",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenarioKey\": \"outpost\",\n  \"scenarioVersion\": 1,\n  \"durationSols\": 1,\n  \"facilities\": {\n    \"solar\": 1,\n    \"habitat\": 2,\n    \"electrolyzer\": 0\n  }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Expected status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"English response\", () => pm.expect(pm.response.headers.get(\"Content-Language\")).to.equal(\"en\"));",
+              "pm.test(\"Half a kilogram unmet\", () => pm.expect(pm.response.json().sols[0].balances.water.unmet).to.equal(0.5));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid unit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/living-on-mars/simulations/preview",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenarioKey\": \"outpost\",\n  \"scenarioVersion\": 1,\n  \"initialStocks\": {\n    \"water\": {\n      \"quantity\": 8,\n      \"unit\": \"kWh\"\n    }\n  }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Expected status\", () => pm.response.to.have.status(400));",
+              "pm.test(\"English response\", () => pm.expect(pm.response.headers.get(\"Content-Language\")).to.equal(\"en\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read the water guide",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/living-on-mars/articles/outpost-water-and-oxygen"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Expected status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"English response\", () => pm.expect(pm.response.headers.get(\"Content-Language\")).to.equal(\"en\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

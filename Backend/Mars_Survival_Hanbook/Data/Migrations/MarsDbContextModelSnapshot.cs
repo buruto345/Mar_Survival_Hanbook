@@ -832,6 +832,66 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.FacilityDefinition", b =>
+                {
+                    b.Property<Guid>("ScenarioVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TechnologyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DefaultCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ScenarioVersionId", "TechnologyId");
+
+                    b.HasIndex("TechnologyId");
+
+                    b.ToTable("FacilityDefinition", t =>
+                        {
+                            t.HasCheckConstraint("CK_LivingFacility_Count", "[DefaultCount]>=0 AND [MaxCount]>=[DefaultCount]");
+                        });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.FacilityFlow", b =>
+                {
+                    b.Property<Guid>("ScenarioVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TechnologyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Phase")
+                        .HasMaxLength(24)
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("Direction")
+                        .HasMaxLength(48)
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<string>("ParameterKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("ScenarioVersionId", "TechnologyId", "ResourceId", "Phase", "Direction");
+
+                    b.HasIndex("ScenarioVersionId", "ParameterKey");
+
+                    b.HasIndex("ScenarioVersionId", "ResourceId");
+
+                    b.ToTable("FacilityFlow", t =>
+                        {
+                            t.HasCheckConstraint("CK_FacilityFlow_Direction", "[Direction] IN (N'Input', N'Output')");
+                        });
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.FeedbackReport", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1297,6 +1357,77 @@ namespace Mars_Survival_Hanbook.Data.Migrations
 
                             t.HasCheckConstraint("CK_IngestionJobs_TimeRange", "[CompletedAt] IS NULL OR ([StartedAt] IS NOT NULL AND [CompletedAt] >= [StartedAt])");
                         });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.LivingEnglishReview", b =>
+                {
+                    b.Property<Guid>("ArticleVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ReviewedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ReviewerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SnapshotHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ArticleVersionId");
+
+                    b.ToTable("LivingEnglishReviews");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.LivingScenarioVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ArchivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("ScenarioKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Snapshot")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArchivedAt");
+
+                    b.HasIndex("ScenarioKey", "Version")
+                        .IsUnique();
+
+                    b.ToTable("LivingScenarios");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.MapLayer", b =>
@@ -2221,6 +2352,82 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                             t.HasCheckConstraint("CK_ReviewTasks_CompletionDate", "[CompletedAt] IS NULL OR [CompletedAt] >= [SubmittedAt]");
 
                             t.HasCheckConstraint("CK_ReviewTasks_State", "[State] IN (N'Pending', N'InProgress', N'Approved', N'ChangesRequested', N'Rejected', N'Cancelled')");
+                        });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ScenarioParameter", b =>
+                {
+                    b.Property<Guid>("ScenarioVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("NormalizedBasis")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<decimal>("NormalizedValue")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<string>("OriginalBasis")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<decimal>("OriginalValue")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<Guid?>("SourceRevisionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("nvarchar(24)");
+
+                    b.HasKey("ScenarioVersionId", "Key");
+
+                    b.HasIndex("SourceRevisionId");
+
+                    b.ToTable("ScenarioParameter", t =>
+                        {
+                            t.HasCheckConstraint("CK_LivingParameter_Value", "[OriginalValue]>=0 AND [NormalizedValue]>=0");
+                        });
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ScenarioResource", b =>
+                {
+                    b.Property<Guid>("ScenarioVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Capacity")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<decimal>("InitialQuantity")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ScenarioVersionId", "ResourceId");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("ScenarioResource", t =>
+                        {
+                            t.HasCheckConstraint("CK_LivingStock_Range", "[InitialQuantity]>=0 AND [Capacity]>=[InitialQuantity]");
                         });
                 });
 
@@ -3403,6 +3610,44 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Source");
                 });
 
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.FacilityDefinition", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.LivingScenarioVersion", null)
+                        .WithMany("Facilities")
+                        .HasForeignKey("ScenarioVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.Technology", "Technology")
+                        .WithMany()
+                        .HasForeignKey("TechnologyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Technology");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.FacilityFlow", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.ScenarioParameter", null)
+                        .WithMany()
+                        .HasForeignKey("ScenarioVersionId", "ParameterKey")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.ScenarioResource", null)
+                        .WithMany()
+                        .HasForeignKey("ScenarioVersionId", "ResourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.FacilityDefinition", null)
+                        .WithMany()
+                        .HasForeignKey("ScenarioVersionId", "TechnologyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.FeedbackReport", b =>
                 {
                     b.HasOne("Mars_Survival_Hanbook.Models.Article", "Article")
@@ -3497,6 +3742,17 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Connector");
 
                     b.Navigation("RequestedBy");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.LivingEnglishReview", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.ArticleVersion", "ArticleVersion")
+                        .WithMany()
+                        .HasForeignKey("ArticleVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ArticleVersion");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.MapLayer", b =>
@@ -3679,6 +3935,47 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("Reviewer");
 
                     b.Navigation("SubmittedBy");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ScenarioParameter", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.LivingScenarioVersion", null)
+                        .WithMany("Parameters")
+                        .HasForeignKey("ScenarioVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.SourceRevision", "SourceRevision")
+                        .WithMany()
+                        .HasForeignKey("SourceRevisionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("SourceRevision");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.ScenarioResource", b =>
+                {
+                    b.HasOne("Mars_Survival_Hanbook.Models.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.LivingScenarioVersion", null)
+                        .WithMany("Resources")
+                        .HasForeignKey("ScenarioVersionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mars_Survival_Hanbook.Models.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Resource");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.ScientificFact", b =>
@@ -3907,6 +4204,15 @@ namespace Mars_Survival_Hanbook.Data.Migrations
                     b.Navigation("AuditLogs");
 
                     b.Navigation("Sources");
+                });
+
+            modelBuilder.Entity("Mars_Survival_Hanbook.Models.LivingScenarioVersion", b =>
+                {
+                    b.Navigation("Facilities");
+
+                    b.Navigation("Parameters");
+
+                    b.Navigation("Resources");
                 });
 
             modelBuilder.Entity("Mars_Survival_Hanbook.Models.MarsLocation", b =>

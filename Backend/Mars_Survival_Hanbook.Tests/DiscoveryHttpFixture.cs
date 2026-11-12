@@ -1,4 +1,7 @@
 using System.Net.Http.Headers;
+using System.Globalization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Mars_Survival_Hanbook.Contracts;
@@ -45,6 +48,7 @@ public sealed class DiscoveryHttpFixture : IAsyncLifetime
         factory = new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
         {
             b.UseEnvironment("Development");
+            b.ConfigureServices(s => s.AddTransient<IStartupFilter, LivingLocaleFixture>());
             b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?> {
                 ["ConnectionStrings:MarsDatabase"] = cs, ["Nasa:WorkerEnabled"] = "false",
                 ["Auth:LoginPermitLimit"] = "1000",
@@ -64,6 +68,19 @@ public sealed class DiscoveryHttpFixture : IAsyncLifetime
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); return client;
         }
         Viewer = await Login("viewer"); OtherAdmin = await Login("otheradmin"); Admin = await Login("admin");
+    }
+    private sealed class LivingLocaleFixture : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => app =>
+        {
+            app.Use(async (context, run) =>
+            {
+                if (context.Request.Path.Value?.Contains("/living-on-mars", StringComparison.Ordinal) == true)
+                    CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("vi-VN");
+                await run();
+            });
+            next(app);
+        };
     }
     public async Task DisposeAsync()
     {

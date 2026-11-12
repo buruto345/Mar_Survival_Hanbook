@@ -46,6 +46,19 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var revisions = await db.SourceRevisions.Include(x => x.Source).Where(x => dependencies.Contains(x.Id)).ToListAsync(ct);
         if (revisions.Count != dependencies.Length || dependencies.Contains(Guid.Empty)) throw ApiException.Invalid("A required source revision is missing.");
         s.Sources = revisions.OrderBy(x => x.Id).Select(ToCitation).ToArray();
+        if (moduleSlug == ContentModule.Living)
+        {
+            s.Sources = s.Sources.Select(c =>
+            {
+                var display = r.EnglishCitations?.GetValueOrDefault(c.SourceRevisionId);
+                if (display == null || string.IsNullOrWhiteSpace(display.Title) ||
+                    (c.Credit != null && string.IsNullOrWhiteSpace(display.Credit)) ||
+                    (c.UsageNote != null && string.IsNullOrWhiteSpace(display.UsageNote)))
+                    throw ApiException.Invalid("English display text is required for each linked source revision.");
+                return c with { Title = display.Title, Credit = display.Credit, UsageNote = display.UsageNote };
+            }).ToArray();
+        }
+        else if (r.EnglishCitations != null) throw ApiException.Invalid("English citation overrides require Living on Mars.");
         return s;
     }
     private async Task<JsonElement[]> LoadAsync(string kind, IEnumerable<Guid> ids, CancellationToken ct)
@@ -84,6 +97,9 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var s = Read(v);
         if (s.ModuleSlug == ContentModule.Survival && (s.LanguageCode != "en" || v.LanguageCode != "en"))
             throw ApiException.Gate("Only English Survival Knowledge versions can be submitted or published.");
+        if (s.ModuleSlug == ContentModule.Living && (s.LanguageCode != "en" || v.LanguageCode != "en" ||
+            !await db.LivingEnglishReviews.AnyAsync(r => r.ArticleVersionId == v.Id && r.SnapshotHash == v.SnapshotHash, ct)))
+            throw ApiException.Gate("English review of all snapshot fields is required.");
         if (v.SnapshotHash != SourceNormalization.Hash(v.Snapshot)) throw ApiException.Gate("The snapshot hash does not match.");
         var dependencies = s.Sources.Select(x => x.SourceRevisionId).ToHashSet();
         var links = await db.ArticleVersionSources.Where(x => x.ArticleVersionId == v.Id).ToListAsync(ct);
