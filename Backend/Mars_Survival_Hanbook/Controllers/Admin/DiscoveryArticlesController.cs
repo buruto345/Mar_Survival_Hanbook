@@ -23,7 +23,7 @@ public abstract class ArticlesControllerBase(MarsDbContext db, ArticleService se
     {
         var query = db.Articles.AsNoTracking().Where(x => x.Category.Module.Slug == module.Slug &&
             (actor.IsAdmin || x.CreatedById == actor.Id));
-        if (module.Slug is ContentModule.Survival or ContentModule.Living) query = query.Where(x => x.LanguageCode == queryOptions.Language);
+        if (module.Slug is ContentModule.Survival or ContentModule.Living or ContentModule.Science) query = query.Where(x => x.LanguageCode == queryOptions.Language);
         if (category != null) query = query.Where(x => x.Category.Slug == category);
         if (publicationStatus.HasValue) query = query.Where(x => x.Status == publicationStatus);
         if (requiresReview.HasValue) query = query.Where(x => x.RequiresReview == requiresReview);
@@ -117,4 +117,8 @@ public sealed class DiscoveryArticlesController(MarsDbContext db, ArticleService
 
 [SurvivalKnowledge, Route("api/admin/survival-knowledge/articles")]
 public sealed class SurvivalArticlesController(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor, ContentModule module)
+    : ArticlesControllerBase(db, service, discovery, actor, module);
+
+[ScienceTechnology, Route("api/admin/science-technology/articles")]
+public sealed class ScienceArticlesController(MarsDbContext db, ArticleService service, DiscoveryService discovery, CurrentActor actor, ContentModule module)
     : ArticlesControllerBase(db, service, discovery, actor, module);

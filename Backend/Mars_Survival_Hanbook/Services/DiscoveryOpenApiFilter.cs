@@ -21,7 +21,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             parameter.Schema.Default = parameter.Name switch {
                 "page" => new Microsoft.OpenApi.Any.OpenApiInteger(1),
                 "pageSize" => new Microsoft.OpenApi.Any.OpenApiInteger(20),
-                "language" => new Microsoft.OpenApi.Any.OpenApiString((path.Contains("/survival-knowledge") || path.Contains("/living-on-mars")) ? "en" : "vi"),
+                "language" => new Microsoft.OpenApi.Any.OpenApiString((path.Contains("/survival-knowledge") || path.Contains("/living-on-mars") || path.Contains("/science-technology")) ? "en" : "vi"),
                 "sort" => new Microsoft.OpenApi.Any.OpenApiString("publishedAtDesc"),
                 "includePlanned" => new Microsoft.OpenApi.Any.OpenApiBoolean(false),
                 _ => parameter.Schema.Default
@@ -58,7 +58,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 """{"status":400,"title":"Invalid value for initialStocks.","code":"invalid_request"}""");
         }
         var contractPath = path.StartsWith("api/living-on-mars") ? path.Replace("living-on-mars", "discover-mars") : path;
-        var successType = ResponseType(contractPath.Replace("survival-knowledge", "discover-mars"), method!);
+        var successType = ResponseType(contractPath.Replace("science-technology", "discover-mars").Replace("survival-knowledge", "discover-mars"), method!);
         if (successType != null)
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :
@@ -85,6 +85,8 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 ". All CMS policies require Admin. Admin can edit, review (including own content), and publish. " +
                 "Viewer has no CMS access. Content validation, workflow states and concurrency checks still apply.";
         }
+        if (path.Contains("/science-technology/") && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
+            operation.Description += " English only (defaults to en). Supply technologyProfile and one catalog category. Sections with anchors problem and principle, a cited claim and technical source revision IDs are required for review. Qualitative profiles can omit facts. Each selected fact needs a factLocators entry.";
         if (path.Contains("/survival-knowledge/") && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
             operation.Description += " The only supported languageCode is en. Omitting it selects English.";
         if (path == "api/auth/register") operation.Description = "Create an active Viewer account using username, fullName, email and password. " +
@@ -109,6 +111,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         if (path.StartsWith("api/discover-mars/"))
         {
             var rest = path["api/discover-mars/".Length..].Split('/');
+            if (rest[0] == "technologies") return rest.Length == 1 ? Page(typeof(TechnologyCard)) : typeof(ArticleDetailResponse);
             if (rest[0] == "categories") return rest.Length == 1 ? typeof(CategoryResponse[]) : typeof(CategoryResponse);
             if (rest[0] == "articles") return rest.Length == 1 ? Page(typeof(ArticleCard)) : typeof(ArticleDetailResponse);
             if (rest[0] == "sources") return typeof(Citation);

@@ -23,6 +23,15 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var s = new ArticleSnapshot { ModuleSlug = moduleSlug, ArticleId = articleId, CategorySlug = r.CategorySlug, LanguageCode = r.LanguageCode,
             Title = r.Title.Trim(), Summary = r.Summary.Trim(), Sections = r.Sections, Claims = r.Claims,
             RelatedArticleIds = r.RelatedArticleIds.Where(x => x != articleId).Distinct().ToArray() };
+        s.TechnologyProfile = r.TechnologyProfile;
+        if (s.TechnologyProfile is { } p)
+        {
+            var resources = p.Resources.Select(x => x.ResourceId).Distinct().ToArray();
+            var hazards = p.Hazards.Select(x => x.HazardId).Distinct().ToArray();
+            if (await db.Resources.CountAsync(x => resources.Contains(x.Id) && x.ArchivedAt == null, ct) != resources.Length ||
+                await db.Hazards.CountAsync(x => hazards.Contains(x.Id) && x.ArchivedAt == null, ct) != hazards.Length)
+                throw ApiException.Invalid("Unknown resource or hazard.");
+        }
         s.Measurements = await LoadAsync("measurements", refs.MeasurementIds, ct);
         s.TimelineEvents = await LoadAsync("timeline-events", refs.TimelineEventIds, ct);
         s.MapLayers = await LoadAsync("map-layers", refs.MapLayerIds, ct);
@@ -41,12 +50,12 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
             node["caption"] = placement?.Caption;
             return JsonSerializer.SerializeToElement(node, DiscoveryJson.Options);
         }).OrderBy(x => x.GetProperty("displayOrder").GetInt32()).ToArray();
-        var dependencies = r.SourceRevisionIds.Concat(r.Claims.SelectMany(x => x.SourceRevisionIds))
+        var dependencies = r.SourceRevisionIds.Concat(r.TechnologyProfile?.SourceRevisionIds ?? []).Concat(r.Claims.SelectMany(x => x.SourceRevisionIds))
             .Concat(Blocks(s).SelectMany(x => Ids(x.Value, "sourceRevisionId"))).Distinct().Order().ToArray();
         var revisions = await db.SourceRevisions.Include(x => x.Source).Where(x => dependencies.Contains(x.Id)).ToListAsync(ct);
         if (revisions.Count != dependencies.Length || dependencies.Contains(Guid.Empty)) throw ApiException.Invalid("A required source revision is missing.");
         s.Sources = revisions.OrderBy(x => x.Id).Select(ToCitation).ToArray();
-        if (moduleSlug == ContentModule.Living)
+        if (moduleSlug == ContentModule.Living || moduleSlug == ContentModule.Science && r.EnglishCitations != null)
         {
             s.Sources = s.Sources.Select(c =>
             {
@@ -58,7 +67,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
                 return c with { Title = display.Title, Credit = display.Credit, UsageNote = display.UsageNote };
             }).ToArray();
         }
-        else if (r.EnglishCitations != null) throw ApiException.Invalid("English citation overrides require Living on Mars.");
+        else if (r.EnglishCitations != null) throw ApiException.Invalid("English citation overrides require Living on Mars or Science and Technology.");
         return s;
     }
     private async Task<JsonElement[]> LoadAsync(string kind, IEnumerable<Guid> ids, CancellationToken ct)
@@ -105,6 +114,20 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var links = await db.ArticleVersionSources.Where(x => x.ArticleVersionId == v.Id).ToListAsync(ct);
         if (dependencies.Count == 0 || !dependencies.SetEquals(links.Select(x => x.SourceRevisionId)))
             throw ApiException.Gate("Source revision links differ from the snapshot.");
+        if (s.ModuleSlug == ContentModule.Science)
+        {
+            var p = s.TechnologyProfile;
+            if (s.LanguageCode != "en" || p == null || !Enum.IsDefined(p.TechnologyStatus) ||
+                p.EvidenceType == EvidenceType.Unspecified || p.TestEnvironment == TestEnvironment.Unspecified ||
+                string.IsNullOrWhiteSpace(p.Capabilities) || string.IsNullOrWhiteSpace(p.Limitations) ||
+                !Enum.IsDefined(p.EvidenceType) || !Enum.IsDefined(p.TestEnvironment) ||
+                p.SourceRevisionIds.Length == 0 || !p.SourceRevisionIds.All(dependencies.Contains) ||
+                !s.Sections.Any(x => x.Anchor == "problem") || !s.Sections.Any(x => x.Anchor == "principle") ||
+                s.Facts.Any(f => string.IsNullOrWhiteSpace(p.FactLocators?.GetValueOrDefault(f.GetProperty("id").GetGuid())) ||
+                    Text(f, "verificationStatus") != "Accepted" || Text(f, "sourceRevisionId") == null ||
+                    string.IsNullOrWhiteSpace(Text(f, "originalUnit")) || Text(f, "originalValue") == null))
+                throw ApiException.Gate("A sourced technical profile, problem and principle sections, and accepted facts with original units are required.");
+        }
         var actual = s.Claims.SelectMany(x => x.SourceRevisionIds).Concat(Blocks(s).SelectMany(x => Ids(x.Value, "sourceRevisionId"))).Distinct();
         if (actual.Any(x => !dependencies.Contains(x)) || s.Sources.Any(x => !links.Any(l => l.SourceId == x.SourceId && l.SourceRevisionId == x.SourceRevisionId)))
             throw ApiException.Gate("A dependency is missing or its source does not match.");

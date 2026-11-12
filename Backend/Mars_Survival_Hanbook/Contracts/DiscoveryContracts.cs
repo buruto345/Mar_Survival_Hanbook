@@ -104,8 +104,17 @@ public class ResourceRefs
 public record EnglishCitationDisplay([Required, MaxLength(500)] string Title,
     [MaxLength(1000)] string? Credit, [MaxLength(4000)] string? UsageNote);
 
+public record ProfileResource(Guid ResourceId, ResourceDirection Direction, [Required, MaxLength(200)] string Label, [MaxLength(2000)] string? Note);
+public record ProfileHazard(Guid HazardId, [Required, MaxLength(200)] string Label, [Required, MaxLength(4000)] string Mitigation);
+public record TechnologyProfileInput(Guid TechnologyId, [property: JsonRequired] TechnologyStatus TechnologyStatus, EvidenceType EvidenceType,
+    TestEnvironment TestEnvironment, [MaxLength(4000)] string Capabilities, [MaxLength(4000)] string Limitations,
+    [Required, MaxLength(100)] Guid[] SourceRevisionIds, [Required, MaxLength(100)] ProfileResource[] Resources,
+    [Required, MaxLength(100)] ProfileHazard[] Hazards, [MaxLength(100)] Dictionary<Guid, string>? FactLocators = null);
+
 public class ArticleDraftRequest
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public TechnologyProfileInput? TechnologyProfile { get; set; }
     [Required, MaxLength(180)] public string CategorySlug { get; set; } = "";
     [Required, RegularExpression("^[a-z0-9-]{1,200}$")] public string Slug { get; set; } = "";
     private string languageCode = "vi";
@@ -133,6 +142,8 @@ public record Citation(Guid SourceId, Guid SourceRevisionId, SourceProvider Prov
     string? Credit, string? UsageNote, string? Doi, DateTimeOffset RetrievedAt);
 public class ArticleSnapshot
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public TechnologyProfileInput? TechnologyProfile { get; set; }
     public int SchemaVersion { get; set; } = 1;
     public Guid ArticleId { get; set; }
     public string ModuleSlug { get; set; } = "discover-mars";

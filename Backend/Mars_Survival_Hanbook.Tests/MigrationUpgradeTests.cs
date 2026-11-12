@@ -57,7 +57,14 @@ public sealed class MigrationUpgradeTests
                 await DiscoveryCommands.RunAsync(["backfill"], services);
                 Assert.Empty(await db.SourceRevisions.ToListAsync());
                 await DiscoveryCommands.RunAsync(["backfill", "--apply"], services);
+                await db.GetService<IMigrator>().MigrateAsync("20261111151039_AddLivingScenarios");
+                var equipment = new Models.Technology { Name = "Legacy equipment", Slug = "legacy-equipment",
+                    Description = "Existing Living equipment", Capabilities = "Original capacity", Limitations = "Original limits" };
+                db.Add(equipment);
+                await db.SaveChangesAsync();
                 await db.Database.MigrateAsync();
+                Assert.Empty(await db.ScienceTechnologyProfiles.ToListAsync());
+                Assert.Equal("Original capacity", await db.Technologies.AsNoTracking().Where(t => t.Id == equipment.Id).Select(t => t.Capabilities).SingleAsync());
                 await DiscoveryCommands.RunAsync(["backfill", "--apply"], services);
             }
             db.ChangeTracker.Clear();

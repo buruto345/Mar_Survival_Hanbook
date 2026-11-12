@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "iss-water-recovery-system",
+    "category": "water-recycling-systems",
+    "title": "ISS Water Recovery System",
+    "environment": "InternationalSpaceStation",
+    "status": "Demonstrated",
+    "problem": "Carrying fresh water for every use makes a crew dependent on resupply.",
+    "principle": "The urine processor distils wastewater. A brine processor draws more water from the residue into humid air; the station collects condensate and the water processor treats it.",
+    "capabilities": "The combined assemblies recover water from multiple waste streams on the space station.",
+    "limitations": "The demonstration used the station air and water loops. It does not establish how a stand-alone Mars habitat would perform.",
+    "sourceTitle": "NASA Achieves Water Recovery Milestone on International Space Station",
+    "url": "https://www.nasa.gov/missions/station/nasa-achieves-water-recovery-milestone-on-international-space-station/",
+    "locator": "Discussion of the Urine Processor Assembly, Brine Processor Assembly and Water Processor Assembly"
+  },
+  {
+    "slug": "moxie",
+    "category": "in-situ-resource-utilization",
+    "title": "Mars Oxygen In-Situ Resource Utilization Experiment",
+    "environment": "Mars",
+    "status": "Demonstrated",
+    "problem": "A mission that brings all its oxygen from Earth must launch that mass with it.",
+    "principle": "MOXIE took in Martian air and used electricity to separate oxygen from carbon dioxide. The instrument analysed the oxygen before venting it.",
+    "capabilities": "The rover payload demonstrated oxygen production from the local atmosphere.",
+    "limitations": "The instrument did not store its output or supply a crew.",
+    "sourceTitle": "Mars Oxygen ISRU Experiment (STMD) (MOXIE)",
+    "url": "https://techport.nasa.gov/projects/96183",
+    "locator": "Project Description"
+  },
+  {
+    "slug": "perseverance-autonav",
+    "category": "robotics-and-ai",
+    "title": "Perseverance AutoNav",
+    "environment": "Mars",
+    "status": "Demonstrated",
+    "problem": "A rover planner on Earth cannot steer around each rock in real time.",
+    "principle": "AutoNav builds a terrain map from images taken as Perseverance drives and selects a path between waypoints.",
+    "capabilities": "The rover can adjust its local path around hazards without waiting for a new command for each turn.",
+    "limitations": "Ground planners still select the waypoints.",
+    "sourceTitle": "NASA\u2019s Perseverance Sets Off-World Record for Total Distance Driven",
+    "url": "https://www.jpl.nasa.gov/news/nasas-perseverance-sets-off-world-record-for-total-distance-driven/",
+    "locator": "Passage describing AutoNav and waypoints selected on Earth"
+  },
+  {
+    "slug": "veggie",
+    "category": "greenhouses-and-space-agriculture",
+    "title": "Veggie Vegetable Production System",
+    "environment": "InternationalSpaceStation",
+    "status": "Demonstrated",
+    "problem": "Crews need a way to grow fresh produce where water does not drain through soil as it does on Earth.",
+    "principle": "LEDs light the canopy while plant pillows hold growing medium and fertilizer and help distribute water and air around the roots.",
+    "capabilities": "Veggie has supported plant growth in the space station cabin.",
+    "limitations": "Cabin trials do not establish crop yields inside a Mars greenhouse.",
+    "sourceTitle": "Growing Plants in Space",
+    "url": "https://www.nasa.gov/exploration-research-and-technology/growing-plants-in-space/",
+    "locator": "Veggie section, plant pillows and lighting"
+  },
+  {
+    "slug": "astrorad-charge",
+    "category": "radiation-protection",
+    "title": "AstroRad Vest: CHARGE Evaluation",
+    "environment": "InternationalSpaceStation",
+    "status": "Demonstrated",
+    "problem": "A radiation garment designed for solar particle events must allow the wearer to work and move.",
+    "principle": "AstroRad places shielding on the body. The CHARGE investigation studied how wearing it affected ordinary activities in the station cabin.",
+    "capabilities": "Crew feedback can identify problems with fit and movement.",
+    "limitations": "CHARGE evaluated human factors. Its results do not measure the dose a crew would receive on Mars.",
+    "sourceTitle": "Comfort and Human factors AstroRad Radiation Garment Evaluation (CHARGE) on ISS",
+    "url": "https://humanresearchroadmap.nasa.gov/Tasks/task.aspx?i=2395",
+    "locator": "Aims and Deliverables"
+  }
+]
