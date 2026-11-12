@@ -37,8 +37,7 @@ public sealed class LivingOnMarsAttribute : ActionFilterAttribute
     }
 }
 
-[AttributeUsage(AttributeTargets.Class)]
-public sealed class ScienceTechnologyAttribute : ActionFilterAttribute
+public abstract class EnglishQueryAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -47,8 +46,15 @@ public sealed class ScienceTechnologyAttribute : ActionFilterAttribute
     }
 }
 
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ScienceTechnologyAttribute : EnglishQueryAttribute;
+
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class HumanSurvivalAttribute : EnglishQueryAttribute;
+
 public sealed record ContentModule(string Slug)
 {
+    public const string Human = "human-survival";
     public const string Science = "science-technology";
     public const string Living = "living-on-mars";
     public const string Discovery = "discover-mars";
@@ -57,6 +63,7 @@ public sealed record ContentModule(string Slug)
     public static ContentModule FromEndpoint(IServiceProvider services)
     {
         var endpoint = services.GetRequiredService<IHttpContextAccessor>().HttpContext?.GetEndpoint();
+        if (endpoint?.Metadata.GetMetadata<HumanSurvivalAttribute>() != null) return new(Human);
         if (endpoint?.Metadata.GetMetadata<ScienceTechnologyAttribute>() != null) return new(Science);
         if (endpoint?.Metadata.GetMetadata<LivingOnMarsAttribute>() != null) return new(Living);
         return new(endpoint?.Metadata.GetMetadata<SurvivalKnowledgeAttribute>() == null ? Discovery : Survival);

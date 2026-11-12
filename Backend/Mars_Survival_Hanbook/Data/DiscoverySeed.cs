@@ -23,6 +23,14 @@ public static class DiscoverySeed
     {
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         await DatabaseLocks.AcquireAsync(db, "discovery-seed", ct);
+        await SeedModuleAsync(db, Services.ContentModule.Human, "Human Survival", "Everyday decisions about crew health, meals, care and shared work at a fictional Mars base.", [
+            ("physical-health", "Physical Health", "Plan movement and rest around maintenance."),
+            ("mental-health", "Mental Health", "Listen to a crewmate's account of life on a different shift."),
+            ("nutrition", "Nutrition", "Match meals to the time and equipment available."),
+            ("medical-care", "Medical Care", "Trace a health report across shifts."),
+            ("teamwork", "Teamwork", "Hand over unfinished work to a named crewmate."),
+            ("adapting-to-isolation", "Adapting to Isolation", "Negotiate shared space across shifts.")
+        ], ct);
         await SeedModuleAsync(db, Services.ContentModule.Science, "Science and Technology", "How exploration technologies work and where they have been tested.", ScienceCategories, ct);
         await SeedModuleAsync(db, "discover-mars", "Discover Mars", "Khám phá Sao Hỏa từ các nguồn khoa học được kiểm chứng.",
             Categories.Select(c => (c.Slug, c.Name, (string?)null)).ToArray(), ct);
@@ -65,7 +73,7 @@ public static class DiscoverySeed
             module = new() { Name = moduleName, Slug = moduleSlug, Description = description };
             db.Modules.Add(module); await db.SaveChangesAsync(ct);
         }
-        if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science)
+        if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science or Services.ContentModule.Human)
         {
             module.Name = moduleName;
             module.Description = description;
@@ -76,9 +84,9 @@ public static class DiscoverySeed
             var category = await db.Categories.SingleOrDefaultAsync(x => x.ModuleId == module.Id && x.Slug == slug, ct);
             if (category == null)
                 db.Categories.Add(new() { ModuleId = module.Id, Name = name, Slug = slug, Description = topicDescription, DisplayOrder = i });
-            else if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science)
+            else if (moduleSlug is "survival-knowledge" or "living-on-mars" or Services.ContentModule.Science or Services.ContentModule.Human)
             {
-                if (moduleSlug is "living-on-mars" or Services.ContentModule.Science) category.DisplayOrder = i;
+                if (moduleSlug is "living-on-mars" or Services.ContentModule.Science or Services.ContentModule.Human) category.DisplayOrder = i;
                 category.Name = name;
                 category.Description = topicDescription;
             }

@@ -21,7 +21,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
             parameter.Schema.Default = parameter.Name switch {
                 "page" => new Microsoft.OpenApi.Any.OpenApiInteger(1),
                 "pageSize" => new Microsoft.OpenApi.Any.OpenApiInteger(20),
-                "language" => new Microsoft.OpenApi.Any.OpenApiString((path.Contains("/survival-knowledge") || path.Contains("/living-on-mars") || path.Contains("/science-technology")) ? "en" : "vi"),
+                "language" => new Microsoft.OpenApi.Any.OpenApiString((path.Contains("/human-survival") || path.Contains("/survival-knowledge") || path.Contains("/living-on-mars") || path.Contains("/science-technology")) ? "en" : "vi"),
                 "sort" => new Microsoft.OpenApi.Any.OpenApiString("publishedAtDesc"),
                 "includePlanned" => new Microsoft.OpenApi.Any.OpenApiBoolean(false),
                 _ => parameter.Schema.Default
@@ -58,7 +58,9 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
                 """{"status":400,"title":"Invalid value for initialStocks.","code":"invalid_request"}""");
         }
         var contractPath = path.StartsWith("api/living-on-mars") ? path.Replace("living-on-mars", "discover-mars") : path;
-        var successType = ResponseType(contractPath.Replace("science-technology", "discover-mars").Replace("survival-knowledge", "discover-mars"), method!);
+        contractPath = contractPath.Replace("human-survival", "discover-mars").Replace("science-technology", "discover-mars").Replace("survival-knowledge", "discover-mars");
+        var successType = path is "api/human-survival" or "api/human-survival/overview" ? typeof(HumanOverviewResponse)
+            : path == "api/human-survival/categories" ? typeof(HumanCategoryResponse[]) : ResponseType(contractPath, method!);
         if (successType != null)
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :
@@ -87,7 +89,7 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         }
         if (path.Contains("/science-technology/") && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
             operation.Description += " English only (defaults to en). Supply technologyProfile and one catalog category. Sections with anchors problem and principle, a cited claim and technical source revision IDs are required for review. Qualitative profiles can omit facts. Each selected fact needs a factLocators entry.";
-        if (path.Contains("/survival-knowledge/") && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
+        if ((path.Contains("/survival-knowledge/") || path.Contains("/human-survival/")) && (path.EndsWith("/draft") || method == "POST" && path.EndsWith("/articles")))
             operation.Description += " The only supported languageCode is en. Omitting it selects English.";
         if (path == "api/auth/register") operation.Description = "Create an active Viewer account using username, fullName, email and password. " +
             "Username is 3-50 ASCII letters/digits/dots/underscores/hyphens, starting with a letter or digit; fullName is required (up to 150 characters); " +

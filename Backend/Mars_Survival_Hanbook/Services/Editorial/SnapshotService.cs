@@ -55,7 +55,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
         var revisions = await db.SourceRevisions.Include(x => x.Source).Where(x => dependencies.Contains(x.Id)).ToListAsync(ct);
         if (revisions.Count != dependencies.Length || dependencies.Contains(Guid.Empty)) throw ApiException.Invalid("A required source revision is missing.");
         s.Sources = revisions.OrderBy(x => x.Id).Select(ToCitation).ToArray();
-        if (moduleSlug == ContentModule.Living || moduleSlug == ContentModule.Science && r.EnglishCitations != null)
+        if (moduleSlug == ContentModule.Living || (moduleSlug is ContentModule.Science or ContentModule.Human) && r.EnglishCitations != null)
         {
             s.Sources = s.Sources.Select(c =>
             {
@@ -67,7 +67,7 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
                 return c with { Title = display.Title, Credit = display.Credit, UsageNote = display.UsageNote };
             }).ToArray();
         }
-        else if (r.EnglishCitations != null) throw ApiException.Invalid("English citation overrides require Living on Mars or Science and Technology.");
+        else if (r.EnglishCitations != null) throw ApiException.Invalid("English citation overrides require Living on Mars, Science and Technology or Human Survival.");
         return s;
     }
     private async Task<JsonElement[]> LoadAsync(string kind, IEnumerable<Guid> ids, CancellationToken ct)
@@ -110,6 +110,13 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
             !await db.LivingEnglishReviews.AnyAsync(r => r.ArticleVersionId == v.Id && r.SnapshotHash == v.SnapshotHash, ct)))
             throw ApiException.Gate("English review of all snapshot fields is required.");
         if (v.SnapshotHash != SourceNormalization.Hash(v.Snapshot)) throw ApiException.Gate("The snapshot hash does not match.");
+        if (s.ModuleSlug == ContentModule.Human)
+        {
+            if (s.LanguageCode != "en" || v.LanguageCode != "en") throw ApiException.Gate("Human Survival versions require English.");
+            string[] required = ["scenario", "question", "explanation", "evidence-limits"];
+            if (!s.Sections.Select(section => section.Anchor).Where(required.Contains).SequenceEqual(required))
+                throw ApiException.Gate("Include scenario, question, explanation and evidence-limits in reading order.");
+        }
         var dependencies = s.Sources.Select(x => x.SourceRevisionId).ToHashSet();
         var links = await db.ArticleVersionSources.Where(x => x.ArticleVersionId == v.Id).ToListAsync(ct);
         if (dependencies.Count == 0 || !dependencies.SetEquals(links.Select(x => x.SourceRevisionId)))
@@ -138,8 +145,8 @@ public sealed class SnapshotService(MarsDbContext db, ContentService content, Ra
             x.EvidenceType == EvidenceType.Unspecified || x.TestEnvironment == TestEnvironment.Unspecified ||
             x.Locator is null || x.Locator.Count == 0 || x.Locator.Values.Any(string.IsNullOrWhiteSpace)))
             throw ApiException.Gate("Each claim requires a source revision, locator, evidence type and context.");
-        if (s.ModuleSlug == ContentModule.Survival && s.Facts.Any(f => Text(f, "verificationStatus") != "Accepted"))
-            throw ApiException.Gate("Approve each fact before saving a Survival Knowledge draft that uses it.");
+        if (s.ModuleSlug is ContentModule.Human or ContentModule.Survival && s.Facts.Any(f => Text(f, "verificationStatus") != "Accepted"))
+            throw ApiException.Gate("Approve each fact before saving a draft that uses it.");
         foreach (var f in s.Facts.Concat(s.Measurements))
             if (Text(f, "evidenceType") is null or "Unspecified" || Text(f, "testEnvironment") is null or "Unspecified" ||
                 !f.TryGetProperty("unit", out _) || string.IsNullOrWhiteSpace(Text(f, "context")))

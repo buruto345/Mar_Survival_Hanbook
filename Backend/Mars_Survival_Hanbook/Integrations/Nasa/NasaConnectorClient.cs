@@ -69,7 +69,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
         }
         throw ApiException.Invalid("This connector requires explicit recordIds.");
     }
-    public async Task<SourceCandidate> FetchAsync(NasaConnector c, string key, CancellationToken ct)
+    public async Task<SourceCandidate> FetchAsync(NasaConnector c, string key, CancellationToken ct, bool requireMarsKeyword = true)
     {
         var blobs = new List<object>();
         var hashes = new Dictionary<string, string>();
@@ -96,7 +96,7 @@ public sealed class NasaConnectorClient(SafeNasaHttp http, RawStorage storage, I
                 var d = await FetchJson(new(Base(c), "api/citations/" + Esc(key)), "metadata");
                 if (Required(d, "distribution", JsonValueKind.String).GetString() != "PUBLIC") throw new UpstreamException("policy_not_public", false);
                 var title = S(d, "title") ?? throw new UpstreamException("missing_title", false);
-                if (!MarsRelevant(title + " " + S(d, "abstract"))) throw new UpstreamException("policy_not_mars", false);
+                if (requireMarsKeyword && !MarsRelevant(title + " " + S(d, "abstract"))) throw new UpstreamException("policy_not_mars", false);
                 var authors = new List<SourceAuthor>();
                 if (d.TryGetProperty("authorAffiliations", out var affiliations))
                     foreach (var a in affiliations.EnumerateArray())

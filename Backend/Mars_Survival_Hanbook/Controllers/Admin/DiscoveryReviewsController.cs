@@ -48,3 +48,7 @@ public sealed class SurvivalReviewsController(ReviewService service)
 [ScienceTechnology, Route("api/admin/science-technology/reviews")]
 public sealed class ScienceReviewsController(ReviewService service)
     : ReviewsControllerBase(service);
+
+[HumanSurvival, Route("api/admin/human-survival/reviews")]
+public sealed class HumanReviewsController(ReviewService service)
+    : ReviewsControllerBase(service);

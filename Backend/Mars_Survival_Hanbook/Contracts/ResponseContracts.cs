@@ -5,6 +5,8 @@ namespace Mars_Survival_Hanbook.Contracts;
 public record ArticleCard(Guid Id, string Slug, string Title, string Summary, string CategorySlug, string LanguageCode,
     Guid ArticleVersionId, int Version, DateTimeOffset? ReviewedAt, DateTimeOffset? PublishedAt, string? ThumbnailUrl);
 public record TechnologyCard(Guid Id, string Slug, string Title, string Summary, string CategorySlug, string TechnologyStatus, string TestEnvironment);
+public record HumanCategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount, string? ArticleSlug);
+public record HumanOverviewResponse(Guid Id, string Name, string Slug, string? Description, HumanCategoryResponse[] Categories, int PublishedArticleCount, string? CoverUrl);
 public record CategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount);
 public record ModuleResponse(Guid Id, string Name, string Slug, string? Description, CategoryResponse[] Categories,
     int PublishedArticleCount, string? CoverUrl);
@@ -28,6 +30,7 @@ public sealed class ArticleDetailResponse : ArticleSnapshot
     public int Version { get; set; }
     public DateTimeOffset? ReviewedAt { get; set; }
     public DateTimeOffset? PublishedAt { get; set; }
+    public string? SurvivalKnowledgeUrl { get; set; }
     public string BodyFormat { get; set; } = "plainText";
     public TableOfContentsEntry[] TableOfContents { get; set; } = [];
     public RelatedArticle[] RelatedArticles { get; set; } = [];

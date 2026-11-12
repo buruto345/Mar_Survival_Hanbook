@@ -11,7 +11,7 @@ public sealed class ReviewService(MarsDbContext db, CurrentActor actor, Snapshot
     public IQueryable<ReviewTask> Tasks => db.ReviewTasks.Where(x => x.Article.Category.Module.Slug == module.Slug &&
         (module.Slug != ContentModule.Living || x.ArticleVersion.LanguageCode == "en"));
 
-    public IQueryable<ReviewTask> List(string language) => module.Slug == ContentModule.Survival
+    public IQueryable<ReviewTask> List(string language) => module.Slug is ContentModule.Survival or ContentModule.Human
         ? Tasks.Where(x => x.ArticleVersion.LanguageCode == language) : Tasks;
 
     public async Task<ReviewTask> ClaimAsync(Guid id, string? etag, CancellationToken ct)

@@ -19,6 +19,7 @@ public sealed class NasaSimulationFactAttribute : FactAttribute
             Skip = "Requires MARS_RUN_SQLSERVER_TESTS=1, MARS_RUN_NASA_SIMULATION=1 and local Postman NASA simulation on port 4010.";
     }
 }
+[Collection("NASA simulation mode")]
 public class NasaSimulationTests(DiscoveryHttpFixture fixture) : IClassFixture<DiscoveryHttpFixture>
 {
     private async Task Configure()

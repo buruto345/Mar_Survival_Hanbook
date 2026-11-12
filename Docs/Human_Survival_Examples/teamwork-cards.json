@@ -1,0 +1,20 @@
+{
+  "items": [
+    {
+      "id": "27b8293e-e9e3-4fee-81a1-7de3ad4395bf",
+      "slug": "filter-handover",
+      "title": "What does “filter work complete” mean?",
+      "summary": "Write a handover that lets the next shift identify an open check.",
+      "categorySlug": "teamwork",
+      "languageCode": "en",
+      "articleVersionId": "0a09615d-7cf7-4d55-b386-7dd83b16572a",
+      "version": 3,
+      "reviewedAt": "2026-11-12T12:53:04.8724841+00:00",
+      "publishedAt": "2026-11-12T12:53:05.2276687+00:00",
+      "thumbnailUrl": null
+    }
+  ],
+  "page": 1,
+  "pageSize": 20,
+  "total": 1
+}

@@ -36,7 +36,7 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
                 db.ArticleVersionSources.Any(l => l.ArticleVersionId == v.Id) &&
                 MarsDbContext.JsonValue(v.Snapshot, "$.moduleSlug") == ContentModule.Science &&
                 MarsDbContext.JsonValue(v.Snapshot, "$.languageCode") == "en")) &&
-            (module.Slug != ContentModule.Survival || v.LanguageCode == "en") &&
+            ((module.Slug != ContentModule.Human && module.Slug != ContentModule.Survival) || v.LanguageCode == "en") &&
             (module.Slug != ContentModule.Living || (v.LanguageCode == "en" &&
                 db.LivingEnglishReviews.Any(review => review.ArticleVersionId == v.Id && review.SnapshotHash == v.SnapshotHash))) &&
             (language == null || v.LanguageCode == language) && v.SnapshotSchemaVersion == 1 &&
@@ -59,11 +59,14 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
     public async Task<object[]> CategoriesAsync(string language, CancellationToken ct)
     {
         var counts = await Publications(language).GroupBy(x => x.Version.CategorySlug)
-            .Select(x => new { Slug = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.Slug, x => x.Count, ct);
+            .Select(x => new { Slug = x.Key, Count = x.Count(), SlugIfSingle = x.Count() == 1 ? x.Min(p => p.Article.Slug) : null }).ToDictionaryAsync(x => x.Slug, ct);
         var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.ArchivedAt == null &&
             (module.Slug != ContentModule.Science || ScienceSlugs.Contains(x.Slug)))
             .OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id).ToListAsync(ct);
-        return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug) }).ToArray();
+        if (module.Slug == ContentModule.Human)
+            return categories.Select(x => (object)new HumanCategoryResponse(x.Id, x.Slug, x.Name, x.Description,
+                counts.GetValueOrDefault(x.Slug)?.Count ?? 0, counts.GetValueOrDefault(x.Slug)?.SlugIfSingle)).ToArray();
+        return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug)?.Count ?? 0 }).ToArray();
     }
     public async Task<object> CategoryAsync(string slug, string language, CancellationToken ct)
     {
@@ -116,20 +119,20 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
         var related = await Publications(s.LanguageCode).Where(x => s.RelatedArticleIds.Contains(x.Article.Id))
             .Select(x => new { x.Article.Id, x.Article.Slug, x.Version.Title, ArticleVersionId = x.Version.Id }).ToListAsync(ct);
         node["relatedArticles"] = JsonSerializer.SerializeToNode(related, DiscoveryJson.Options);
-        if (module.Slug == ContentModule.Living)
+        if (module.Slug == ContentModule.Living || module.Slug == ContentModule.Human && s.CategorySlug == "physical-health")
         {
             var relatedSlug = s.CategorySlug switch {
                 "energy" => "dust-storms-and-solar-power", "water-and-oxygen" => "oxygen-and-surface-pressure",
-                "housing" => "radiation-at-curiosity", "community" => "partial-gravity-and-human-health", _ => null
+                "housing" => "radiation-at-curiosity", "community" or "physical-health" => "partial-gravity-and-human-health", _ => null
             };
             var survival = new DiscoveryService(db, config, new ContentModule(ContentModule.Survival));
             if (relatedSlug != null && await survival.Publications("en").AnyAsync(x => x.Article.Slug == relatedSlug, ct))
                 node["survivalKnowledgeUrl"] = "/api/survival-knowledge/articles/" + relatedSlug + "?language=en";
         }
-        if (module.Slug == ContentModule.Science && s.RelatedArticleIds.Length > 0)
+        if ((module.Slug is ContentModule.Science or ContentModule.Human) && s.RelatedArticleIds.Length > 0)
         {
             var accessible = new JsonArray();
-            foreach (var target in new[] { ContentModule.Science, ContentModule.Discovery, ContentModule.Living, ContentModule.Survival })
+            foreach (var target in new[] { module.Slug, ContentModule.Science, ContentModule.Discovery, ContentModule.Living, ContentModule.Survival }.Distinct())
             {
                 var targetService = new DiscoveryService(db, config, new ContentModule(target));
                 var rows = await targetService.Publications(null).Where(p => s.RelatedArticleIds.Contains(p.Article.Id))

@@ -1,0 +1,127 @@
+{
+  "languageCode": "en",
+  "sources": [
+    {
+      "key": "gravity",
+      "ntrsId": "20210019591"
+    },
+    {
+      "key": "support",
+      "ntrsId": "20250001454"
+    },
+    {
+      "key": "medical",
+      "ntrsId": "20220017856"
+    },
+    {
+      "key": "team",
+      "ntrsId": "20220007465"
+    },
+    {
+      "key": "food",
+      "title": "Food and Nutrition",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/food-and-nutrition-technical-brief-ochmo.pdf",
+      "author": "NASA Office of the Chief Health and Medical Officer",
+      "organization": "NASA Office of the Chief Health and Medical Officer"
+    },
+    {
+      "key": "hera",
+      "title": "The effect of a dynamic lighting schedule on neurobehavioral performance during a 45-day simulated space mission",
+      "url": "https://doi.org/10.1093/sleepadvances/zpae032",
+      "author": "Leilah K. Grant et al.",
+      "organization": "Division of Sleep and Circadian Disorders, Brigham and Women's Hospital"
+    }
+  ],
+  "articles": [
+    {
+      "category": "physical-health",
+      "slug": "maintenance-and-movement",
+      "title": "When maintenance runs into exercise time",
+      "summary": "Decide what to reschedule when a repair takes longer than expected.",
+      "scenario": "Mara has a movement session followed by a rest break. A pump repair runs late and the next crew member is available to take over. The schedule still lists both breaks as completed.",
+      "question": "Which parts of the schedule need correcting? What evidence would you need before changing the exercise plan?",
+      "explanation": "Mark the movement session and rest break as missed. Ask when the relief worker can take over and look for room to restore both activities. Record the actual times so the next planner can see what happened.",
+      "claim": "Jones reviewed indirect evidence suggesting that gravity at the Martian surface may provide too little loading to maintain conditioning over a long stay.",
+      "limits": "The paper had no long-term human observations on Mars. It cannot tell Mara how long to exercise after this repair.",
+      "source": "gravity",
+      "locator": "ICES-2021-142, page 1, abstract",
+      "evidence": "Modeled",
+      "environment": "EarthAnalog"
+    },
+    {
+      "category": "mental-health",
+      "slug": "a-conversation-between-shifts",
+      "title": "A conversation between shifts",
+      "summary": "Practice asking a crewmate what kind of contact they want.",
+      "scenario": "After moving to the late shift, Sol says, “I hardly get to talk to anyone around here.” A teammate starts arranging a daily group call.",
+      "question": "What has Sol told you? What would you ask before booking the call?",
+      "explanation": "Sol described having few chances to talk. Ask, “Who would you like to catch up with, and when would that work for you?” A quiet meal with one friend might fit better than a group call.",
+      "claim": "In terrestrial isolation studies summarized by NASA, participants who rated support from crewmates more highly also tended to report less evening stress.",
+      "limits": "An association across participants cannot establish how Sol feels or which arrangement Sol wants.",
+      "source": "support",
+      "locator": "Terrestrial analog evidence, Family and Social Support, Figure 4",
+      "evidence": "Observed",
+      "environment": "EarthAnalog"
+    },
+    {
+      "category": "nutrition",
+      "slug": "dinner-on-the-late-shift",
+      "title": "Dinner on the late shift",
+      "summary": "Use the galley schedule alongside the inventory to plan dinner.",
+      "scenario": "The inventory lists six stew pouches. Each needs hot water and time to stand. The late shift has one short meal break, and the galley heater is booked for cleaning. These quantities and bookings belong to the exercise.",
+      "question": "What would you check before assigning the stew to this shift?",
+      "explanation": "Check the heater booking, water supply, pouch preparation instructions and actual overlap with the meal break. Ask the crew which ready-to-eat items they can use if the heater stays unavailable.",
+      "claim": "NASA identifies limited preparation time and access to heating or rehydration equipment as constraints that can keep crews from finishing meals.",
+      "limits": "The brief describes spaceflight food systems. The base inventory and shift menu are editorial assumptions.",
+      "source": "food",
+      "locator": "Food and Nutrition technical brief, Meal Preparation Time and Capability",
+      "evidence": "Observed",
+      "environment": "InternationalSpaceStation"
+    },
+    {
+      "category": "medical-care",
+      "slug": "handover-of-a-health-report",
+      "title": "Who has the health report?",
+      "summary": "Follow a report from the crew member to the person responsible for follow-up.",
+      "scenario": "Just before changeover, Jules tells the shift lead about a health concern. With Jules present, the lead enters the report in the fictional base medical log. The outgoing note says only “message sent.”",
+      "question": "Who knows about the report so far? What would let the incoming medical contact confirm responsibility?",
+      "explanation": "Trace the path from Jules to the lead and the log. The note leaves out the recipient and whether anyone acknowledged it. Use the private channel to identify the incoming contact, confirm receipt and agree who will update Jules.",
+      "claim": "NASA’s exploration medical decision-support concept anticipates periods of delayed contact with ground flight surgeons.",
+      "limits": "The concept describes design needs. This fictional reporting exercise assigns roles for discussion and provides no diagnostic or treatment protocol.",
+      "source": "medical",
+      "locator": "Concept of Operations, abstract, delayed communication with flight surgeons",
+      "evidence": "Proposed",
+      "environment": "DeepSpace"
+    },
+    {
+      "category": "teamwork",
+      "slug": "filter-handover",
+      "title": "What does “filter work complete” mean?",
+      "summary": "Write a handover that lets the next shift identify an open check.",
+      "scenario": "Rin replaced the filter on loop B. The follow-up check is still open. Jo is taking over. The shift log reads “Filter work complete.”",
+      "question": "Write the next log entry in your own words. Can Jo tell what happened, what remains open and who owns it?",
+      "explanation": "“Loop B filter replaced by Rin. Follow-up check pending. Jo, please take ownership and enter the result in the shift log.” Ask Jo to acknowledge the handover. If Jo is unavailable, the outgoing shift still needs a named recipient.",
+      "claim": "NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions.",
+      "limits": "The exchange is fictional. The review does not test this wording or establish a filter inspection procedure.",
+      "source": "team",
+      "locator": "2022 Team Evidence Report, IV. Executive Summary",
+      "evidence": "Observed",
+      "environment": "EarthAnalog"
+    },
+    {
+      "category": "adapting-to-isolation",
+      "slug": "sharing-the-common-room",
+      "title": "Who gets the common room?",
+      "summary": "Compare two room agreements and decide when to revisit them.",
+      "scenario": "For the coming week the day crew wants to meet beside the sleeping quarters. Members of the night crew hear voices and see the meeting lights through the doorway.",
+      "question": "Compare moving the meeting with moving its time. Who bears the cost of each choice, and how will both shifts judge the trial?",
+      "explanation": "Moving to the workshop keeps the meeting time but displaces anyone using the bench. Meeting later keeps the workshop free but may exclude the outgoing shift. Ask both shifts to try one arrangement for three days and record missed meetings and interrupted rest before deciding together.",
+      "claim": "In a 45-day HERA campaign in Houston with restricted sleep, crews exposed to a changing daily light schedule performed better on a sustained-attention task than those under constant waking light.",
+      "limits": "The researchers tested lighting on Earth. Neither room bookings nor noise agreements were compared, so the crews must evaluate their own trial.",
+      "source": "hera",
+      "locator": "Grant et al. (2024), Discussion, psychomotor vigilance task",
+      "evidence": "Tested",
+      "environment": "EarthAnalog"
+    }
+  ]
+}
