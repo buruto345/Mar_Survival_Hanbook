@@ -12,6 +12,13 @@ public static class DiscoveryCommands
 {
     public static async Task<bool> RunAsync(string[] args, IServiceProvider services)
     {
+        if (args.FirstOrDefault() == "import-human-survival-pack")
+        {
+            if (!(args.Length == 1 || args.Length == 3 && args[1] == "--file"))
+                throw ApiException.Invalid("Usage: import-human-survival-pack [--file PATH]");
+            await HumanSurvival.HumanSurvivalImport.RunAsync(services, args.Length == 3 ? args[2] : null);
+            return true;
+        }
         if (args.FirstOrDefault() == "import-science-pack")
         {
             if (!(args.Length == 1 || args.Length == 3 && args[1] == "--file")) throw ApiException.Invalid("Usage: import-science-pack [--file PATH]");

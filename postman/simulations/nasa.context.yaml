@@ -2,6 +2,13 @@ purpose:
   stands_in_for: NASA NTRS, Images, PDS MEDA pressure and Mars Trek HTTP responses and upstream failures.
   unblocks: Local tests of the real Discover Mars worker and SQL persistence.
 assumptions:
+  - id: human-survival-pack-ntrs-retry
+    status: supported
+    claim: An interrupted Human Survival import can reuse a committed NTRS revision on retry.
+    reason: Each resolved source and saved article is committed separately. The importer looks up a local NTRS record before fetching.
+    verification: On 2026-11-12 the partial simulation returned 404 for fixture 124 after 123 succeeded. The next run fetched only 124. A third run in 500 mode made zero upstream requests and retained both versions.
+    source: Backend/Mars_Survival_Hanbook.Tests/HumanSurvivalNasaTests.cs
+    updated_at: "2026-11-12"
   - id: pds-current-registry-redirect
     status: supported
     claim: The public pds.nasa.gov API redirects product requests to pds.mcp.nasa.gov over HTTPS.

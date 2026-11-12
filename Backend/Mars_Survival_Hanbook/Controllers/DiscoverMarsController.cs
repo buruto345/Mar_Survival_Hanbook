@@ -40,6 +40,14 @@ public abstract class KnowledgeControllerBase(DiscoveryService service, RawStora
 public sealed class SurvivalKnowledgeController(DiscoveryService service, RawStorage raw)
     : KnowledgeControllerBase(service, raw);
 
+[HumanSurvival, Route("api/human-survival")]
+public sealed class HumanSurvivalController(DiscoveryService service, RawStorage raw)
+    : KnowledgeControllerBase(service, raw)
+{
+    [HttpGet("overview")]
+    public async Task<IActionResult> Overview(CancellationToken ct) => Ok(await Service.ModuleAsync("en", ct));
+}
+
 [Route("api/discover-mars")]
 public sealed class DiscoverMarsController(DiscoveryService discovery, RawStorage raw)
     : KnowledgeControllerBase(discovery, raw)

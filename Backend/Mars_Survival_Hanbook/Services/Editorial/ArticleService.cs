@@ -25,9 +25,10 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
     }
     public async Task<Article> SaveDraftAsync(Guid? id, ArticleDraftRequest r, string? etag, CancellationToken ct)
     {
+        if (module.Slug == ContentModule.Human && !r.HasExplicitLanguage) r.LanguageCode = "en";
         if (module.Slug == ContentModule.Survival && r.LanguageCode != "en")
             throw ApiException.Invalid("Survival Knowledge drafts require languageCode en.");
-        if (module.Slug == ContentModule.Living && r.LanguageCode != "en") throw ApiException.Invalid("languageCode must be en.");
+        if (module.Slug is ContentModule.Living or ContentModule.Human && r.LanguageCode != "en") throw ApiException.Invalid("languageCode must be en.");
         if (module.Slug == ContentModule.Science)
         {
             if (!r.HasExplicitLanguage) r.LanguageCode = "en";
@@ -206,6 +207,8 @@ public sealed class ArticleService(MarsDbContext db, CurrentActor actor, Snapsho
         var s = SnapshotService.Read(sourceVersion);
         if (module.Slug == ContentModule.Science && sourceVersion.SnapshotHash != SourceNormalization.Hash(sourceVersion.Snapshot))
             throw ApiException.Gate("The snapshot hash does not match.");
+        if (module.Slug == ContentModule.Human && (s.LanguageCode != "en" || sourceVersion.LanguageCode != "en" || s.ModuleSlug != module.Slug))
+            throw ApiException.Invalid("Only English Human Survival versions can be restored.");
         if (module.Slug == ContentModule.Survival && s.LanguageCode != "en")
             throw ApiException.Invalid("Only English versions can be restored as Survival Knowledge drafts.");
         if (module.Slug == ContentModule.Science && (s.LanguageCode != "en" || s.ModuleSlug != module.Slug ||

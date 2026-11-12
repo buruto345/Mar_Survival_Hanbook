@@ -49,7 +49,7 @@ builder.Services.AddHttpClient<SafeNasaHttp>(c => {
 builder.Services.AddScoped<NasaConnectorClient>();
 builder.Services.AddHostedService<IngestionWorker>();
 var key = builder.Configuration["Jwt:SigningKey"];
-var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-science-pack" or "import-discovery-pack" or "publish-survival-edition" or "publish-living-scenario" or "withdraw-living-scenario" or "export-living-review";
+var commandMode = args.FirstOrDefault() is "seed" or "backfill" or "provision" or "import-human-survival-pack" or "import-science-pack" or "import-discovery-pack" or "publish-survival-edition" or "publish-living-scenario" or "withdraw-living-scenario" or "export-living-review";
 if (string.IsNullOrEmpty(key) && (builder.Environment.IsDevelopment() || commandMode))
     key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 if (key == null || Encoding.UTF8.GetByteCount(key) < 32)
@@ -119,7 +119,7 @@ if (await DiscoveryCommands.RunAsync(args, app.Services)) return;
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.Use(async (context, next) =>
 {
-    if (context.GetEndpoint()?.Metadata.GetMetadata<ScienceTechnologyAttribute>() != null || context.Request.Path.StartsWithSegments("/api/living-on-mars") || context.Request.Path.StartsWithSegments("/api/admin/living-on-mars"))
+    if (context.GetEndpoint()?.Metadata.GetMetadata<EnglishQueryAttribute>() != null || context.Request.Path.StartsWithSegments("/api/living-on-mars") || context.Request.Path.StartsWithSegments("/api/admin/living-on-mars"))
     {
         context.Response.Headers.ContentLanguage = "en";
         context.Response.Headers.CacheControl = "no-store";

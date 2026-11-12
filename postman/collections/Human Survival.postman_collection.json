@@ -1,0 +1,779 @@
+{
+  "info": {
+    "name": "Human Survival",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5097"
+    },
+    {
+      "key": "slug",
+      "value": "filter-handover"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "sourceRevisionId",
+      "value": ""
+    },
+    {
+      "key": "articleId",
+      "value": ""
+    },
+    {
+      "key": "draftSlug",
+      "value": "filter-handover-practice"
+    }
+  ],
+  "item": [
+    {
+      "name": "Overview",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/human-survival/overview",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "human-survival",
+            "overview"
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('OK', () => pm.response.to.have.status(200));",
+              "pm.test('Six categories', () => pm.expect(pm.response.json().categories).to.have.length(6));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/human-survival/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "human-survival",
+            "categories"
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('OK', () => pm.response.to.have.status(200));",
+              "pm.test('English taxonomy', () => pm.expect(pm.response.json()[0].name).to.equal('Physical Health'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Teamwork cards",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/human-survival/articles?category=teamwork&page=1&pageSize=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "human-survival",
+            "articles"
+          ],
+          "query": [
+            {
+              "key": "category",
+              "value": "teamwork"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "20"
+            }
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('OK', () => pm.response.to.have.status(200));",
+              "pm.test('Teamwork cards', () => pm.response.json().items.forEach(item => pm.expect(item.categorySlug).to.equal('teamwork')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filter handover",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/human-survival/articles/{{slug}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "human-survival",
+            "articles",
+            "{{slug}}"
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const c = pm.response.json().sources[0];",
+              "pm.collectionVariables.set('sourceId', c.sourceId); pm.collectionVariables.set('sourceRevisionId', c.sourceRevisionId);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cited source revision",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/human-survival/sources/{{sourceId}}/revisions/{{sourceRevisionId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "human-survival",
+            "sources",
+            "{{sourceId}}",
+            "revisions",
+            "{{sourceRevisionId}}"
+          ]
+        },
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('OK', () => pm.response.to.have.status(200));",
+              "pm.test('Pinned revision', () => pm.expect(pm.response.json().sourceRevisionId).to.equal(pm.collectionVariables.get('sourceRevisionId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create practice article",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles"
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categorySlug\": \"teamwork\",\n  \"slug\": \"{{draftSlug}}\",\n  \"title\": \"What does “filter work complete” mean?\",\n  \"summary\": \"Write a handover that lets the next shift identify an open check.\",\n  \"sections\": [\n    {\n      \"anchor\": \"scenario\",\n      \"heading\": \"Fictional scenario\",\n      \"body\": \"Rin replaced the filter on loop B. The follow-up check is still open. Jo is taking over. The shift log reads “Filter work complete.”\"\n    },\n    {\n      \"anchor\": \"question\",\n      \"heading\": \"Your turn\",\n      \"body\": \"Write the next log entry in your own words. Can Jo tell what happened, what remains open and who owns it?\"\n    },\n    {\n      \"anchor\": \"explanation\",\n      \"heading\": \"One possible response\",\n      \"body\": \"“Loop B filter replaced by Rin. Follow-up check pending. Jo, please take ownership and enter the result in the shift log.” Ask Jo to acknowledge the handover. If Jo is unavailable, the outgoing shift still needs a named recipient.\"\n    },\n    {\n      \"anchor\": \"evidence-limits\",\n      \"heading\": \"Evidence and limits\",\n      \"body\": \"NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions. The exchange is fictional. The review does not test this wording or establish a filter inspection procedure.\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"key\": \"evidence-limits\",\n      \"text\": \"NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions.\",\n      \"evidenceType\": \"Observed\",\n      \"testEnvironment\": \"EarthAnalog\",\n      \"sourceRevisionIds\": [\n        \"{{sourceRevisionId}}\"\n      ],\n      \"locator\": {\n        \"section\": \"2022 Team Evidence Report, IV. Executive Summary\"\n      }\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh article and ETag",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Save new draft",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/draft",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "draft"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categorySlug\": \"teamwork\",\n  \"slug\": \"{{draftSlug}}\",\n  \"title\": \"What does “filter work complete” mean?\",\n  \"summary\": \"Write a handover that lets the next shift identify an open check.\",\n  \"sections\": [\n    {\n      \"anchor\": \"scenario\",\n      \"heading\": \"Fictional scenario\",\n      \"body\": \"Rin replaced the filter on loop B. The follow-up check is still open. Jo is taking over. The shift log reads “Filter work complete.”\"\n    },\n    {\n      \"anchor\": \"question\",\n      \"heading\": \"Your turn\",\n      \"body\": \"Write the next log entry in your own words. Can Jo tell what happened, what remains open and who owns it?\"\n    },\n    {\n      \"anchor\": \"explanation\",\n      \"heading\": \"One possible response\",\n      \"body\": \"“Loop B filter replaced by Rin. Follow-up check pending. Jo, please take ownership and enter the result in the shift log.” Ask Jo to acknowledge the handover. If Jo is unavailable, the outgoing shift still needs a named recipient.\"\n    },\n    {\n      \"anchor\": \"evidence-limits\",\n      \"heading\": \"Evidence and limits\",\n      \"body\": \"NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions. The exchange is fictional. The review does not test this wording or establish a filter inspection procedure.\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"key\": \"evidence-limits\",\n      \"text\": \"NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions.\",\n      \"evidenceType\": \"Observed\",\n      \"testEnvironment\": \"EarthAnalog\",\n      \"sourceRevisionIds\": [\n        \"{{sourceRevisionId}}\"\n      ],\n      \"locator\": {\n        \"section\": \"2022 Team Evidence Report, IV. Executive Summary\"\n      }\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preview selected version",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/versions/{{versionId}}/preview",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "versions",
+            "{{versionId}}",
+            "preview"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Submit current draft",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/versions/{{versionId}}/submit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "versions",
+            "{{versionId}}",
+            "submit"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "pm.collectionVariables.set('taskId', pm.response.json().id); pm.collectionVariables.set('taskETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claim review",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/reviews/{{taskId}}/claim",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "reviews",
+            "{{taskId}}",
+            "claim"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{taskETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "pm.collectionVariables.set('taskETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Approve after checking the snapshot",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/reviews/{{taskId}}/decision",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "reviews",
+            "{{taskId}}",
+            "decision"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{taskETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"decision\": \"Approved\",\n  \"notes\": \"Checked the frozen English text and primary evidence.\",\n  \"checklist\": {\n    \"sourcesChecked\": true,\n    \"claimsChecked\": true,\n    \"unitsChecked\": true,\n    \"evidenceChecked\": true,\n    \"mediaRightsChecked\": true\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Refresh article before publishing",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}"
+          ]
+        },
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Publish approved version",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/publish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "publish"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"versionId\": \"{{versionId}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unpublish",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/unpublish",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "unpublish"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"Withdraw this edition for correction.\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restore selected version as draft",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/human-survival/articles/{{articleId}}/restore",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "human-survival",
+            "articles",
+            "{{articleId}}",
+            "restore"
+          ]
+        },
+        "header": [
+          {
+            "key": "If-Match",
+            "value": "{{articleETag}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceVersionId\": \"{{versionId}}\",\n  \"changeSummary\": \"Restore the selected frozen snapshot.\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Request succeeded', () => pm.expect(pm.response.code).to.be.within(200, 299));",
+              "if (pm.response.code < 300) {",
+              "const a = pm.response.json(); pm.collectionVariables.set('articleId', a.id); pm.collectionVariables.set('versionId', a.currentDraftVersionId);",
+              "pm.collectionVariables.set('articleETag', pm.response.headers.get('ETag'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

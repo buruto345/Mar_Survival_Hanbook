@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "articleId": "27b8293e-e9e3-4fee-81a1-7de3ad4395bf",
+  "moduleSlug": "human-survival",
+  "categorySlug": "teamwork",
+  "languageCode": "en",
+  "title": "What does “filter work complete” mean?",
+  "summary": "Write a handover that lets the next shift identify an open check.",
+  "sections": [
+    {
+      "anchor": "scenario",
+      "heading": "Fictional scenario",
+      "body": "Rin replaced the filter on loop B. The follow-up check is still open. Jo is taking over. The shift log reads “Filter work complete.”"
+    },
+    {
+      "anchor": "question",
+      "heading": "Your turn",
+      "body": "Write the next log entry in your own words. Can Jo tell what happened, what remains open and who owns it?"
+    },
+    {
+      "anchor": "explanation",
+      "heading": "One possible response",
+      "body": "“Loop B filter replaced by Rin. Follow-up check pending. Jo, please take ownership and enter the result in the shift log.” Ask Jo to acknowledge the handover. If Jo is unavailable, the outgoing shift still needs a named recipient."
+    },
+    {
+      "anchor": "evidence-limits",
+      "heading": "Evidence and limits",
+      "body": "NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions. The exchange is fictional. The review does not test this wording or establish a filter inspection procedure."
+    }
+  ],
+  "claims": [
+    {
+      "key": "evidence-limits",
+      "text": "NASA’s team evidence review identifies crew coordination and communication as factors in team performance during exploration missions.",
+      "evidenceType": "Observed",
+      "testEnvironment": "EarthAnalog",
+      "sourceRevisionIds": [
+        "10c5dca2-d823-4b34-b744-2eecd90989c4"
+      ],
+      "locator": {
+        "section": "2022 Team Evidence Report, IV. Executive Summary"
+      }
+    }
+  ],
+  "facts": [],
+  "measurements": [],
+  "missions": [],
+  "locations": [],
+  "timelineEvents": [],
+  "media": [],
+  "mapLayers": [],
+  "sources": [
+    {
+      "sourceId": "e7a04168-49bb-4678-8dbb-1ec26e70a3a0",
+      "sourceRevisionId": "10c5dca2-d823-4b34-b744-2eecd90989c4",
+      "provider": "Ntrs",
+      "externalRecordId": "20220007465",
+      "title": "Risk of Performance and Behavioral Health Decrements Due to Inadequate Cooperation, Coordination, and Psychosocial Adaptions within a Team",
+      "url": "https://ntrs.nasa.gov/citations/20220007465",
+      "authors": [
+        {
+          "name": "Lauren Blackwell Landon",
+          "organization": "Wyle (United States)"
+        }
+      ],
+      "organization": "Johnson Space Center",
+      "credit": null,
+      "usageNote": "Reviewer must verify document access and usage terms.",
+      "doi": null,
+      "retrievedAt": "2026-11-12T12:51:20.1431141+00:00"
+    }
+  ],
+  "id": "27b8293e-e9e3-4fee-81a1-7de3ad4395bf",
+  "slug": "filter-handover",
+  "articleVersionId": "0a09615d-7cf7-4d55-b386-7dd83b16572a",
+  "version": 3,
+  "reviewedAt": "2026-11-12T12:53:04.8724841+00:00",
+  "publishedAt": "2026-11-12T12:53:05.2276687+00:00",
+  "tableOfContents": [
+    {
+      "anchor": "scenario",
+      "heading": "Fictional scenario"
+    },
+    {
+      "anchor": "question",
+      "heading": "Your turn"
+    },
+    {
+      "anchor": "explanation",
+      "heading": "One possible response"
+    },
+    {
+      "anchor": "evidence-limits",
+      "heading": "Evidence and limits"
+    }
+  ],
+  "relatedArticles": [],
+  "bodyFormat": "plainText"
+}
