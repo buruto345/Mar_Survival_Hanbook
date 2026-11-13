@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mars-backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mars-backend
+  template:
+    metadata:
+      labels:
+        app: mars-backend
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mars-backend-data
+      initContainers:
+        - name: prepare-storage
+          image: &backendImage anhkiethp/mars_survival_handbook@sha256:1f3d2077c58eca6b4c6e4c3dc4eb44a818c62273ebec43b7810f22cfc431e088
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              mkdir -p /data/raw /data/images
+              cp -n /app/ImageMarHanbook/. /data/images/ -R
+              chown "$APP_UID" /data/raw /data/images
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: backend
+          image: *backendImage
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          envFrom:
+            - secretRef:
+                name: mars-backend-config
+          env:
+            - name: Storage__RawRoot
+              value: /data/raw
+            - name: Storage__ImageRoot
+              value: /data/images
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: http
+          volumeMounts:
+            - name: data
+              mountPath: /data

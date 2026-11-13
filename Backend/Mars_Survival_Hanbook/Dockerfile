@@ -1,30 +1,24 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS=8080
+# Visual Studio uses port 8081 for its HTTPS launch profile.
+EXPOSE 8080 8081
 USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
-
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Mars_Survival_Hanbook.csproj", "."]
-RUN dotnet restore "./Mars_Survival_Hanbook.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./Mars_Survival_Hanbook.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY Mars_Survival_Hanbook.csproj ./
+RUN dotnet restore Mars_Survival_Hanbook.csproj
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
+COPY . ./
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Mars_Survival_Hanbook.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish Mars_Survival_Hanbook.csproj \
+    -c "$BUILD_CONFIGURATION" --no-restore -p:UseAppHost=false -o /out
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /out/ ./
+USER root
+RUN mkdir -p App_Data/raw ImageMarHanbook \
+    && chown "$APP_UID" App_Data/raw ImageMarHanbook
+USER $APP_UID
 ENTRYPOINT ["dotnet", "Mars_Survival_Hanbook.dll"]
