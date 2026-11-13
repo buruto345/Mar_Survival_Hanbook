@@ -49,9 +49,18 @@ public sealed class HumanSurvivalController(DiscoveryService service, RawStorage
 }
 
 [Route("api/discover-mars")]
-public sealed class DiscoverMarsController(DiscoveryService discovery, RawStorage raw)
+public sealed class DiscoverMarsController(DiscoveryService discovery, RawStorage raw, IWebHostEnvironment env)
     : KnowledgeControllerBase(discovery, raw)
 {
+    [HttpGet("categories/{slug}/image")]
+    [Produces("image/jpeg")]
+    public IActionResult CategoryImage(string slug)
+    {
+        var image = DiscoverCategoryImage.Find(slug);
+        if (image is null) return NotFound();
+        return PhysicalFile(Path.Combine(env.ContentRootPath, "ImageMarHanbook", image.FileName), "image/jpeg");
+    }
+
     [HttpGet("timeline")] public async Task<IActionResult> Timeline([FromQuery] DiscoveryQuery queryOptions, CancellationToken ct) => Ok(await Service.ResourcesAsync("timeline-events", queryOptions, ct));
     [HttpGet("missions")] public async Task<IActionResult> Missions([FromQuery] DiscoveryQuery queryOptions, CancellationToken ct) => Ok(await Service.ResourcesAsync("missions", queryOptions, ct));
     [HttpGet("locations")] public async Task<IActionResult> Locations([FromQuery] DiscoveryQuery queryOptions, CancellationToken ct) => Ok(await Service.ResourcesAsync("locations", queryOptions, ct));

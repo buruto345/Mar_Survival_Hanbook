@@ -64,7 +64,10 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
             (module.Slug != ContentModule.Science || ScienceSlugs.Contains(x.Slug)))
             .OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id).ToListAsync(ct);
         if (module.Slug == ContentModule.Human)
-            return categories.Select(x => (object)new HumanCategoryResponse(x.Id, x.Slug, x.Name, x.Description,
+            if (module.Slug == ContentModule.Discovery)
+            return categories.Select(x => DiscoverCategoryImage.Category(x.Id, x.Slug, x.Name, x.Description,
+                counts.GetValueOrDefault(x.Slug)?.Count ?? 0)).ToArray();
+        return categories.Select(x => (object)new HumanCategoryResponse(x.Id, x.Slug, x.Name, x.Description,
                 counts.GetValueOrDefault(x.Slug)?.Count ?? 0, counts.GetValueOrDefault(x.Slug)?.SlugIfSingle)).ToArray();
         return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug)?.Count ?? 0 }).ToArray();
     }
@@ -72,7 +75,10 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
     {
         var c = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.Slug == slug && x.ArchivedAt == null)
             .Select(x => new { x.Id, x.Slug, x.Name, x.Description }).SingleOrDefaultAsync(ct) ?? throw ApiException.Missing();
-        return new { c.Id, c.Slug, c.Name, c.Description, PublishedArticleCount = await Publications(language).CountAsync(x => x.Version.CategorySlug == slug, ct) };
+        var count = await Publications(language).CountAsync(x => x.Version.CategorySlug == slug, ct);
+        if (module.Slug == ContentModule.Discovery)
+            return DiscoverCategoryImage.Category(c.Id, c.Slug, c.Name, c.Description, count);
+        return new { c.Id, c.Slug, c.Name, c.Description, PublishedArticleCount = count };
     }
     public async Task<object> ArticlesAsync(DiscoveryQuery q, CancellationToken ct)
     {
