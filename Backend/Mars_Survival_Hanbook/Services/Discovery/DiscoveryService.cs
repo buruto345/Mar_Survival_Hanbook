@@ -63,11 +63,11 @@ public sealed class DiscoveryService(MarsDbContext db, IConfiguration config, Co
         var categories = await db.Categories.AsNoTracking().Where(x => x.Module.Slug == module.Slug && x.ArchivedAt == null &&
             (module.Slug != ContentModule.Science || ScienceSlugs.Contains(x.Slug)))
             .OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id).ToListAsync(ct);
-        if (module.Slug == ContentModule.Human)
-            if (module.Slug == ContentModule.Discovery)
+        if (module.Slug == ContentModule.Discovery)
             return categories.Select(x => DiscoverCategoryImage.Category(x.Id, x.Slug, x.Name, x.Description,
                 counts.GetValueOrDefault(x.Slug)?.Count ?? 0)).ToArray();
-        return categories.Select(x => (object)new HumanCategoryResponse(x.Id, x.Slug, x.Name, x.Description,
+        if (module.Slug == ContentModule.Human)
+            return categories.Select(x => (object)new HumanCategoryResponse(x.Id, x.Slug, x.Name, x.Description,
                 counts.GetValueOrDefault(x.Slug)?.Count ?? 0, counts.GetValueOrDefault(x.Slug)?.SlugIfSingle)).ToArray();
         return categories.Select(x => (object)new { x.Id, x.Slug, x.Name, x.Description, PublishedArticleCount = counts.GetValueOrDefault(x.Slug)?.Count ?? 0 }).ToArray();
     }
