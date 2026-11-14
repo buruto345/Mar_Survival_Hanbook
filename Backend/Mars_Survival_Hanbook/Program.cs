@@ -114,8 +114,16 @@ builder.Services.AddSwaggerGen(o =>
     o.SchemaFilter<DiscoverySchemaFilter>();
     o.SupportNonNullableReferenceTypes();
 });
+var frontendOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
+    .WithOrigins(frontendOrigins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithExposedHeaders("ETag", "Location")));
 var app = builder.Build();
 if (await DiscoveryCommands.RunAsync(args, app.Services)) return;
+app.UseRouting();
+app.UseCors();
 app.UseMiddleware<ApiExceptionMiddleware>();
 app.Use(async (context, next) =>
 {
