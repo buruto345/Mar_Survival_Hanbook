@@ -52,11 +52,19 @@ public sealed class HumanSurvivalController(DiscoveryService service, RawStorage
 public sealed class DiscoverMarsController(DiscoveryService discovery, RawStorage raw, IWebHostEnvironment env)
     : KnowledgeControllerBase(discovery, raw)
 {
-    [HttpGet("categories/{slug}/image")]
-    [Produces("image/jpeg")]
-    public IActionResult CategoryImage(string slug)
+    [HttpGet("articles/{articleSlug}/images")]
+    public IActionResult ArticleImages(string articleSlug)
     {
-        var image = DiscoverCategoryImage.Find(slug);
+        var images = DiscoverCategoryImage.ForArticle(articleSlug);
+        return images is null ? NotFound() : Ok(images);
+    }
+
+    [HttpGet("categories/{slug}/image")]
+    [HttpGet("categories/{slug}/images/{nasaId}")]
+    [Produces("image/jpeg")]
+    public IActionResult CategoryImage(string slug, [FromRoute] string? nasaId = null)
+    {
+        var image = DiscoverCategoryImage.Find(slug, nasaId);
         if (image is null) return NotFound();
         return PhysicalFile(Path.Combine(env.ContentRootPath, "ImageMarHanbook", image.FileName), "image/jpeg");
     }
