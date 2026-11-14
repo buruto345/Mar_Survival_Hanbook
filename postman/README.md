@@ -12,6 +12,6 @@ The actual .NET worker, HTTP transport and SQL Server persistence run in the sim
 
 The simulation uses synthetic documents and is not evidence of scientific verification, production availability or support for every PDS dataset. Runtime local URL allowances are enabled only in Development tests; production retains the NASA/approved-host and public-IP checks.
 
-No cloud workspace was modified or collection published. Postman CLI 1.75.0 printed a signed-out notice but executed the local smoke collection successfully: 8 requests and 20 assertions passed. See the [Vietnamese runbook](../Docs/Discover_Mars_Implementation_Status.md) for migration, account provisioning, import examples and remaining editorial acceptance.
+No cloud workspace was modified or collection published. Postman CLI 1.75.0 printed a signed-out notice but executed the local smoke collection successfully: 8 requests and 20 assertions passed. See the [Vietnamese runbook](https://github.com/buruto345/Mar_Survival_Hanbook/blob/7322c0be43e68681c7ba3d8f8a4fa755b126d435/Docs/Discover_Mars_Implementation_Status.md) for migration, account provisioning, import examples and remaining editorial acceptance.
 
-Registration accepts `username`, `fullName`, `email`, `password` and always creates Viewer. Admin has all CMS permissions including review and publication. See [account contract and migration](../Docs/User_Registration_And_Authorization.md).
+Registration accepts `username`, `fullName`, `email`, `password` and always creates Viewer. Admin has all CMS permissions including review and publication. See [account contract and migration](https://github.com/buruto345/Mar_Survival_Hanbook/blob/7322c0be43e68681c7ba3d8f8a4fa755b126d435/Docs/User_Registration_And_Authorization.md).

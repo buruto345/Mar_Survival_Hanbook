@@ -1,6 +1,6 @@
 # Models của Mars Survival Handbook
 
-Bộ model bám theo [đặc tả dự án](../../../Docs/Mars_Survival_Handbook.pdf), đặc biệt các mục 7–10. Sử dụng .NET 8, EF Core 8 và SQL Server theo các dependency đã có trong project. Namespace giữ nguyên tên hiện tại của backend: `Mars_Survival_Hanbook`.
+Bộ model bám theo [đặc tả dự án](../../../Docs/Reference/Mars_Survival_Handbook.pdf), đặc biệt các mục 7–10. Sử dụng .NET 8, EF Core 8 và SQL Server theo các dependency đã có trong project. Namespace giữ nguyên tên hiện tại của backend: `Mars_Survival_Hanbook`.
 
 ## Danh mục
 
@@ -53,7 +53,7 @@ Connection string mặc định dùng LocalDB và database `MarsSurvivalHandbook
 
 ## Workflow tại service
 
-Discover Mars đã triển khai các yêu cầu dưới đây trong `Services`, `Integrations/Nasa`, `BackgroundJobs` và controllers. Các module khác chưa tự động có workflow này. Xem [runbook và bằng chứng kiểm thử](../../../Docs/Discover_Mars_Implementation_Status.md).
+Discover Mars đã triển khai các yêu cầu dưới đây trong `Services`, `Integrations/Nasa`, `BackgroundJobs` và controllers. Các module khác chưa tự động có workflow này. Xem [runbook và bằng chứng kiểm thử](https://github.com/buruto345/Mar_Survival_Hanbook/blob/7322c0be43e68681c7ba3d8f8a4fa755b126d435/Docs/Discover_Mars_Implementation_Status.md).
 
 1. Kiểm tra quyền Admin/Viewer và các bước chuyển trạng thái; Admin được tự duyệt nhưng chỉ xuất bản phiên bản hiện tại đã được duyệt.
 2. Kiểm tra NASA ownership, claim, nguồn, credit và quyền media trước khi publish; không coi domain NASA hoặc một cờ Accepted là bằng chứng tự động.

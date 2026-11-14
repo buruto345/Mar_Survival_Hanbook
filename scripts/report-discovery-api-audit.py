@@ -56,7 +56,8 @@ summary = {'reportDate': '2026-11-06', 'target': 'http://127.0.0.1:5093', 'datab
            'schemaCheckedResponses': sum(r['schemaChecked'] for r in rows),
            'schemaErrorResponses': sum(bool(r['schemaErrors']) for r in rows),
            'unexpectedStatusResponses': sum(not r['statusPass'] for r in rows), 'operations': results}
-(ROOT / 'Docs/Discover_Mars_API_Test_Report.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), 'utf-8')
+(ROOT / 'Docs/Reports').mkdir(parents=True, exist_ok=True)
+(ROOT / 'Docs/Reports/Discover_Mars_API_Test_Report.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), 'utf-8')
 
 lines = ['# Báo cáo kiểm thử API Discover Mars', '', 'Ngày tổng hợp: **06/11/2026**. Backend thật tại `http://127.0.0.1:5093`, dùng bản sao SQL Server LocalDB của `MarsSurvivalHandbook`.', '',
     f"Đã chạy **{len(rows)} HTTP request**, bao phủ **{len(ops)}/84 operation Discover Mars** (mỗi cặp method + route là một operation). Có thêm login và me để hỗ trợ xác thực. **{counts['Đạt các ca đã chạy']} operation đạt các ca đã chạy; {counts['Có lỗi']} operation có lỗi trong ít nhất một ca.** Không có operation nào bị bỏ qua.", '',
@@ -102,9 +103,9 @@ lines += ['', '## Kiểm thử hồi quy và bảo toàn dữ liệu', '',
     '## Bằng chứng và giới hạn', '',
     '- `scripts/audit-discovery-api.py`: harness HTTP, cần server và clone được chuẩn bị riêng; không chạy vào database chính.',
     '- `scripts/report-discovery-api-audit.py`: sinh báo cáo từ evidence, không gọi API hoặc thay đổi database.',
-    '- `Docs/Discover_Mars_API_Test_Report.json`: kết quả từng operation và field lỗi, không chứa token/password.',
+    '- `Docs/Reports/Discover_Mars_API_Test_Report.json`: kết quả từng operation và field lỗi, không chứa token/password.',
     '- Raw responses và log ở `Backend/Mars_Survival_Hanbook/App_Data/api-audit/` (bị Git ignore). Không push state.json vì có credential fixture.',
     '- Kiểm thử ở localhost, không chứng minh môi trường deploy, hiệu năng tải cao, mọi tổ hợp filter hoặc kết nối NASA trực tiếp đang sẵn sàng.', '',
     'Thứ tự xử lý đề xuất: sửa lọc ngôn ngữ citation và URL ảnh; bổ sung bounding box đúng từ metadata nguồn; hoàn tất kiểm chứng nguồn/nội dung rồi publish các bài tiếng Anh; chuẩn hóa measurements có timestamp/quality trước khi nhập bảng đo đạc.', '']
-(ROOT / 'Docs/Discover_Mars_API_Test_Report.md').write_text('\n'.join(lines), 'utf-8')
+(ROOT / 'Docs/Reports/Discover_Mars_API_Test_Report.md').write_text('\n'.join(lines), 'utf-8')
 print(json.dumps({k:v for k,v in summary.items() if k != 'operations'}, ensure_ascii=True))
