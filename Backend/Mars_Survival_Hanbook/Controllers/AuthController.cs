@@ -10,7 +10,7 @@ public sealed class AuthController(AuthenticationService auth, CurrentActor acto
 {
     [HttpPost("register"), AllowAnonymous, EnableRateLimiting("register")]
     public async Task<IActionResult> Register(RegisterRequest request, CancellationToken ct)
-        => CreatedAtAction(nameof(Me), await auth.RegisterAsync(request, ct));
+        => Created(Url.Action(nameof(Me))!, await auth.RegisterAsync(request, ct));
 
     [HttpPost("login"), AllowAnonymous, EnableRateLimiting("login")]
     public async Task<IActionResult> Login(LoginRequest request, CancellationToken ct) => Ok(await auth.LoginAsync(request, ct));

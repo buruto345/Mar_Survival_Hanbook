@@ -61,6 +61,14 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         contractPath = contractPath.Replace("human-survival", "discover-mars").Replace("science-technology", "discover-mars").Replace("survival-knowledge", "discover-mars");
         var successType = path is "api/human-survival" or "api/human-survival/overview" ? typeof(HumanOverviewResponse)
             : path == "api/human-survival/categories" ? typeof(HumanCategoryResponse[]) : ResponseType(contractPath, method!);
+        successType = path switch
+        {
+            "api/discover-mars" => typeof(DiscoverModuleResponse),
+            "api/discover-mars/categories" => typeof(DiscoverCategoryResponse[]),
+            "api/discover-mars/categories/{slug}" => typeof(DiscoverCategoryResponse),
+            "api/discover-mars/articles/{articleSlug}/images" => typeof(DiscoverImageResponse[]),
+            _ => successType
+        };
         if (successType != null)
         {
             var status = method == "POST" && (path.EndsWith("/imports") || path.EndsWith("/retry")) ? "202" :
@@ -79,6 +87,9 @@ public sealed class DiscoveryOpenApiFilter : IOperationFilter
         if (path.EndsWith("/raw") || path.EndsWith("/file"))
             operation.Responses["200"] = new() { Description = "Immutable raw manifest, or a manifest-listed blob. Never an arbitrary filesystem path.",
                 Content = new Dictionary<string, OpenApiMediaType> { ["application/octet-stream"] = new() { Schema = new() { Type = "string", Format = "binary" } } } };
+        if (path is "api/discover-mars/categories/{slug}/image" or "api/discover-mars/categories/{slug}/images/{nasaId}")
+            operation.Responses["200"] = new() { Description = "Category image", Content = new Dictionary<string, OpenApiMediaType> {
+                ["image/jpeg"] = new() { Schema = new() { Type = "string", Format = "binary" } } } };
         if (admin)
         {
             var policies = context.MethodInfo.DeclaringType!.GetCustomAttributes(true).OfType<AuthorizeAttribute>()

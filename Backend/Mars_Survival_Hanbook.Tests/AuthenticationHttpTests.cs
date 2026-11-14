@@ -64,7 +64,7 @@ public sealed class AuthenticationHttpTests(DiscoveryHttpFixture fixture) : ICla
         var input = NewAccount();
         var response = await Register(input);
         var profile = await Json(response, HttpStatusCode.Created);
-        Assert.Equal("/api/auth/me", response.Headers.Location?.AbsolutePath);
+        Assert.Equal("/api/auth/me", response.Headers.Location?.OriginalString);
         Assert.Equal(input.Username, profile.GetProperty("username").GetString());
         Assert.Equal("Nguyễn Văn An", profile.GetProperty("fullName").GetString());
         Assert.Equal("Viewer", profile.GetProperty("role").GetString());

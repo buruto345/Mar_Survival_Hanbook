@@ -1,3 +1,5 @@
+using Mars_Survival_Hanbook.Contracts;
+
 namespace Mars_Survival_Hanbook.Services.Discovery;
 
 internal sealed record DiscoverCategoryImage(string NasaId, string Title, string FileName, string Credit)
@@ -40,23 +42,23 @@ internal sealed record DiscoverCategoryImage(string NasaId, string Title, string
         return nasaId is null ? entry.Images[0] : entry.Images.FirstOrDefault(image => image.NasaId == nasaId);
     }
 
-    private static object[] ImageLinks(string category, DiscoverCategoryImage[] images) =>
-        images.Select(image => new { image.NasaId, image.Title, image.Credit,
-            url = $"/api/discover-mars/categories/{category}/images/{image.NasaId}" }).ToArray();
+    private static DiscoverImageResponse[] ImageLinks(string category, DiscoverCategoryImage[] images) =>
+        images.Select(image => new DiscoverImageResponse(image.NasaId, image.Title, image.Credit,
+             $"/api/discover-mars/categories/{category}/images/{image.NasaId}")).ToArray();
 
-    internal static object[]? ForArticle(string articleSlug)
+    internal static DiscoverImageResponse[]? ForArticle(string articleSlug)
     {
         foreach (var (category, entry) in Catalog)
             if (entry.ArticleSlug == articleSlug) return ImageLinks(category, entry.Images);
         return null;
     }
 
-    internal static object Category(Guid id, string slug, string name, string? description, int publishedArticleCount)
+    internal static DiscoverCategoryResponse Category(Guid id, string slug, string name, string? description, int publishedArticleCount)
     {
         var cover = Find(slug, null);
-        return new { id, slug, name, description, publishedArticleCount,
-            imageUrl = cover is null ? null : $"/api/discover-mars/categories/{slug}/image",
-            imageCredit = cover?.Credit,
-            images = Catalog.TryGetValue(slug, out var entry) ? ImageLinks(slug, entry.Images) : [] };
+        return new DiscoverCategoryResponse(id, slug, name, description, publishedArticleCount,
+            cover is null ? null : $"/api/discover-mars/categories/{slug}/image",
+            cover?.Credit,
+            Catalog.TryGetValue(slug, out var entry) ? ImageLinks(slug, entry.Images) : []);
     }
 }

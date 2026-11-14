@@ -8,6 +8,11 @@ public record TechnologyCard(Guid Id, string Slug, string Title, string Summary,
 public record HumanCategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount, string? ArticleSlug);
 public record HumanOverviewResponse(Guid Id, string Name, string Slug, string? Description, HumanCategoryResponse[] Categories, int PublishedArticleCount, string? CoverUrl);
 public record CategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount);
+public record DiscoverImageResponse(string NasaId, string Title, string Credit, string Url);
+public record DiscoverCategoryResponse(Guid Id, string Slug, string Name, string? Description, int PublishedArticleCount,
+    string? ImageUrl, string? ImageCredit, DiscoverImageResponse[] Images);
+public record DiscoverModuleResponse(Guid Id, string Name, string Slug, string? Description, DiscoverCategoryResponse[] Categories,
+    int PublishedArticleCount, string? CoverUrl);
 public record ModuleResponse(Guid Id, string Name, string Slug, string? Description, CategoryResponse[] Categories,
     int PublishedArticleCount, string? CoverUrl);
 public record LoginResponse(string AccessToken, string TokenType, int ExpiresIn, UserProfile Profile);
