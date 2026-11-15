@@ -1,0 +1,73 @@
+@page "/"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>Mars Survival Handbook</PageTitle>
+
+<div class="story" id="story">
+    <canvas id="story-canvas"></canvas>
+
+    <section data-sec class="ssec s0">
+        <div class="sc">
+            <div class="eyebrow mono">NASA SPACE APPS 2026 &nbsp;/&nbsp; INTERPLANETARY SURVIVAL GUIDE</div>
+            <h1 class="mega">Mars<br />is waiting</h1>
+            <p class="sp">A layered map for the first people to walk on Mars. Choose a place, plan the walk, and know before you step outside whether it is a go.</p>
+            <div class="scrollhint mono">SCROLL ↓</div>
+        </div>
+    </section>
+
+    <section data-sec class="ssec s1">
+        <div class="sc">
+            <div class="idx mono">01 / THE PLACE</div>
+            <h2 class="big">Canyons,<br />craters<br />and ice</h2>
+            <p class="sp">Valles Marineris runs 4,000 km. Olympus Mons stands about 22 km tall. Jezero held a river delta. Every site on the map comes from real NASA missions.</p>
+        </div>
+    </section>
+
+    <section data-sec class="ssec s2">
+        <div class="sc wide">
+            <div class="idx mono">02 / THE CONDITIONS</div>
+            <h2 class="big">Nothing here<br />forgives mistakes</h2>
+            <div class="nums">
+                <div><b><span data-count="3.72">0</span></b><small>M/S² GRAVITY</small></div>
+                <div><b>≈<span data-count="0.6">0</span></b><small>KPA PRESSURE</small></div>
+                <div><b>−<span data-count="63">0</span></b><small>°C MEAN TEMPERATURE</small></div>
+                <div><b>24:39</b><small>HOURS IN A SOL</small></div>
+            </div>
+        </div>
+    </section>
+
+    <section data-sec class="ssec s3">
+        <div class="sc wide">
+            <div class="idx mono">03 / THE BUDGET</div>
+            <h2 class="big">Eight hours.<br />One verdict.</h2>
+            <p class="sp">Walking speed, science stops, suit life and a safety reserve become distance, time and oxygen — then one word.</p>
+            <div class="verds"><span>GO</span><span>CAUTION</span><span>NO-GO</span></div>
+        </div>
+    </section>
+
+    <section data-sec class="ssec s4">
+        <div class="sc center">
+            <div class="idx mono">04 / YOUR TURN</div>
+            <h2 class="big">Plan the<br />first walk</h2>
+            <NavLink class="cta" href="map">OPEN THE MAP &nbsp;→</NavLink>
+            <p class="foot mono">NASA/JPL MARS TREK · MOLA · VIKING · TEAM ROAD TO NASA</p>
+        </div>
+    </section>
+</div>
+
+@code {
+    IJSObjectReference? _m;
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (!first) return;
+        _m = await JS.InvokeAsync<IJSObjectReference>("import", "./js/story.js");
+        await _m.InvokeVoidAsync("initStory", "#story", "#story-canvas");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try { if (_m != null) { await _m.InvokeVoidAsync("disposeStory"); await _m.DisposeAsync(); } } catch { }
+    }
+}

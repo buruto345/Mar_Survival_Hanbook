@@ -1,6 +1,8 @@
-@page "/"
+@page "/map"
 @implements IAsyncDisposable
 @inject MapInterop Map
+@inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <PageTitle>Martian Map · Mars Survival Handbook</PageTitle>
 
@@ -57,12 +59,18 @@
                 <button class="@(_base == k ? "on" : "")" @onclick="() => SetBase(k)">@n</button>
             }
         </div>
+        <div class="chips" style="margin-top:12px">
+            @foreach (var k in Kinds)
+            {
+                <button class="chip @(_kinds.Contains(k) ? "on" : "")" @onclick="() => ToggleKind(k)"><span class="k fill k-@k"></span>@SiteData.KindName(k)</button>
+            }
+        </div>
     </div>
 
     <div class="sec">
         <h3><span class="n">02</span>Site</h3>
         <div class="sites">
-            @foreach (var p in SiteData.All)
+            @foreach (var p in SiteData.All.Where(p => _kinds.Contains(p.Kind)))
             {
                 <button class="site @(_sel?.Id == p.Id ? "sel" : "")" @onclick="() => Select(p)">
                     <span class="k fill k-@p.Kind"></span>
@@ -91,6 +99,7 @@
         <label class="sl">Safety reserve <b>@A.ReservePct.ToString("0")%</b><input type="range" min="10" max="50" step="5" @bind="A.ReservePct" @bind:event="oninput" @bind:after="Recalc" /></label>
         <label class="sl">Science stops <b>@A.ScienceStops × @A.ScienceStopMin.ToString("0") min</b><input type="range" min="0" max="8" step="1" @bind="A.ScienceStops" @bind:event="oninput" @bind:after="Recalc" /></label>
         <label class="chk"><input type="checkbox" @bind="A.OutAndBack" @bind:after="Recalc" /> Return to habitat the same way</label>
+        <button class="btn" style="width:100%;margin-top:14px" disabled="@(_route.Count == 0)" @onclick="CopyLink">@(_copied ? "✓ LINK COPIED" : "SHARE THIS PLAN")</button>
         @if (_near.Count > 0)
         {
             <div class="near">
@@ -109,7 +118,7 @@
     <div class="cell"><small>Total time</small><b>@S.TotalHours.ToString("0.0")<u>h</u></b></div>
     <div class="cell"><small>Oxygen</small><b>@S.O2Kg.ToString("0.00")<u>kg</u></b></div>
     <div class="cell"><small>Safe radius</small><b>@S.ReachKm.ToString("0.0")<u>km</u></b></div>
-    <div class="cell verdict v-@S.Verdict.ToString().ToLower()"><small>Verdict</small><b>@Title</b><span>@S.Message</span></div>
+    <div class="cell verdict v-@Vd.ToString().ToLower()"><small>Verdict</small><b>@Title</b><span>@S.Message</span>@if (!string.IsNullOrEmpty(_solarNote)) { <span class="note">@_solarNote</span> }</div>
 </div>
 
 @code {
@@ -120,8 +129,12 @@
     RouteStats S = MarsMath.Evaluate(new List<RoutePoint>(), new Assumptions());
     Poi? _sel; bool _drawing; string _base = "mola"; string _status = "";
 
-        string Title => S.Verdict switch { Verdict.Go => "GO", Verdict.Caution => "CAUTION", Verdict.NoGo => "NO-GO", _ => "STANDBY" };
-    bool _introOut, _booting, _eva; double _frac;
+        Verdict Vd => (S.Verdict == Verdict.Go && _dark) ? Verdict.Caution : S.Verdict;
+    string Title => Vd switch { Verdict.Go => "GO", Verdict.Caution => "CAUTION", Verdict.NoGo => "NO-GO", _ => "STANDBY" };
+    static readonly string[] Kinds = { "landing", "ice", "geology", "hazard" };
+    readonly HashSet<string> _kinds = new(Kinds);
+    bool _copied, _dark; string _solarNote = "";
+    bool _introOut = true, _booting, _eva; double _frac;
     double SuitLeft => A.SuitHours - _frac * S.TotalHours;
     async Task Enter()
     {
@@ -131,6 +144,50 @@
         _sel = SiteData.All[0];
         await Map.FlyTo(_sel.Lat, _sel.Lng, 5, 3.4);
     }
+    async Task ToggleKind(string k)
+    {
+        if (!_kinds.Add(k)) _kinds.Remove(k);
+        await Map.SetPois(SiteData.All.Where(p => _kinds.Contains(p.Kind)));
+    }
+
+    async Task CopyLink()
+    {
+        if (_route.Count == 0) return;
+        var r = string.Join(";", _route.Select(p => FormattableString.Invariant($"{p.Lat:0.#####},{p.Lng:0.#####}")));
+        var url = Nav.ToAbsoluteUri("map").ToString() + "?r=" + r;
+        try { await JS.InvokeVoidAsync("navigator.clipboard.writeText", url); } catch { }
+        _copied = true; StateHasChanged(); await Task.Delay(2200); _copied = false; StateHasChanged();
+    }
+
+    async Task UpdateSolar()
+    {
+        if (_route.Count == 0) { _solarNote = ""; _dark = false; StateHasChanged(); return; }
+        try
+        {
+            var si = await Map.SolarAt(_route[0].Lat, _route[0].Lng);
+            _dark = si.Phase == "NIGHT";
+            _solarNote = _dark ? $"Habitat is in darkness (local solar time {si.Ltst}). Plan the walk for daylight." : $"Sun {si.Elev:0}° · local solar time {si.Ltst} ({si.Phase}).";
+        }
+        catch { }
+        StateHasChanged();
+    }
+
+    List<RoutePoint>? SharedRoute()
+    {
+        var q = Nav.ToAbsoluteUri(Nav.Uri).Query.TrimStart('?');
+        var kv = q.Split('&', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split('=', 2)).FirstOrDefault(x => x.Length == 2 && x[0] == "r");
+        if (kv is null) return null;
+        var list = new List<RoutePoint>();
+        foreach (var part in Uri.UnescapeDataString(kv[1]).Split(';', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var ll = part.Split(',');
+            if (ll.Length == 2 && double.TryParse(ll[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var la)
+                && double.TryParse(ll[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var lo))
+                list.Add(new RoutePoint { Lat = la, Lng = lo });
+        }
+        return list.Count > 0 ? list : null;
+    }
+
     async Task ToggleEva()
     {
         if (_eva) { _eva = false; await Map.StopEva(); return; }
@@ -148,7 +205,17 @@
         Map.EvaDone += () => InvokeAsync(() => { _eva = false; StateHasChanged(); });
         await Map.InitAsync("map");
         await Map.SetPois(SiteData.All);
-        await Map.StartStars("stars");
+        var shared = SharedRoute();
+        if (shared is not null)
+        {
+            await Map.SetRoute(shared);
+            await Map.FlyTo(shared[0].Lat, shared[0].Lng, 7, 2.5);
+        }
+        else
+        {
+            _sel = SiteData.All[0]; StateHasChanged();
+            await Map.FlyTo(_sel.Lat, _sel.Lng, 5, 3.2);
+        }
     }
 
     async Task SetBase(string k) { _base = k; _status = ""; await Map.SetBasemap(k); }
@@ -174,6 +241,7 @@
             .Where(n => n.DistKm <= 2).OrderBy(n => n.DistKm).ToList();
         if (_route.Count > 0) _ = Map.SetReach(_route[0].Lat, _route[0].Lng, S.ReachKm);
         StateHasChanged();
+        _ = UpdateSolar();
     }
 
     public async ValueTask DisposeAsync() => await Map.DisposeAsync();

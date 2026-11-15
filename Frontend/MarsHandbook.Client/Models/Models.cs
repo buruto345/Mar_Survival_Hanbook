@@ -24,3 +24,5 @@ public record RouteStats(double DistanceKm, double WalkHours, double TotalHours,
 public record NearbyPoi(Poi Poi, double DistKm);
 
 public record ApiItem(string Title, string Summary, string? Tag);
+
+public record SolarInfo(double Elev, string Ltst, string Phase);
