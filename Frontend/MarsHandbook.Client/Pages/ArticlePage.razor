@@ -1,0 +1,170 @@
+@page "/handbook/{ModuleSlug}/{Slug}"
+@using System.Text.Json
+@inject HandbookService Hb
+@inject IJSRuntime JS
+
+<PageTitle>@_title · Mars Survival Handbook</PageTitle>
+<div class="page"><div class="wrap wide">
+    <div class="crumbs mono"><a href="handbook">HANDBOOK</a> / <a href="@($"handbook/{ModuleSlug}")">@HandbookService.Label(ModuleSlug).ToUpperInvariant()</a>@(string.IsNullOrEmpty(_cat) ? "" : " / " + _cat.ToUpperInvariant())</div>
+    @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
+    @if (_error is not null) { <div class="err"><div class="hint mono">@_error</div><br /><button class="btn" @onclick="Load">Retry</button></div> }
+
+    @if (_a.ValueKind == JsonValueKind.Object)
+    {
+        var sections = _a.A("sections"); var facts = _a.A("facts"); var claims = _a.A("claims");
+        var sources = _a.A("sources"); var related = _a.A("relatedArticles");
+        var profile = _a.Get("technologyProfile");
+        var summary = _a.S("summary") ?? profile.S("summary");
+        var evid = facts.Select(f => f.S("evidenceType")).Concat(claims.Select(c => c.S("evidenceType"))).Append(profile.S("evidenceType"))
+                        .Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
+        <h1 class="art-t">@_title</h1>
+        @if (!string.IsNullOrEmpty(summary)) { <p class="lead">@summary</p> }
+        <div class="meta mono">
+            @foreach (var e in evid) { <span class="ev ev-@(e!.ToLowerInvariant())">@EvLabel(e)</span> }
+            @if (!string.IsNullOrEmpty(_a.S("reviewedAt"))) { <span>REVIEWED @(_a.S("reviewedAt")!.Split('T')[0])</span> }
+            @if (_a.I("version") > 0) { <span>V@(_a.I("version"))</span> }
+            @if (Mins(sections) > 0) { <span>~@(Mins(sections)) MIN READ</span> }
+            <button class="btn @(_saved ? "on" : "")" @onclick="ToggleSave">@(_saved ? "Saved ✓" : "Save")</button>
+        </div>
+
+        <div class="art">
+            <aside class="toc">
+                <div class="mono toc-h">CONTENTS</div>
+                @foreach (var s in sections)
+                {
+                    var id = s.S("anchor") ?? ""; var hd = s.S("heading") ?? id;
+                    <button class="toc-i" @onclick="() => Go(id)">@hd</button>
+                }
+                @if (profile.ValueKind == JsonValueKind.Object) { <button class="toc-i" @onclick='() => Go("profile")'>Technology profile</button> }
+                @if (facts.Count > 0) { <button class="toc-i" @onclick='() => Go("figures")'>Key figures</button> }
+                @if (claims.Count > 0) { <button class="toc-i" @onclick='() => Go("claims")'>Claims &amp; evidence</button> }
+                @if (sources.Count > 0) { <button class="toc-i" @onclick='() => Go("sources")'>NASA sources</button> }
+            </aside>
+
+            <article>
+                @foreach (var s in sections)
+                {
+                    <section class="sec-b" id="@(s.S("anchor"))">
+                        <h2>@s.S("heading")</h2>
+                        @foreach (var para in (s.S("body") ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries)) { <p>@para</p> }
+                    </section>
+                }
+
+                @if (profile.ValueKind == JsonValueKind.Object)
+                {
+                    <section class="sec-b" id="profile">
+                        <h2>Technology profile</h2>
+                        <table class="facts">
+                            @foreach (var p in profile.EnumerateObject().Where(q => (q.Value.ValueKind == JsonValueKind.String || q.Value.ValueKind == JsonValueKind.Number) && !q.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <tr><td class="mono">@Nice(p.Name)</td><td>@p.Value.Show()</td></tr>
+                            }
+                        </table>
+                    </section>
+                }
+
+                @if (facts.Count > 0)
+                {
+                    <section class="sec-b" id="figures">
+                        <h2>Key figures</h2>
+                        <table class="facts">
+                            <thead><tr><th>Measurement</th><th>Value</th><th>Evidence</th><th>Status</th></tr></thead>
+                            @foreach (var f in facts)
+                            {
+                                var up = f.Get("upperValue"); var unit = f.Get("unit").S("symbol");
+                                <tr>
+                                    <td>@f.S("name")<small>@f.S("context")</small></td>
+                                    <td class="mono">@f.Get("value").Show()@(up.ValueKind == JsonValueKind.Number ? " – " + up.Show() : "") @unit</td>
+                                    <td>@if (!string.IsNullOrEmpty(f.S("evidenceType"))) { <span class="ev ev-@(f.S("evidenceType")!.ToLowerInvariant())">@EvLabel(f.S("evidenceType")!)</span> }</td>
+                                    <td class="mono">@f.S("verificationStatus")</td>
+                                </tr>
+                            }
+                        </table>
+                    </section>
+                }
+
+                @if (claims.Count > 0)
+                {
+                    <section class="sec-b" id="claims">
+                        <h2>Claims &amp; evidence</h2>
+                        <ul class="claims">
+                            @foreach (var c in claims)
+                            {
+                                <li>@if (!string.IsNullOrEmpty(c.S("evidenceType"))) { <span class="ev ev-@(c.S("evidenceType")!.ToLowerInvariant())">@EvLabel(c.S("evidenceType")!)</span> } @c.S("text")
+                                    @if (!string.IsNullOrEmpty(c.S("testEnvironment"))) { <small class="mono"> · @c.S("testEnvironment")</small> }</li>
+                            }
+                        </ul>
+                        <p class="hint">Observed = measured on Mars · Tested = lab/ISS/analog · Modelled = simulation · Proposed = concept.</p>
+                    </section>
+                }
+
+                @if (sources.Count > 0)
+                {
+                    <section class="sec-b" id="sources">
+                        <h2>NASA sources</h2>
+                        <ol class="srcs">
+                            @foreach (var s in sources)
+                            {
+                                var url = s.S("url");
+                                <li>
+                                    @if (url is not null && (url.StartsWith("https://") || url.StartsWith("http://"))) { <a href="@url" target="_blank" rel="noopener noreferrer">@(s.S("title") ?? url)</a> }
+                                    else { @(s.S("title")) }
+                                    <small class="mono">@(s.S("organization") ?? s.S("credit") ?? s.S("provider")) · RETRIEVED @((s.S("retrievedAt") ?? "").Split('T')[0])</small>
+                                    @if (!string.IsNullOrEmpty(s.S("usageNote"))) { <small>@s.S("usageNote")</small> }
+                                </li>
+                            }
+                        </ol>
+                    </section>
+                }
+
+                @if (related.Count > 0)
+                {
+                    <section class="sec-b"><h2>Related</h2>
+                        <ul class="claims">
+                            @foreach (var r in related)
+                            {
+                                var rs = r.S("slug"); var rm = r.S("moduleSlug") ?? ModuleSlug;
+                                @if (rs is not null) { <li><a href="@($"handbook/{rm}/{rs}")">@(r.S("title") ?? rs)</a></li> }
+                            }
+                        </ul>
+                    </section>
+                }
+                <p class="note mono">Reference material compiled from NASA sources. Unofficial student project, not endorsed or sponsored by NASA. Not an operational safety procedure.</p>
+            </article>
+        </div>
+    }
+</div></div>
+
+@code {
+    [Parameter] public string ModuleSlug { get; set; } = "";
+    [Parameter] public string Slug { get; set; } = "";
+    JsonElement _a; bool _loading, _saved; string? _error; string _key = "";
+    string _title => _a.ValueKind == JsonValueKind.Object ? (_a.S("title") ?? _a.Get("technologyProfile").S("title") ?? Slug) : "Article";
+    string? _cat => _a.ValueKind == JsonValueKind.Object ? (_a.S("categorySlug") ?? _a.Get("technologyProfile").S("categorySlug")) : null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var key = ModuleSlug + "/" + Slug;
+        if (key == _key) return;
+        _key = key; await Load();
+    }
+
+    async Task Load()
+    {
+        _loading = true; _error = null; _a = default;
+        try
+        {
+            _a = await Hb.DetailAsync(ModuleSlug, Slug);
+            var bms = await Hb.BookmarksAsync();
+            _saved = bms.Any(b => b.M == ModuleSlug && b.S == Slug);
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        _loading = false;
+    }
+
+    async Task ToggleSave() => _saved = await Hb.ToggleAsync(ModuleSlug, Slug, _title);
+    async Task Go(string id) { try { await JS.InvokeVoidAsync("mhui.scrollTo", id); } catch { } }
+    static string EvLabel(string e) => e.ToLowerInvariant() switch { "observed" => "Mars observed", "tested" => "Tested · Earth analog", _ => e };
+    static int Mins(List<JsonElement> secs) => (int)Math.Ceiling(secs.Sum(x => (x.S("body") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Length) / 200.0);
+    static string Nice(string s) => System.Text.RegularExpressions.Regex.Replace(s, "(?<!^)([A-Z])", " $1");
+}

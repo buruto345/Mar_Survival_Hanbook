@@ -36,6 +36,7 @@ public sealed class MapInterop : IAsyncDisposable
     public Task StopEva() => Call("stopEva");
     public Task StartStars(string id) => Call("startStars", id);
     public Task SetReach(double lat, double lng, double km) => Call("setReach", lat, lng, km);
+    public async Task<SolarInfo> SolarAt(double lat, double lng) => await _m!.InvokeAsync<SolarInfo>("solarAt", lat, lng);
     public Task FitRoute() => Call("fitRoute");
 
     [JSInvokable] public void OnRouteChanged(List<RoutePoint> pts) => RouteChanged?.Invoke(pts);

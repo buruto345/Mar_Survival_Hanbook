@@ -1,0 +1,78 @@
+@page "/handbook/{ModuleSlug}"
+@inject HandbookService Hb
+
+<PageTitle>@(_mod?.Name ?? "Module") · Mars Survival Handbook</PageTitle>
+<div class="page"><div class="wrap">
+    <div class="crumbs mono"><a href="handbook">HANDBOOK</a> / @((_mod?.Name ?? HandbookService.Label(ModuleSlug)).ToUpperInvariant())</div>
+    @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
+    @if (_error is not null) { <div class="err"><div class="hint mono">@_error</div><br /><button class="btn" @onclick="Load">Retry</button></div> }
+    @if (_mod is not null)
+    {
+        <h1>@_mod.Name</h1>
+        <p class="lead">@_mod.Desc</p>
+
+        <div class="chips">
+            <button class="chip @(_cat is null ? "on" : "")" @onclick="() => _cat = null">All topics</button>
+            @foreach (var c in _mod.Cats)
+            {
+                var slug = c.Slug;
+                <button class="chip @(_cat == slug ? "on" : "")" @onclick="() => _cat = slug">@c.Name · @c.Count</button>
+            }
+        </div>
+
+        @if (Imgs.Count > 0)
+        {
+            <div class="strip">
+                @foreach (var c in Imgs)
+                {
+                    <figure><img src="@Hb.Abs(c.Image!)" alt="@c.Name" loading="lazy" /><figcaption class="mono">@c.Name · @c.Credit</figcaption></figure>
+                }
+            </div>
+        }
+
+        <div class="list">
+            @foreach (var a in Shown)
+            {
+                <a class="item link" href="@($"handbook/{a.Module}/{a.Slug}")">
+                    <span class="idx">@a.Date</span>
+                    <div><h3>@a.Title</h3><p>@a.Summary</p><small>@a.Cat</small></div>
+                </a>
+            }
+        </div>
+        @if (Shown.Count == 0 && !_loading)
+        {
+            <p class="hint">No published article in this topic yet. New entries appear here once the editors and scientific reviewers approve them.</p>
+        }
+    }
+</div></div>
+
+@code {
+    [Parameter] public string ModuleSlug { get; set; } = "";
+    [SupplyParameterFromQuery(Name = "c")] public string? C { get; set; }
+    Mod? _mod; List<Art> _arts = new(); string? _cat; bool _loading; string? _error; string _loaded = "";
+
+    List<Art> Shown => _arts.Where(a => _cat is null || a.Cat == _cat).ToList();
+    List<Cat> Imgs => _mod is null ? new() : _mod.Cats.Where(c => !string.IsNullOrEmpty(c.Image) && (_cat is null || c.Slug == _cat)).ToList();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(C)) _cat = C;
+        if (_loaded == ModuleSlug) return;
+        _loaded = ModuleSlug; _cat = string.IsNullOrEmpty(C) ? null : C;
+        await Load();
+    }
+
+    async Task Load()
+    {
+        _loading = true; _error = null; _mod = null;
+        try
+        {
+            if (!HandbookService.Known(ModuleSlug)) { _error = "Unknown module."; _loading = false; return; }
+            var mods = await Hb.ModulesAsync();
+            _mod = mods.FirstOrDefault(m => m.Slug == ModuleSlug);
+            _arts = await Hb.ArticlesAsync(ModuleSlug);
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        _loading = false;
+    }
+}

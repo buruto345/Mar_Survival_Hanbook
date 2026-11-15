@@ -5,19 +5,21 @@
 <div class="page"><div class="wrap">
     <h1>Survival<br />knowledge</h1>
     <p class="lead">Live from the Mars Survival Handbook API: technologies and strategies for living and working on Mars.</p>
-    @if (_loading) { <p class="hint mono">CONTACTING SERVER… THE FREE HOST MAY TAKE UP TO A MINUTE TO WAKE.</p> }
+    <input class="search mono" placeholder="SEARCH TECHNOLOGIES…" @bind="_q" @bind:event="oninput" />
+    @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
     @if (_error is not null) { <div class="err"><div class="hint mono">@_error</div><br /><button class="btn" @onclick="Load">Retry</button></div> }
     <div class="list">
-        @for (var i = 0; i < _items.Count; i++)
+        @for (var i = 0; i < Shown.Count; i++)
         {
-            var it = _items[i];
+            var it = Shown[i];
             <div class="item"><span class="idx">@((i + 1).ToString("00"))</span><div><h3>@it.Title</h3><p>@it.Summary</p><small>@it.Tag</small></div></div>
         }
     </div>
 </div></div>
 
 @code {
-    List<ApiItem> _items = new(); bool _loading; string? _error;
+    List<ApiItem> _items = new(); bool _loading; string? _error; string _q = "";
+    List<ApiItem> Shown => string.IsNullOrWhiteSpace(_q) ? _items : _items.Where(x => x.Title.Contains(_q, StringComparison.OrdinalIgnoreCase) || x.Summary.Contains(_q, StringComparison.OrdinalIgnoreCase)).ToList();
     protected override Task OnInitializedAsync() => Load();
     async Task Load()
     {

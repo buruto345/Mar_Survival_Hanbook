@@ -229,3 +229,8 @@ export function startStars(id) {
   };
   requestAnimationFrame(draw);
 }
+
+export function solarAt(lat, lng) {
+  const s = marsSolar(), el = sunElev(lat, lng, s);
+  return { elev: el, ltst: hhmm(s.mtc + lng / 15 + s.eot / 15), phase: el > 6 ? 'DAY' : el > -6 ? 'TWILIGHT' : 'NIGHT' };
+}

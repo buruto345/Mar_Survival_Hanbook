@@ -1,0 +1,94 @@
+@page "/handbook"
+@inject HandbookService Hb
+
+<PageTitle>Handbook · Mars Survival Handbook</PageTitle>
+<div class="page"><div class="wrap">
+    <h1>The<br />handbook</h1>
+    <p class="lead">Five modules, twenty-seven topics. Every figure links back to its NASA source and is tagged with how strong the evidence is.</p>
+    <input class="search mono" placeholder="SEARCH ARTICLES, TOPICS, TECHNOLOGIES…" @bind="_q" @bind:event="oninput" />
+    @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
+    @if (_error is not null) { <div class="err"><div class="hint mono">@_error</div><br /><button class="btn" @onclick="Load">Retry</button></div> }
+
+    @if (_mods.Count > 0 && !string.IsNullOrWhiteSpace(_q))
+    {
+        var hits = Hits;
+        <p class="hint mono">@hits.Count @(hits.Count == 1 ? "RESULT" : "RESULTS") FOR “@_q.Trim()”</p>
+        <div class="list">
+            @foreach (var a in hits)
+            {
+                <a class="item link" href="@($"handbook/{a.Module}/{a.Slug}")">
+                    <span class="idx">@HandbookService.Label(a.Module).ToUpperInvariant()</span>
+                    <div><h3>@a.Title</h3><p>@a.Summary</p><small>@a.Cat</small></div>
+                </a>
+            }
+        </div>
+        @if (hits.Count == 0) { <p class="hint">No published article matches that yet. Try “oxygen”, “radiation” or “water”.</p> }
+    }
+    else if (_mods.Count > 0)
+    {
+        @for (var i = 0; i < _mods.Count; i++)
+        {
+            var m = _mods[i];
+            <section class="mod">
+                <div class="mod-h">
+                    <span class="idx">@((i + 1).ToString("00"))</span>
+                    <div><h2><a href="@($"handbook/{m.Slug}")">@m.Name</a></h2><p>@m.Desc</p></div>
+                    <span class="ct mono">@m.Cats.Count TOPICS · @m.Count ARTICLES</span>
+                </div>
+                <div class="topics">
+                    @foreach (var c in m.Cats)
+                    {
+                        <a class="topic" href="@($"handbook/{m.Slug}?c={c.Slug}")">@c.Name<small>@c.Count</small></a>
+                    }
+                </div>
+            </section>
+        }
+        @if (_saved.Count > 0)
+        {
+            <h2 class="sec">Saved</h2>
+            <div class="list">
+                @foreach (var b in _saved)
+                {
+                    <a class="item link" href="@($"handbook/{b.M}/{b.S}")">
+                        <span class="idx">@HandbookService.Label(b.M).ToUpperInvariant()</span>
+                        <div><h3>@b.T</h3></div>
+                    </a>
+                }
+            </div>
+        }
+        <p class="note mono">NASA-only sources · reference material, not an operational safety procedure.</p>
+    }
+</div></div>
+
+@code {
+    List<Mod> _mods = new(); List<Art> _arts = new(); List<Bm> _saved = new();
+    bool _loading; string? _error; string _q = "";
+
+    List<Art> Hits
+    {
+        get
+        {
+            var q = _q.Trim();
+            return _arts.Where(a => a.Title.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || a.Summary.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || a.Cat.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || HandbookService.Label(a.Module).Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+    }
+
+    protected override Task OnInitializedAsync() => Load();
+
+    async Task Load()
+    {
+        _loading = true; _error = null; StateHasChanged();
+        try
+        {
+            var mt = Hb.ModulesAsync(); var at = Hb.AllArticlesAsync();
+            await Task.WhenAll(mt, at);
+            _mods = await mt; _arts = await at;
+            _saved = await Hb.BookmarksAsync();
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        _loading = false;
+    }
+}

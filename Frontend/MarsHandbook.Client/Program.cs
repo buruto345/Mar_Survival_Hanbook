@@ -16,5 +16,6 @@ var apiUri = string.IsNullOrWhiteSpace(apiBase)
 
 builder.Services.AddScoped(sp => new MarsApi(new HttpClient { BaseAddress = apiUri, Timeout = TimeSpan.FromSeconds(75) }, apiUri));
 builder.Services.AddScoped<MapInterop>();
+builder.Services.AddScoped<HandbookService>();
 
 await builder.Build().RunAsync();
