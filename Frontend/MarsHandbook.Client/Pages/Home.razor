@@ -1,0 +1,180 @@
+@page "/"
+@implements IAsyncDisposable
+@inject MapInterop Map
+
+<PageTitle>Martian Map · Mars Survival Handbook</PageTitle>
+
+<div class="mapwrap"><div id="map"></div><div class="vignette"></div></div>
+
+<section class="intro @(_introOut ? "out" : "")">
+    <canvas id="stars" class="stars"></canvas>
+    <div class="eyebrow">NASA SPACE APPS 2026 &nbsp;/&nbsp; INTERPLANETARY SURVIVAL GUIDE</div>
+    <h1>Martian<span>Map</span></h1>
+    <p>Plan a walk across Mars. NASA imagery, real mission sites, and a suit-life budget that answers one question: go, or no-go.</p>
+    @if (_booting)
+    {
+        <div class="bootlines mono">
+            <div style="--d:0s">▸ LINK ESTABLISHED · MRO / MGS / MAVEN</div>
+            <div style="--d:.4s">▸ SYNCING MOLA ELEVATION GRID</div>
+            <div style="--d:.8s">▸ MARS SOL CLOCK LOCKED</div>
+            <div style="--d:1.2s">▸ MISSION CONTROL READY</div>
+        </div>
+    }
+    else
+    {
+        <button class="enter" @onclick="Enter">ENTER MISSION CONTROL &nbsp;→</button>
+    }
+    <div class="facts">
+        <div>RADIUS<b>3,389.5 KM</b></div>
+        <div>GRAVITY<b>3.72 M/S²</b></div>
+        <div>SOL<b>24 H 39 M</b></div>
+        <div>SURFACE PRESSURE<b>≈ 0.6 KPA</b></div>
+    </div>
+</section>
+
+<div class="hud">
+    <div>CURSOR <b id="coords">–</b></div>
+    <div id="solar" class="solar"></div>
+    @if (_status == "offline") { <div class="warn">NASA TILES UNREACHABLE — OFFLINE GRID ACTIVE</div> }
+</div>
+
+@if (_eva)
+{
+    <div class="eva">
+        <div class="eva-t"><i></i>LIVE EVA SIMULATION</div>
+        <div class="gauge"><span>PROGRESS</span><em><u style="width:@((_frac * 100).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%"></u></em><b>@((_frac * 100).ToString("0"))%</b></div>
+        <div class="gauge @(SuitLeft < A.SuitHours * A.ReservePct / 100 ? "warn" : "")"><span>SUIT LEFT</span><em><u style="width:@((Math.Max(0, SuitLeft) / A.SuitHours * 100).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%"></u></em><b>@SuitLeft.ToString("0.0") h</b></div>
+        <div class="gauge"><span>O₂ USED</span><em><u style="width:@((_frac * 100).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))%"></u></em><b>@((_frac * S.O2Kg).ToString("0.00")) kg</b></div>
+    </div>
+}
+
+<aside class="console">
+    <div class="sec">
+        <h3><span class="n">01</span>Layer</h3>
+        <div class="seg">
+            @foreach (var (k, n) in Bases)
+            {
+                <button class="@(_base == k ? "on" : "")" @onclick="() => SetBase(k)">@n</button>
+            }
+        </div>
+    </div>
+
+    <div class="sec">
+        <h3><span class="n">02</span>Site</h3>
+        <div class="sites">
+            @foreach (var p in SiteData.All)
+            {
+                <button class="site @(_sel?.Id == p.Id ? "sel" : "")" @onclick="() => Select(p)">
+                    <span class="k fill k-@p.Kind"></span>
+                    <span class="nm">@p.Name<small>@SiteData.KindName(p.Kind).ToUpper() · @p.Mission</small></span>
+                    <span class="ar">@(_sel?.Id == p.Id ? "●" : "→")</span>
+                </button>
+            }
+        </div>
+        @if (_sel is not null)
+        {
+            <p class="hint" style="margin:12px 0">@_sel.Note</p>
+            <button class="btn primary" @onclick="PlanHere">Plan a Marswalk here</button>
+        }
+    </div>
+
+    <div class="sec">
+        <h3><span class="n">03</span>EVA plan</h3>
+        <div class="row" style="margin-bottom:16px">
+            <button class="btn @(_drawing ? "on" : "")" @onclick="ToggleDraw">@(_drawing ? "● Drawing" : "Draw route")</button>
+            <button class="btn" @onclick="Map.UndoPoint">Undo</button>
+            <button class="btn" @onclick="ClearAll">Clear</button>
+        </div>
+        <button class="btn primary" style="width:100%;margin-bottom:16px" disabled="@(S.Verdict == Verdict.None)" @onclick="ToggleEva">@(_eva ? "■ STOP SIMULATION" : "▶ SIMULATE EVA")</button>
+        <label class="sl">Walking speed <b>@A.WalkSpeedKmh.ToString("0.0") km/h</b><input type="range" min="0.5" max="4" step="0.1" @bind="A.WalkSpeedKmh" @bind:event="oninput" @bind:after="Recalc" /></label>
+        <label class="sl">Suit life <b>@A.SuitHours.ToString("0") h</b><input type="range" min="4" max="12" step="1" @bind="A.SuitHours" @bind:event="oninput" @bind:after="Recalc" /></label>
+        <label class="sl">Safety reserve <b>@A.ReservePct.ToString("0")%</b><input type="range" min="10" max="50" step="5" @bind="A.ReservePct" @bind:event="oninput" @bind:after="Recalc" /></label>
+        <label class="sl">Science stops <b>@A.ScienceStops × @A.ScienceStopMin.ToString("0") min</b><input type="range" min="0" max="8" step="1" @bind="A.ScienceStops" @bind:event="oninput" @bind:after="Recalc" /></label>
+        <label class="chk"><input type="checkbox" @bind="A.OutAndBack" @bind:after="Recalc" /> Return to habitat the same way</label>
+        @if (_near.Count > 0)
+        {
+            <div class="near">
+                <div class="hint">SCIENCE TARGETS ON ROUTE</div>
+                @foreach (var n in _near)
+                {
+                    <div><span class="k fill k-@n.Poi.Kind"></span>@n.Poi.Name <span style="margin-left:auto">@n.DistKm.ToString("0.0") km</span></div>
+                }
+            </div>
+        }
+    </div>
+</aside>
+
+<div class="tele">
+    <div class="cell"><small>Distance</small><b>@S.DistanceKm.ToString("0.0")<u>km</u></b></div>
+    <div class="cell"><small>Total time</small><b>@S.TotalHours.ToString("0.0")<u>h</u></b></div>
+    <div class="cell"><small>Oxygen</small><b>@S.O2Kg.ToString("0.00")<u>kg</u></b></div>
+    <div class="cell"><small>Safe radius</small><b>@S.ReachKm.ToString("0.0")<u>km</u></b></div>
+    <div class="cell verdict v-@S.Verdict.ToString().ToLower()"><small>Verdict</small><b>@Title</b><span>@S.Message</span></div>
+</div>
+
+@code {
+    static readonly (string, string)[] Bases = { ("mola", "Elevation"), ("viking", "Viking"), ("grid", "Grid") };
+    readonly Assumptions A = new();
+    List<RoutePoint> _route = new();
+    List<NearbyPoi> _near = new();
+    RouteStats S = MarsMath.Evaluate(new List<RoutePoint>(), new Assumptions());
+    Poi? _sel; bool _drawing; string _base = "mola"; string _status = "";
+
+        string Title => S.Verdict switch { Verdict.Go => "GO", Verdict.Caution => "CAUTION", Verdict.NoGo => "NO-GO", _ => "STANDBY" };
+    bool _introOut, _booting, _eva; double _frac;
+    double SuitLeft => A.SuitHours - _frac * S.TotalHours;
+    async Task Enter()
+    {
+        _booting = true; StateHasChanged();
+        await Task.Delay(1900);
+        _introOut = true; _booting = false; StateHasChanged();
+        _sel = SiteData.All[0];
+        await Map.FlyTo(_sel.Lat, _sel.Lng, 5, 3.4);
+    }
+    async Task ToggleEva()
+    {
+        if (_eva) { _eva = false; await Map.StopEva(); return; }
+        _frac = 0; _eva = true; _drawing = false; await Map.SetDrawing(false);
+        await Map.StartEva(14000, A.OutAndBack);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (!first) return;
+        Map.RouteChanged += pts => InvokeAsync(() => { _route = pts; Recalc(); });
+        Map.PoiClicked += id => InvokeAsync(() => { _sel = SiteData.All.FirstOrDefault(p => p.Id == id); StateHasChanged(); });
+        Map.BasemapStatus += s => InvokeAsync(() => { _status = s; StateHasChanged(); });
+        Map.EvaProgress += f => InvokeAsync(() => { _frac = f; StateHasChanged(); });
+        Map.EvaDone += () => InvokeAsync(() => { _eva = false; StateHasChanged(); });
+        await Map.InitAsync("map");
+        await Map.SetPois(SiteData.All);
+        await Map.StartStars("stars");
+    }
+
+    async Task SetBase(string k) { _base = k; _status = ""; await Map.SetBasemap(k); }
+
+    async Task Select(Poi p) { _sel = p; await Map.FlyTo(p.Lat, p.Lng, 6); }
+
+    async Task PlanHere()
+    {
+        if (_sel is null) return;
+        await Map.SetRoute(new[] { new RoutePoint { Lat = _sel.Lat, Lng = _sel.Lng } });
+        await Map.FlyTo(_sel.Lat, _sel.Lng, 8);
+        _drawing = true; await Map.SetDrawing(true);
+    }
+
+    async Task ToggleDraw() { _drawing = !_drawing; await Map.SetDrawing(_drawing); }
+    async Task ClearAll() { await Map.ClearRoute(); }
+
+    void Recalc()
+    {
+        S = MarsMath.Evaluate(_route, A);
+        _near = _route.Count < 2 ? new() : SiteData.All
+            .Select(p => new NearbyPoi(p, MarsMath.DistanceToPath(p.Lat, p.Lng, _route)))
+            .Where(n => n.DistKm <= 2).OrderBy(n => n.DistKm).ToList();
+        if (_route.Count > 0) _ = Map.SetReach(_route[0].Lat, _route[0].Lng, S.ReachKm);
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync() => await Map.DisposeAsync();
+}

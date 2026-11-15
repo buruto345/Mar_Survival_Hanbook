@@ -1,0 +1,29 @@
+@page "/knowledge"
+@inject MarsApi Api
+
+<PageTitle>Knowledge · Mars Survival Handbook</PageTitle>
+<div class="page"><div class="wrap">
+    <h1>Survival<br />knowledge</h1>
+    <p class="lead">Live from the Mars Survival Handbook API: technologies and strategies for living and working on Mars.</p>
+    @if (_loading) { <p class="hint mono">CONTACTING SERVER… THE FREE HOST MAY TAKE UP TO A MINUTE TO WAKE.</p> }
+    @if (_error is not null) { <div class="err"><div class="hint mono">@_error</div><br /><button class="btn" @onclick="Load">Retry</button></div> }
+    <div class="list">
+        @for (var i = 0; i < _items.Count; i++)
+        {
+            var it = _items[i];
+            <div class="item"><span class="idx">@((i + 1).ToString("00"))</span><div><h3>@it.Title</h3><p>@it.Summary</p><small>@it.Tag</small></div></div>
+        }
+    </div>
+</div></div>
+
+@code {
+    List<ApiItem> _items = new(); bool _loading; string? _error;
+    protected override Task OnInitializedAsync() => Load();
+    async Task Load()
+    {
+        _loading = true; _error = null; StateHasChanged();
+        try { _items = await Api.GetItemsAsync("api/science-technology/technologies?language=en"); if (_items.Count == 0) _error = "The API responded but has no published items yet."; }
+        catch (Exception ex) { _error = ex.Message; }
+        _loading = false;
+    }
+}
