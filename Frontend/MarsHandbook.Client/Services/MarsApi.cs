@@ -10,6 +10,13 @@ public sealed class MarsApi
     public Uri BaseUri { get; }
     public MarsApi(HttpClient http, Uri baseUri) { _http = http; BaseUri = baseUri; }
 
+    public async Task<JsonElement> GetJsonAsync(string path, CancellationToken ct = default)
+    {
+        using var res = await _http.GetAsync(path, ct);
+        res.EnsureSuccessStatusCode();
+        return await res.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: ct);
+    }
+
     public async Task<List<ApiItem>> GetItemsAsync(string path, CancellationToken ct = default)
     {
         using var res = await _http.GetAsync(path, ct);
