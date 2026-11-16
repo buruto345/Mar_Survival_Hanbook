@@ -64,27 +64,33 @@ internal static class LivingEdition
                 if (version.ChangedById != identity.Id || frozen.Title != heading || frozen.Summary != body ||
                     frozen.Sections.Single().Body != body || frozen.Sources.Single().SourceRevisionId != revision.Id)
                     throw ApiException.Gate("A guide has entered a different editorial workflow.");
-                if (!await db.LivingEnglishReviews.AnyAsync(r => r.ArticleVersionId == version.Id, ct))
-                {
-                    db.LivingEnglishReviews.Add(new() { ArticleVersion = version, SnapshotHash = version.SnapshotHash,
-                        ReviewerId = identity.Id, ReviewedAt = DateTimeOffset.UtcNow });
-                    await db.SaveChangesAsync(ct);
-                }
-                var task = version.ReviewState == ArticleVersionReviewState.Draft
-                    ? await articles.SubmitAsync(article.Id, version.Id, Concurrency.ETag(article), ct)
-                    : await db.ReviewTasks.SingleAsync(t => t.ArticleVersionId == version.Id, ct);
-                if (task.State == ReviewState.Pending) await reviews.ClaimAsync(task.Id, Concurrency.ETag(task), ct);
-                if (task.State == ReviewState.InProgress)
-                    await reviews.DecideAsync(task.Id, new(ReviewState.Approved, "English guide and citation checked.",
-                        new(true, true, true, true, true)), Concurrency.ETag(task), ct);
-                await articles.PublishAsync(article.Id, version.Id, Concurrency.ETag(article), ct);
+                await ReviewAndPublishAsync(db, identity, article, version, articles, reviews, ct);
             }
             return revision.Id;
         }
         finally { accessor.HttpContext = previous; }
     }
 
-    private static async Task<User> ReleaseIdentityAsync(MarsDbContext db, CancellationToken ct)
+    internal static async Task ReviewAndPublishAsync(MarsDbContext db, User identity, Article article,
+        ArticleVersion version, ArticleService articles, ReviewService reviews, CancellationToken ct)
+    {
+        if (!await db.LivingEnglishReviews.AnyAsync(r => r.ArticleVersionId == version.Id, ct))
+        {
+            db.LivingEnglishReviews.Add(new() { ArticleVersion = version, SnapshotHash = version.SnapshotHash,
+                ReviewerId = identity.Id, ReviewedAt = DateTimeOffset.UtcNow });
+            await db.SaveChangesAsync(ct);
+        }
+        var task = version.ReviewState == ArticleVersionReviewState.Draft
+            ? await articles.SubmitAsync(article.Id, version.Id, Concurrency.ETag(article), ct)
+            : await db.ReviewTasks.SingleAsync(t => t.ArticleVersionId == version.Id, ct);
+        if (task.State == ReviewState.Pending) await reviews.ClaimAsync(task.Id, Concurrency.ETag(task), ct);
+        if (task.State == ReviewState.InProgress)
+            await reviews.DecideAsync(task.Id, new(ReviewState.Approved, "English guide and citation checked.",
+                new(true, true, true, true, true)), Concurrency.ETag(task), ct);
+        await articles.PublishAsync(article.Id, version.Id, Concurrency.ETag(article), ct);
+    }
+
+    internal static async Task<User> ReleaseIdentityAsync(MarsDbContext db, CancellationToken ct)
     {
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         await DatabaseLocks.AcquireAsync(db, "living-release-identity", ct);

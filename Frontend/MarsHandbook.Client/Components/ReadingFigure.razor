@@ -1,0 +1,11 @@
+<figure class="reading-figure" aria-labelledby="reading-figure-title">
+    <figcaption><h2 id="reading-figure-title">@Guide.Figure</h2><span>@Guide.Context · Illustrative 3D model</span></figcaption>
+    <HabitatModel @key="Slug" Scene="@Slug" Label="@Guide.Figure" />
+    <details><summary>Model notes</summary>
+        <ul>@foreach (var step in Guide.Steps) { <li><strong>@step.Label</strong> — @step.Detail</li> }</ul>
+    </details>
+</figure>
+@code {
+    [Parameter, EditorRequired] public ReadingGuide Guide { get; set; } = default!;
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+}

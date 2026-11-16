@@ -1,7 +1,22 @@
 @page "/handbook/{ModuleSlug}"
 @inject HandbookService Hb
 
-<PageTitle>@(_mod?.Name ?? "Module") · Mars Survival Handbook</PageTitle>
+<PageTitle>@(ModuleSlug == "living-on-mars" ? "Living on Mars" : _mod?.Name ?? "Module") · Mars Survival Handbook</PageTitle>
+@if (ModuleSlug == "living-on-mars")
+{
+    <HabitatModel Scene="outpost" MapPage="true" Label="Six habitats on the Martian surface"
+                  Articles="_arts" Categories="@(_mod?.Cats ?? new List<Cat>())" ContentLoading="_loading" />
+    @if (_loading)
+    {
+        <p class="map-load-status" role="status">Loading habitat articles…</p>
+    }
+    @if (_error is not null)
+    {
+        <div class="map-load-error" role="alert"><p>@_error</p><button class="btn" @onclick="Load">Retry</button></div>
+    }
+}
+else
+{
 <div class="page"><div class="wrap">
     <div class="crumbs mono"><a href="handbook">HANDBOOK</a> / @((_mod?.Name ?? HandbookService.Label(ModuleSlug)).ToUpperInvariant())</div>
     @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
@@ -45,6 +60,8 @@
         }
     }
 </div></div>
+
+}
 
 @code {
     [Parameter] public string ModuleSlug { get; set; } = "";

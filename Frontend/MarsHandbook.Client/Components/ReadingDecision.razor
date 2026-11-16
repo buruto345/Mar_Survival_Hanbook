@@ -1,0 +1,22 @@
+<section class="reading-decision sec-b" aria-labelledby="reading-question">
+    <h2 id="reading-question">@Guide.Question</h2>
+    <div class="reading-answers" role="group" aria-labelledby="reading-question">
+        @for (var i = 0; i < Guide.Answers.Length; i++)
+        {
+            var choice = i;
+            <button type="button" aria-pressed="@(_selected == choice ? "true" : "false")"
+                    @onclick="() => _selected = choice">@Guide.Answers[choice]</button>
+        }
+    </div>
+    <div role="status" aria-live="polite">
+        @if (_selected.HasValue)
+        {
+            <p class="reading-feedback"><strong>@(_selected == Guide.Correct ? "Correct." : "Try again.")</strong> @Guide.Explanation</p>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public ReadingGuide Guide { get; set; } = default!;
+    private int? _selected;
+}
