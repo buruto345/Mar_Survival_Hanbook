@@ -7,35 +7,60 @@
     @if (_expanded)
     {
         <header class="map-heading">
-            <a class="map-exit" href="handbook">← Back to handbook</a>
-            <div><h2>Living on Mars</h2><p>Explore the surface outpost</p></div>
+            <div><a class="map-exit" href="handbook">← Handbook</a>
+                <h1>Living on Mars</h1></div>
+            <p>Explore six systems in a conceptual surface outpost.</p>
         </header>
+        <nav class="facility-index" aria-label="Outpost systems">
+            @foreach (var facility in Facilities)
+            {
+                <button type="button" aria-pressed="@(_topic == facility.Slug ? "true" : "false")"
+                        @onclick="() => SelectTopic(facility.Slug)">@facility.Name</button>
+            }
+        </nav>
     }
     <div class="model-explorer">
         <div class="model-stage" @ref="_host"></div>
+        @if (_failed) { <p class="model-unavailable" role="status">3D view unavailable on this device. @(_expanded ? "Choose a system to browse its articles." : "")</p> }
         @if (_topic is not null)
         {
-            <section class="model-articles" aria-label="Articles for selected habitat">
-                <header><h3>@(Categories.FirstOrDefault(c => c.Slug == _topic)?.Name ?? _topic)</h3>
-                    <button type="button" aria-label="Close habitat articles" @onclick="CloseTopic">×</button>
+            var facility = Facilities.First(f => f.Slug == _topic);
+            var category = Categories.FirstOrDefault(c => c.Slug == _topic);
+            var related = Articles.Where(a => a.Cat == _topic).ToList();
+            <section class="model-articles" aria-label="Selected system" aria-live="polite">
+                <header><h2>@(category?.Name ?? facility.Name)</h2>
+                    <button type="button" aria-label="Close system details" @onclick="CloseTopic">×</button>
                 </header>
-                <div aria-live="polite" class="model-article-count">@Related.Count articles</div>
-                @foreach (var article in Related)
+                <p>@(string.IsNullOrWhiteSpace(category?.Desc) ? facility.Role : category.Desc)</p>
+                <h3>In the model</h3><p>@facility.Equipment</p>
+                @if (!_failed)
                 {
-                    <a href="@($"handbook/{article.Module}/{article.Slug}")">
-                        <strong>@article.Title</strong><span>@article.Summary</span>
-                    </a>
+                    <label class="route-toggle"><input type="checkbox" checked="@_routes" @onchange="ToggleRoutes" /> Highlight model connections</label>
+                    @if (_routes) { <p class="route-note">Illustrative routes in this model.</p> }
                 }
+                <h3>Related articles @if (!ContentLoading && ContentError is null) { <span>(@related.Count)</span> }</h3>
                 @if (ContentLoading) { <p role="status">Loading articles…</p> }
-                else if (Related.Count == 0) { <p>No published articles in this habitat yet.</p> }
+                else if (ContentError is not null) { <p role="alert">Articles could not be loaded.</p><button @onclick="Retry">Retry</button> }
+                else if (related.Count == 0) { <p>No published articles in this system yet.</p> }
+                else
+                {
+                    @foreach (var article in related)
+                    {
+                        <a href="@($"handbook/{article.Module}/{article.Slug}")"><strong>@article.Title ↗</strong><span>@article.Summary</span></a>
+                    }
+                }
             </section>
         }
     </div>
-    @if (_failed) { <small>3D view unavailable on this device.</small> }
-    else
+    @if (!_failed)
     {
         <div class="model-controls">
-            <small>@(Scene == "outpost" ? "Click or tap a habitat · Drag to move · Scroll to zoom" : "Drag to rotate · Arrow keys to orbit")</small>
+            <small>@(Scene == "outpost" ? "Drag to pan · Shift-drag to orbit · Scroll or pinch to zoom" : "Drag to rotate · Arrow keys to orbit")</small>
+            @if (_expanded)
+            {
+                <button type="button" aria-label="Orbit left" title="Orbit left" @onclick="() => Orbit(-.25)">↶</button>
+                <button type="button" aria-label="Orbit right" title="Orbit right" @onclick="() => Orbit(.25)">↷</button>
+            }
             <button type="button" aria-label="Zoom in" @onclick="() => Zoom(-.15)">+</button>
             <button type="button" aria-label="Zoom out" @onclick="() => Zoom(.15)">−</button>
             <button type="button" @onclick="Reset">Reset view</button>
@@ -60,11 +85,21 @@
     ElementReference _host;
     IJSObjectReference? _module;
     DotNetObjectReference<HabitatModel>? _self;
-    bool _failed, _disposed;
+    bool _failed, _disposed, _routes;
     bool _expanded => MapPage;
     string[]? _reference;
     string? _topic;
-    List<Art> Related => Articles.Where(a => a.Cat == _topic).ToList();
+    [Parameter] public string? ContentError { get; set; }
+    [Parameter] public EventCallback Retry { get; set; }
+    static readonly (string Slug, string Name, string Role, string Equipment)[] Facilities =
+    {
+        ("housing","Housing","Private quarters give the crew space to rest.","Insulated shell, pressure door and transfer tunnel."),
+        ("community","Community","Shared spaces bring crew activities together.","Observation windows, airlock and service cabinet."),
+        ("food","Food","Growing spaces support food production.","Hydroponic beds, irrigation lines and grow lights."),
+        ("energy","Energy","Solar arrays supply power to the outpost.","Photovoltaic cells, panel mounts and distribution cabinet."),
+        ("water-and-oxygen","Water & oxygen","Processing and storage support water and breathing-gas supplies.","Storage vessels, pressure gauges and distribution lines."),
+        ("sanitation-and-waste","Waste","Collection and processing keep waste separate from living spaces.","Collection drums, recovery unit and inspection cabinet.")
+    };
 
     protected override async Task OnAfterRenderAsync(bool first)
     {
@@ -77,7 +112,10 @@
             _reference = await _module.InvokeAsync<string[]>("mount", _host, Scene, Label, _self);
             if (!_disposed)
             {
-                if (MapPage) await _module.InvokeVoidAsync("setExpanded", _host, true);
+                if (MapPage) {
+                    await _module.InvokeVoidAsync("setExpanded", _host, true);
+                    if (_topic is not null) await _module.InvokeVoidAsync("setTopic", _host, _topic);
+                }
                 StateHasChanged();
             }
         }
@@ -91,18 +129,31 @@
         else Navigation.NavigateTo("handbook");
     }
 
-    [JSInvokable] public Task SelectTopic(string slug) => OnTopic.InvokeAsync(slug);
-    [JSInvokable] public async Task PreviewTopic(string? slug)
+    [JSInvokable] public async Task SelectTopic(string slug)
     {
-        if (_disposed || _topic == slug) return;
+        if (_disposed || !Facilities.Any(f => f.Slug == slug)) return;
+        _routes = false;
         _topic = slug;
         await InvokeAsync(StateHasChanged);
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("setTopic", _host, slug);
+        await OnTopic.InvokeAsync(slug);
     }
 
     async Task CloseTopic()
     {
         _topic = null;
-        if (_module is not null) await _module.InvokeVoidAsync("clearTopic", _host);
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("setTopic", _host, (string?)null);
+    }
+
+    async Task ToggleRoutes(ChangeEventArgs e)
+    {
+        _routes = e.Value is true;
+        if (_module is not null) await _module.InvokeVoidAsync("setRoutes", _host, _routes);
+    }
+
+    async Task Orbit(double delta)
+    {
+        if (_module is not null) await _module.InvokeVoidAsync("orbit", _host, delta);
     }
 
     async Task Zoom(double amount)
@@ -112,6 +163,7 @@
 
     async Task Reset()
     {
+        if (_topic is not null) await CloseTopic();
         if (_module is not null) await _module.InvokeVoidAsync("reset", _host);
     }
 

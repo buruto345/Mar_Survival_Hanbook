@@ -311,38 +311,50 @@ h2.sec{font-size:22px;margin:44px 0 14px;letter-spacing:.14em;color:var(--mut)}
 .model-articles a:hover strong{color:#ffba72;text-decoration:underline}
 .model-articles :focus-visible{outline:2px solid #ffba72;outline-offset:3px}
 @media(max-width:620px){.model-articles{position:relative;inset:auto;width:100%;max-height:330px;margin-top:8px}}
-.habitat-fullscreen{position:fixed;inset:0;z-index:3000;background:#b57048;isolation:isolate}
-.habitat-fullscreen .model-explorer{position:absolute;inset:0}
-.habitat-fullscreen .model-stage{height:100%;margin:0;background:#b57048}
-.habitat-fullscreen canvas{touch-action:none}
-.map-heading{position:absolute;top:24px;left:24px;z-index:3;display:flex;gap:22px;align-items:center;pointer-events:none}
-.map-heading>*{pointer-events:auto}.map-heading h2{font-size:30px;letter-spacing:.12em;color:#fff;text-shadow:0 2px 8px #351705}
-.map-heading p{margin:2px 0;color:#fff0d9;text-shadow:0 1px 5px #351705}
-.map-exit{background:#19252deb;border:1px solid #ffffff40;color:#fff;padding:12px 16px;min-height:44px;cursor:pointer}
-.habitat-fullscreen .model-controls{position:absolute;bottom:24px;left:24px;margin:0;padding:10px;background:#19252deb;border:1px solid #ffffff40;z-index:2;max-width:calc(100% - 48px)}
-.habitat-fullscreen .model-controls small{color:#e4e9e9;margin-right:16px}
-.habitat-fullscreen .model-articles{right:24px;top:100px;max-height:calc(100% - 200px);z-index:3}
-body:has(.habitat-fullscreen){overflow:hidden}
-@media(max-width:620px){
-    .map-heading{top:16px;left:16px;right:16px;align-items:flex-start;gap:12px}
-    .map-heading h2{font-size:21px}.map-heading p{font-size:12px}
-    .map-exit{padding:10px;font-size:12px}
-    .habitat-fullscreen .model-controls{bottom:16px;left:16px;max-width:calc(100% - 32px)}
-    .habitat-fullscreen .model-controls small{flex-basis:100%;font-size:11px}
-    .habitat-fullscreen .model-articles{position:absolute;top:auto;bottom:130px;right:16px;width:calc(100% - 32px);max-height:36dvh;margin:0}
+/* The outpost keeps the map and its system index available while reading. */
+.habitat-fullscreen {
+    position:fixed; inset:0; z-index:3000; isolation:isolate;
+    display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto minmax(0,1fr) auto;
+    width:100%;height:100dvh;overflow:hidden;
+    background:#191c1e; color:#f1ede6;
 }
+html:has(.habitat-fullscreen),body:has(.habitat-fullscreen){overflow:hidden}
+.shell:has(.habitat-fullscreen) > .top {display:none}
+.route-toggle {display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;min-height:36px}
+.route-toggle input {accent-color:#edb088}
+.model-articles .route-note {font-size:12px;margin:2px 0}
 .wrap:has(.habitat-fullscreen){animation:none;transform:none}
-
-
-.map-exit{text-decoration:none;display:inline-flex;align-items:center}
-.map-load-status,.map-load-error{position:fixed;right:24px;top:24px;z-index:3001;padding:12px 18px;background:#19252deb;color:#fff;max-width:min(420px,calc(100% - 32px))}
-.map-load-status{font-size:12px;pointer-events:none;margin:0}
-.map-load-error p{margin:0 0 8px}
-.habitat-fullscreen .model-stage canvas{animation:map-arrive 1.3s ease-out both}
-.habitat-fullscreen .map-heading,.habitat-fullscreen .model-controls{animation:map-controls-arrive .7s .2s ease-out both}
-@keyframes map-arrive{from{opacity:.15}to{opacity:1}}
-@keyframes map-controls-arrive{from{opacity:0}to{opacity:1}}
-@media(max-width:620px){.map-load-status,.map-load-error{top:90px;right:16px}}
-@media(prefers-reduced-motion:reduce){
-    .habitat-fullscreen .model-stage canvas,.habitat-fullscreen .map-heading,.habitat-fullscreen .model-controls{animation:none}
+.map-heading,.facility-index,.habitat-fullscreen .model-controls {padding-inline:clamp(14px,3vw,48px)}
+.map-heading {display:flex;align-items:end;justify-content:space-between;gap:20px;padding-block:14px 10px}
+.map-heading h1 {font-family:inherit;font-size:clamp(24px,3vw,42px);line-height:1.1;letter-spacing:-.045em;margin:4px 0 0;color:#fff4e6}
+.map-exit {color:#edb088;text-decoration:none;font-size:13px}
+.map-heading p {margin:0 0 4px;color:#c6c3bf;font-size:14px}
+.facility-index {display:flex;gap:5px;overflow:auto;padding-block:6px 10px;scrollbar-width:thin}
+.facility-index button,.habitat-fullscreen .model-controls button,.model-articles button {
+    color:#e6dfd5;background:#25282a;border:1px solid #505050;border-radius:4px;
+    padding:6px 12px;min-height:36px;cursor:pointer;font:inherit;font-size:13px;white-space:nowrap;
+}
+.facility-index button[aria-pressed=true]{background:#ecd0ad;border-color:#ecd0ad;color:#2b201a}
+.habitat-fullscreen :is(button,a):focus-visible {outline:2px solid #ffc296;outline-offset:2px}
+.habitat-fullscreen .model-explorer {min-height:0;display:flex;overflow:hidden;border-block:1px solid #49423d}
+.habitat-fullscreen .model-stage {position:relative;flex:1;min-width:0;min-height:0;height:100%;margin:0;background:#49362d;overflow:hidden}
+.habitat-fullscreen .model-controls {display:flex;align-items:center;gap:6px;margin:0;padding-block:8px}
+.habitat-fullscreen .model-articles {position:static;width:clamp(265px,26vw,395px);max-height:none;margin:0;padding:clamp(16px,2vw,30px);background:#202324;border:0;border-left:1px solid #554b43;box-shadow:none}
+.model-articles h2 {font:inherit;font-size:26px;font-weight:650;letter-spacing:-.035em;margin:0}
+.habitat-fullscreen .model-articles h3 {font-size:12px;letter-spacing:.075em;text-transform:uppercase;color:#e9b18d;margin:22px 0 8px}
+.model-articles p {font-size:14px;line-height:1.55;color:#d3cec6}
+.model-unavailable {position:absolute;top:12px;left:12px;max-width:50%;padding:10px;background:#25282a;color:#eee}
+.facility-label {position:absolute;transform:translate(-50%,-100%);background:#242321ec;color:#fff0dc;
+    border:1px solid #f5d2a47a;border-radius:3px;padding:4px 8px;white-space:nowrap;font:600 12px/1.2 system-ui;cursor:pointer}
+.facility-label::after {content:"";position:absolute;height:9px;width:1px;top:100%;left:50%;background:#f2d7b2}
+.facility-label:is(:hover,.is-hovered,.is-active){background:#f3d2a8;color:#33271f;border-color:#ffe1bb}
+@media(max-width:700px){
+    .map-heading {padding-block:8px;align-items:center}
+    .map-heading p {font-size:12px;max-width:16ch}
+    .facility-index {padding-block:3px 7px}
+    .habitat-fullscreen .model-explorer {flex-direction:column}
+    .habitat-fullscreen .model-articles {width:100%;max-height:34dvh;border:0;border-top:1px solid #554b43;padding:12px 16px}
+    .habitat-fullscreen .model-controls small {display:none}
+    .habitat-fullscreen .model-controls {justify-content:center}
+    .facility-label {font-size:10px;padding:3px 5px}
 }

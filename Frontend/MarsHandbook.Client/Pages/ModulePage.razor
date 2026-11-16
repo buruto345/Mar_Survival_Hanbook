@@ -5,15 +5,8 @@
 @if (ModuleSlug == "living-on-mars")
 {
     <HabitatModel Scene="outpost" MapPage="true" Label="Six habitats on the Martian surface"
-                  Articles="_arts" Categories="@(_mod?.Cats ?? new List<Cat>())" ContentLoading="_loading" />
-    @if (_loading)
-    {
-        <p class="map-load-status" role="status">Loading habitat articles…</p>
-    }
-    @if (_error is not null)
-    {
-        <div class="map-load-error" role="alert"><p>@_error</p><button class="btn" @onclick="Load">Retry</button></div>
-    }
+                  Articles="_arts" Categories="@(_mod?.Cats ?? new List<Cat>())" ContentLoading="_loading"
+                  ContentError="@_error" Retry="Load" />
 }
 else
 {
@@ -81,7 +74,7 @@ else
 
     async Task Load()
     {
-        _loading = true; _error = null; _mod = null;
+        _loading = true; _error = null; _mod = null; _arts = new();
         try
         {
             if (!HandbookService.Known(ModuleSlug)) { _error = "Unknown module."; _loading = false; return; }
