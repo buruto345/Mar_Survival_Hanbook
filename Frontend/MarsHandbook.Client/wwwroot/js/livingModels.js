@@ -29,10 +29,20 @@ function build(root, id) {
     const materials = new Map();
     function material(color) {
         if (!materials.has(color)) {
-            materials.set(color, new T.MeshStandardMaterial({
+            const surface = new T.MeshStandardMaterial({
                 color, roughness: color === C.silver ? .34 : .77,
                 metalness: [C.silver, C.gold].includes(color) ? .65 : .08
-            }));
+            });
+            if (id === "outpost") {
+                if (color===C.blue || color===0x183c55) {
+                    surface.roughness=.28; surface.metalness=.33;
+                } else if (color===C.fabric) {
+                    surface.roughness=.91;
+                } else if (color===C.dark) {
+                    surface.roughness=.68; surface.metalness=.24;
+                }
+            }
+            materials.set(color,surface);
         }
         return materials.get(color);
     }
@@ -392,14 +402,19 @@ export function mount(host,id,title,callback) {
     base.position.set(center.x,-.2,center.z);base.receiveShadow=true;
     if (id !== "outpost") scene.add(base);
     else { base.geometry.dispose(); base.material.dispose(); }
-    scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,2));
-    const key = new T.DirectionalLight(0xffe1b9,3.2);if(id==="outpost") key.position.set(-6,9,4); else key.position.set(-4,8,6);key.castShadow=true;
-    key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
+    const overview=id==="outpost";
+    if (overview) {
+        scene.background=new T.Color(0xcda58e);
+        scene.fog=new T.Fog(0xcda58e,29,80);
+    }
+    scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : 2));
+    const key = new T.DirectionalLight(0xffe1b9,3.2);if(id==="outpost") key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
+    key.shadow.mapSize.setScalar(overview && host.clientWidth>800 ? 2048 : 1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
     key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.001;scene.add(key);
-    const fill=new T.DirectionalLight(0xa9d5ff,1.2);fill.position.set(5,3,-5);scene.add(fill);
-    const camera = new T.OrthographicCamera(-4,4,3,-3,.1,80);
+    const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
+    const camera = new T.OrthographicCamera(-4,4,3,-3,.1,overview ? 160 : 80);
     const initialPitch = id === "outpost" ? .76 : .52;
-    const initialZoom = id === "outpost" ? .84 : 1;
+    const initialZoom = id === "outpost" ? .97 : 1;
     let yaw=.42,pitch=initialPitch,zoom=initialZoom,expanded=false;
     let entryFrame = null;
     function stopEntry() {
@@ -437,7 +452,15 @@ export function mount(host,id,title,callback) {
             renderedWidth=w;renderedHeight=h;
         }
         // Fit the bounding sphere for every angle, including portrait viewports.
-        camera.position.set(target.x+25*Math.sin(yaw)*Math.cos(pitch),target.y+25*Math.sin(pitch),target.z+25*Math.cos(yaw)*Math.cos(pitch));
+        // At grazing angles the near plane must clear the foreground escarpments.
+        // Moving an orthographic camera along its sightline preserves composition.
+        const distance = overview ? Math.max(25,13/Math.sin(pitch)) : 25;
+        if (overview) {
+            scene.fog.near=distance+4;
+            scene.fog.far=distance+55;
+        }
+        camera.position.set(target.x+distance*Math.sin(yaw)*Math.cos(pitch),
+            target.y+distance*Math.sin(pitch),target.z+distance*Math.cos(yaw)*Math.cos(pitch));
         camera.lookAt(target); camera.updateMatrixWorld();
         let half;
         if (id === "outpost") {
@@ -649,7 +672,7 @@ export function mount(host,id,title,callback) {
             observer.disconnect();
             for (const [object, original] of originals) object.material = original;
             highlights.forEach(material => material.dispose());
-            scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material){materials.add(o.material);if(o.material.map)textures.add(o.material.map)}});
+            scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material){materials.add(o.material);for(const value of Object.values(o.material))if(value?.isTexture)textures.add(value)}});
             textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
             labels.forEach(({label})=>label.remove());
             scene.traverse(object=>{if(object.isInstancedMesh)object.dispose()});
