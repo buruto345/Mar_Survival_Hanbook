@@ -358,3 +358,5 @@ html:has(.habitat-fullscreen),body:has(.habitat-fullscreen){overflow:hidden}
     .habitat-fullscreen .model-controls {justify-content:center}
     .facility-label {font-size:10px;padding:3px 5px}
 }
+
+.model-loading{position:absolute;inset:12px auto auto 12px;margin:0;padding:8px 12px;border-radius:4px;background:#25282a;color:#eee;pointer-events:none}

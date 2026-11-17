@@ -72,17 +72,23 @@ else
         await Load();
     }
 
+    int _request;
     async Task Load()
     {
+        var request = ++_request;
+        var module = ModuleSlug;
         _loading = true; _error = null; _mod = null; _arts = new();
         try
         {
             if (!HandbookService.Known(ModuleSlug)) { _error = "Unknown module."; _loading = false; return; }
-            var mods = await Hb.ModulesAsync();
-            _mod = mods.FirstOrDefault(m => m.Slug == ModuleSlug);
-            _arts = await Hb.ArticlesAsync(ModuleSlug);
+            var metadata = Hb.ModuleAsync(module);
+            var articles = Hb.ArticlesAsync(module);
+            await Task.WhenAll(metadata, articles);
+            if (request != _request) return;
+            _mod = await metadata;
+            _arts = await articles;
         }
-        catch (Exception ex) { _error = ex.Message; }
+        catch (Exception ex) { if (request != _request) return; _error = ex.Message; }
         _loading = false;
     }
 }

@@ -20,7 +20,8 @@
         </nav>
     }
     <div class="model-explorer">
-        <div class="model-stage" @ref="_host"></div>
+        <div class="model-stage" aria-busy="@(!_ready && !_failed ? "true" : "false")" @ref="_host"></div>
+        @if (!_ready && !_failed) { <p class="model-loading" role="status">Preparing 3D view…</p> }
         @if (_failed) { <p class="model-unavailable" role="status">3D view unavailable on this device. @(_expanded ? "Choose a system to browse its articles." : "")</p> }
         @if (_topic is not null)
         {
@@ -89,6 +90,8 @@
     ElementReference _host;
     IJSObjectReference? _module;
     DotNetObjectReference<HabitatModel>? _self;
+    readonly string _viewerId = Guid.NewGuid().ToString("N");
+    bool _ready;
     bool _failed, _disposed, _routes;
     bool _expanded => MapPage;
     string[]? _reference;
@@ -110,15 +113,17 @@
         if (!first) return;
         try
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", Scene == "outpost" ? "./js/livingModels.js" : "./js/articleModels.js");
-            if (_disposed) { await _module.DisposeAsync(); return; }
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/livingViewer.js");
+            if (_disposed) { await module.DisposeAsync(); return; }
+            _module = module;
             _self = DotNetObjectReference.Create(this);
-            _reference = await _module.InvokeAsync<string[]>("mount", _host, Scene, Label, _self);
+            _reference = await _module.InvokeAsync<string[]>("mount", _host, Scene, Label, _self, _viewerId);
             if (!_disposed)
             {
+                _ready = true;
                 if (MapPage) {
-                    await _module.InvokeVoidAsync("setExpanded", _host, true);
-                    if (_topic is not null) await _module.InvokeVoidAsync("setTopic", _host, _topic);
+                    await _module.InvokeVoidAsync("command", _viewerId, "setExpanded", true);
+                    if (_topic is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", _topic);
                 }
                 StateHasChanged();
             }
@@ -139,30 +144,30 @@
         _routes = false;
         _topic = slug;
         await InvokeAsync(StateHasChanged);
-        if (!_failed && _module is not null) await _module.InvokeVoidAsync("setTopic", _host, slug);
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", slug);
         await OnTopic.InvokeAsync(slug);
     }
 
     async Task CloseTopic()
     {
         _topic = null;
-        if (!_failed && _module is not null) await _module.InvokeVoidAsync("setTopic", _host, (string?)null);
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", (string?)null);
     }
 
     async Task ToggleRoutes(ChangeEventArgs e)
     {
         _routes = e.Value is true;
-        if (_module is not null) await _module.InvokeVoidAsync("setRoutes", _host, _routes);
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setRoutes", _routes);
     }
 
     async Task Orbit(double delta)
     {
-        if (_module is not null) await _module.InvokeVoidAsync("orbit", _host, delta);
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "orbit", delta);
     }
 
     async Task Zoom(double amount)
     {
-        if (_module is not null) await _module.InvokeVoidAsync("zoom", _host, amount);
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "zoom", amount);
     }
 
     bool _illustrated;
@@ -179,13 +184,13 @@
     async Task ToggleIllustration()
     {
         _illustrated = !_illustrated;
-        if (_module is not null) await _module.InvokeVoidAsync("illustrate", _host, _illustrated);
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "illustrate", _illustrated);
     }
 
     async Task Reset()
     {
         if (_topic is not null) await CloseTopic();
-        if (_module is not null) await _module.InvokeVoidAsync("reset", _host);
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "reset");
         if (_illustrated) await ToggleIllustration();
     }
 
@@ -194,7 +199,7 @@
         _disposed = true;
         if (_module is not null)
         {
-            await _module.InvokeVoidAsync("unmount", _host);
+            await _module.InvokeVoidAsync("unmount", _viewerId);
             await _module.DisposeAsync();
         }
         _self?.Dispose();

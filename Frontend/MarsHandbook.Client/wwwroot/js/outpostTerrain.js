@@ -1,3 +1,4 @@
+import {yieldTask} from "./viewerScheduling.js";
 import * as T from "../lib/three/three.module.min.js";
 
 function hash(x,z) {
@@ -17,10 +18,9 @@ function formation(x,z) {
     return .85*noise(x*.16,z*.16)+.35*noise(x*.54,z*.54)+.45*strata;
 }
 // The construction bench is level; away from it, benches and fractured ledges emerge.
-export function elevation(x,z) {
+export function elevation(x,z,ridge=formation(x,z)) {
     const edge=Math.max(Math.abs(x-.1)-6.9,Math.abs(z)-6.7);
     const blend=T.MathUtils.smoothstep(edge,0,3.5);
-    const ridge=formation(x,z);
     const shelf=T.MathUtils.smoothstep(ridge,.79,1.05);
     const distant=T.MathUtils.smoothstep(edge,6,29);
     return -.095+blend*(ridge*.43+shelf*.79-.43+distant*(.65+noise(x*.07,z*.07)*4.1));
@@ -46,7 +46,8 @@ function gritTexture(random) {
     for(let y=0;y<n;y++) for(let x=0;x<n;x++){
         const grains=random();
         const grit=Math.min(255,167+grains*67+noise(x*.12,y*.12)*21);
-        bytes.set([grit,grit,grit,255],4*(y*n+x));
+        const i=4*(y*n+x);
+        bytes[i]=bytes[i+1]=bytes[i+2]=grit;bytes[i+3]=255;
     }
     const tex=new T.DataTexture(bytes,n,n,T.RGBAFormat);
     tex.wrapS=tex.wrapT=T.RepeatWrapping;
@@ -105,7 +106,7 @@ function exposedBeds(root,random) {
     ledges.userData.mapGround=true;ledges.castShadow=ledges.receiveShadow=true;root.add(ledges);
 }
 
-export function buildLandscape(root,random) {
+export async function buildLandscape(root,random,signal) {
     const resolution=224;
     const ground=new T.PlaneGeometry(2,2,resolution,resolution);
     ground.rotateX(-Math.PI/2);
@@ -113,12 +114,14 @@ export function buildLandscape(root,random) {
     const colors=[],color=new T.Color(),roadColor=new T.Color(0xb1967b);
     // Concentrate vertices at the installation; distant folds share the same continuous mesh.
     const spread=u=>u*19+Math.sign(u)*Math.abs(u)**5*91;
+    let slice=performance.now();
     for(let i=0;i<pos.count;i++){
+        if((i&511)===0 && performance.now()-slice>8){await yieldTask(signal);slice=performance.now()}
         const x=spread(pos.getX(i)),z=spread(pos.getZ(i));
-        const y=elevation(x,z);
+        const strata=formation(x,z);
+        const y=elevation(x,z,strata);
         pos.setXYZ(i,x,y,z);uv.setXY(i,x*.76,z*.76);
         const patch=noise(x*.32,z*.32), fine=noise(x*1.6,z*1.6);
-        const strata=formation(x,z);
         color.setRGB(.235+.13*patch+.036*fine,.096+.075*patch+.036*fine,.053+.049*patch+.029*fine);
         if (y>.16) color.multiplyScalar(.72+.31*strata);
         if(Math.abs(x)<9&&Math.abs(z)<9){
@@ -131,11 +134,13 @@ export function buildLandscape(root,random) {
     }
     ground.setAttribute("color",new T.Float32BufferAttribute(colors,3));
     ground.computeVertexNormals();ground.computeBoundingSphere();
+    await yieldTask(signal);
     const texture=gritTexture(random);
     const surface=new T.Mesh(ground,new T.MeshStandardMaterial({vertexColors:true,roughness:.95,
         map:texture,roughnessMap:texture,bumpMap:texture,bumpScale:.032}));
     surface.receiveShadow=true;surface.userData.mapGround=true;root.add(surface);
 
+    await yieldTask(signal);
     exposedBeds(root,random);
     const basalt=new T.MeshStandardMaterial({roughness:.96,flatShading:true});
     // Flattened, chipped fragments follow the same bedding direction in each outcrop.

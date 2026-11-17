@@ -26,20 +26,34 @@ public sealed class HandbookService
     public static string Label(string slug) => Order.FirstOrDefault(o => o.Slug == slug).Label ?? slug;
     public static bool Known(string slug) => Order.Any(o => o.Slug == slug);
 
+    readonly Dictionary<string, Task<Mod>> _modules = new();
+
+    public async Task<Mod> ModuleAsync(string slug)
+    {
+        if (!Known(slug)) throw new InvalidOperationException("Unknown module.");
+        if (!_modules.TryGetValue(slug, out var task))
+            _modules[slug] = task = ReadModuleAsync(slug);
+        try { return await task; }
+        catch
+        {
+            if (_modules.GetValueOrDefault(slug) == task) _modules.Remove(slug);
+            throw;
+        }
+    }
+
+    async Task<Mod> ReadModuleAsync(string slug)
+    {
+        var j = await _api.GetJsonAsync($"api/{slug}?language=en");
+        var cats = j.A("categories").Select(c => new Cat(
+            c.S("slug") ?? "", c.S("name") ?? "", c.S("description") ?? "",
+            c.I("publishedArticleCount"), c.S("imageUrl"), c.S("imageCredit"))).ToList();
+        return new Mod(slug, j.S("name") ?? Label(slug), j.S("description") ?? "", j.I("publishedArticleCount"), cats);
+    }
+
     public async Task<List<Mod>> ModulesAsync()
     {
         if (_mods is not null) return _mods;
-        var res = await Task.WhenAll(Order.Select(o => _api.GetJsonAsync($"api/{o.Slug}?language=en")));
-        var list = new List<Mod>();
-        for (var i = 0; i < Order.Length; i++)
-        {
-            var j = res[i];
-            var cats = j.A("categories").Select(c => new Cat(
-                c.S("slug") ?? "", c.S("name") ?? "", c.S("description") ?? "",
-                c.I("publishedArticleCount"), c.S("imageUrl"), c.S("imageCredit"))).ToList();
-            list.Add(new Mod(Order[i].Slug, j.S("name") ?? Order[i].Label, j.S("description") ?? "", j.I("publishedArticleCount"), cats));
-        }
-        return _mods = list;
+        return _mods = (await Task.WhenAll(Order.Select(o => ModuleAsync(o.Slug)))).ToList();
     }
 
     public async Task<List<Art>> ArticlesAsync(string module)

@@ -1,20 +1,61 @@
 import * as T from "../lib/three/three.module.min.js";
 
-// Keep network caching with the browser. Each mounted viewer owns its GPU resources.
-export async function loadArticleAsset(id, signal) {
-    const file = {
-        "rooms-for-four":"workwear", "time-off-in-isolation":"workwear", "waiting-for-a-reply":"workwear",
-        "perseverance-heat-and-power":"rover", "oxygen-from-martian-air":"rover", "dust-and-solar-budget":"insight"
-    }[id];
-    if (!file) return null;
-    const [{GLTFLoader, MeshoptDecoder, cloneRig}, response] = await Promise.all([
-        import("../lib/three/gltf.min.js"),
-        fetch(new URL("../models/living/"+file+".glb",import.meta.url),{signal})
+import {resources,disposeResources} from "./viewerResources.js";
+
+import {markPhase} from "./viewerScheduling.js";
+
+const files={
+    "rooms-for-four":"workwear","time-off-in-isolation":"workwear","waiting-for-a-reply":"workwear",
+    "perseverance-heat-and-power":"rover","oxygen-from-martian-air":"rover","dust-and-solar-budget":"insight"
+};
+const assets=new Map();
+
+async function readAsset(url,signal){
+    const [{GLTFLoader,MeshoptDecoder,cloneRig},response]=await Promise.all([
+        import("../lib/three/gltf.min.js"),fetch(url,{signal})
     ]);
-    if (!response.ok) throw Error("Could not load "+file+" ("+response.status+")");
-    const data=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(await response.arrayBuffer(),"");
+    if(!response.ok)throw Error("Model request failed ("+response.status+")");
+    const bytes=await response.arrayBuffer();
+    const start=performance.now();
+    const data=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bytes,"");
+    markPhase("glb.parse",start,{url});
     data.scene.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true});
-    return {data,cloneRig};
+    return {data,cloneRig,shared:resources(data.scene)};
+}
+function evict(url,entry){
+    if(entry.users || assets.get(url)!==entry)return;
+    clearTimeout(entry.timer);assets.delete(url);entry.controller.abort();
+    entry.promise.then(asset=>disposeResources(asset.shared),()=>{});
+}
+export async function loadArticleAsset(id,signal){
+    const file=files[id];if(!file)return null;
+    signal.throwIfAborted();
+    const url=new URL("../models/living/"+file+".glb",import.meta.url).href;
+    let entry=assets.get(url);
+    if(!entry){
+        entry={controller:new AbortController(),users:0,ready:false};
+        entry.promise=readAsset(url,entry.controller.signal).then(asset=>{entry.ready=true;return asset});
+        assets.set(url,entry);
+    }
+    clearTimeout(entry.timer);entry.users++;
+    let released=false;
+    function release(){
+        if(released)return;
+        released=true;
+        if(--entry.users===0){
+            if(!entry.ready)evict(url,entry);
+            else entry.timer=setTimeout(()=>evict(url,entry),90000);
+        }
+    }
+    signal.addEventListener("abort",release,{once:true});
+    try{
+        const source=await entry.promise;
+        signal.throwIfAborted();
+        // Only object transforms and skeletons are mutable. Scene-owned coatings are cloned separately.
+        const scene=file==="workwear"?source.data.scene:source.cloneRig(source.data.scene);
+        return {data:{scene},cloneRig:source.cloneRig,shared:source.shared,release};
+    }catch(error){release();throw error}
+    finally{signal.removeEventListener("abort",release)}
 }
 
 export function placeRover(root, asset, id, parts) {

@@ -161,16 +161,23 @@
         _key = key; await Load();
     }
 
+    int _request;
     async Task Load()
     {
-        _loading = true; _error = null; _a = default;
+        var request = ++_request;
+        var module = ModuleSlug; var slug = Slug;
+        _loading = true; _error = null; _a = default; _saved = false;
         try
         {
-            _a = await Hb.DetailAsync(ModuleSlug, Slug);
-            var bms = await Hb.BookmarksAsync();
-            _saved = bms.Any(b => b.M == ModuleSlug && b.S == Slug);
+            var bookmarks = Hb.BookmarksAsync();
+            var detail = await Hb.DetailAsync(module, slug);
+            if (request != _request) return;
+            _a = detail;
+            var bms = await bookmarks;
+            if (request != _request) return;
+            _saved = bms.Any(b => b.M == module && b.S == slug);
         }
-        catch (Exception ex) { _error = ex.Message; }
+        catch (Exception ex) { if (request != _request) return; _error = ex.Message; }
         _loading = false;
     }
 

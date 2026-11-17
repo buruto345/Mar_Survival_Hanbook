@@ -1,3 +1,5 @@
+import {acquireRenderer,releaseRenderer,storeScene,resources,disposeResources} from "./viewerResources.js";
+import {yieldTask,afterPaint,textureCanvas,markPhase} from "./viewerScheduling.js";
 import { buildOutpost } from "./outpostScene.js";
 import * as T from "../lib/three/three.module.min.js";
 
@@ -8,7 +10,7 @@ const C = { white: 0xe6e3d8, silver: 0x9da9ae, dark: 0x242d35, blue: 0x224457,
 const nasa = "https://www.nasa.gov/";
 const habitat = nasa + "humans-in-space/chapea/habitat/";
 const eclss = nasa + "reference/environmental-control-and-life-support-systems-eclss/";
-const references = {
+export const references = {
     outpost: [habitat, "CHAPEA habitat", "Outpost composition inspired by the supplied Mars-base illustration. Habitat details reference NASA research."],
     "rooms-for-four": [habitat, "CHAPEA habitat", "Printed wall courses, compact quarters and shared workspaces."],
     "time-off-in-isolation": [nasa + "humans-in-space/chapea/chapea-mission-1/", "CHAPEA crew photographs", "Illustrative interior and crew placement."],
@@ -25,7 +27,7 @@ const references = {
     "trash-storage-tiles": [nasa + "ames/space-biosciences/what-is-nasas-heat-melt-compactor/", "Heat Melt Compactor photographs", "Metal process chamber, instrumentation and compressed trash tiles."]
 };
 
-function build(root, id, article) {
+async function build(root, id, article, signal) {
     const materials = new Map();
     const finish=article?.finishes(C);
     function material(color) {
@@ -93,7 +95,7 @@ function build(root, id, article) {
         return object;
     }
     function plaque(x,y,z,text,width=1.2) {
-        const canvas = document.createElement("canvas");
+        const canvas = textureCanvas();
         canvas.width = 512; canvas.height = 96;
         const ctx = canvas.getContext("2d");
         ctx.fillStyle = "#e8e5da"; ctx.fillRect(0,0,512,96);
@@ -114,7 +116,7 @@ function build(root, id, article) {
         const display = box(x,y,z+.045,w,h,.015,C.water);
         display.material = material(0x244c59);display.material.emissive.setHex(0x327d88);display.material.emissiveIntensity=.4;
         if(id==="waiting-for-a-reply"){
-            const canvas=document.createElement("canvas");canvas.width=320;canvas.height=160;
+            const canvas=textureCanvas();canvas.width=320;canvas.height=160;
             const ctx=canvas.getContext("2d");ctx.fillStyle=x<0?"#17343a":"#1a2a38";ctx.fillRect(0,0,320,160);
             ctx.fillStyle="#daece6";ctx.font="19px monospace";ctx.fillText(x<0?"HAB / OUTBOX":"EARTH / INBOX",13,26);
             ctx.strokeStyle="#487075";for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(i*44,47);ctx.lineTo(i*44,140);ctx.stroke()}
@@ -183,7 +185,7 @@ function build(root, id, article) {
     case "rooms-for-four": habitatInterior(true);break;
     case "time-off-in-isolation": habitatInterior(false);break;
     case "outpost": {
-        buildOutpost(root, { mesh, box, cylinder, sphere, tube, rod, ring, vessel, plaque }, C);
+        await buildOutpost(root, { mesh, box, cylinder, sphere, tube, rod, ring, vessel, plaque }, C,signal);
         break;
     }
     case "expandable-room":
@@ -349,45 +351,127 @@ function build(root, id, article) {
     }
 }
 
-export function mount(host,id,title,callback,article=null) {
+export function applyEnvironment(slot,scene,article,id){
+    const outdoor=article.outdoor(id);
+    if(!slot.environments.has(outdoor)){
+        const start=performance.now();
+        slot.environments.set(outdoor,article.reflections(slot.renderer,scene,outdoor));
+        markPhase("pmrem",start,{outdoor});
+    }
+    scene.environment=slot.environments.get(outdoor).texture;
+    scene.environmentIntensity=outdoor?.83:.54;
+}
+
+export async function prepareScene(slot,id,article,wide,signal){
+    const scene = new T.Scene(), root = new T.Group();scene.add(root);
+    const started=performance.now();
+    try{
+        if(article)article.asset=await article.loadArticleAsset(id,signal);
+        signal.throwIfAborted();
+        const buildStart=performance.now();
+        await build(root,id,article,signal);
+        markPhase("scene.build",buildStart,{id});
+        await yieldTask(signal);
+        const bounds = new T.Box3();
+        for (const object of root.children)
+            if (!object.userData.mapGround) bounds.union(new T.Box3().setFromObject(object));
+        const center = bounds.getCenter(new T.Vector3());
+        const size = bounds.getSize(new T.Vector3());
+        if(article)article.surroundings(scene,id,bounds);
+        if(article)applyEnvironment(slot,scene,article,id);
+        const overview=id==="outpost";
+        if (overview) {
+            scene.background=new T.Color(0xcda58e);
+            scene.fog=new T.Fog(0xcda58e,29,80);
+        }
+        scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : article ? 1.53 : 2));
+        const key = new T.DirectionalLight(article && !article.outdoor(id)?0xfff0da:0xffe1b9,article?2.6:3.2);if(id==="outpost" || article?.outdoor(id)) key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
+        key.shadow.mapSize.setScalar(overview && wide ? 2048 : 1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
+        key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.001;scene.add(key);
+        const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : article ? .65 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
+        markPhase("scene.prepare",started,{id});
+        return {scene,root,bounds,center,size,key,article,dispose(){
+            disposeResources(resources(scene),article?.asset?.shared);
+            key.shadow.dispose();article?.asset?.release();
+        }};
+    }catch(error){
+        disposeResources(resources(scene),article?.asset?.shared);
+        article?.asset?.release();throw error;
+    }
+}
+
+const pending=new WeakMap();
+export async function mount(host,id,title,callback,design=null){
     unmount(host);
-    const renderer = new T.WebGLRenderer({antialias:true});
-    renderer.setPixelRatio(Math.min(devicePixelRatio,id === "outpost" ? 1.5 : 2));
+    const controller=new AbortController(), signal=controller.signal;
+    pending.set(host,controller);
+    let slot,entry,attached=false;
+    try{
+        await afterPaint(signal);
+        slot=acquireRenderer();
+        entry=slot.scenes.get(id);
+        if(!entry){
+            entry=await prepareScene(slot,id,design,host.clientWidth>800,signal);
+            signal.throwIfAborted();
+            await yieldTask(signal);
+        }
+        const cached=slot.scenes.has(id);
+        await attach(host,id,title,callback,slot,entry,signal,cached);
+        attached=true;
+        storeScene(slot,id,entry);
+        return references[id];
+    }catch(error){
+        if(slot && !attached){
+            if(entry && !slot.scenes.has(id))entry.dispose();
+            slot.renderer.domElement.remove();releaseRenderer(slot);
+        }
+        if(signal.aborted)return null;
+        throw error;
+    }finally{if(pending.get(host)===controller)pending.delete(host)}
+}
+
+export function configureRenderer(renderer,entry,overview,dpr,width,cached){
+    const {key}=entry;
+    const ratio=Math.min(dpr,overview?1.5:2);
+    if(renderer.getPixelRatio()!==ratio)renderer.setPixelRatio(ratio);
     renderer.setClearColor(0x111a22);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.autoUpdate = false;
-    renderer.shadowMap.needsUpdate = true;
-    renderer.shadowMap.type = T.PCFSoftShadowMap;
-    renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = id === "outpost" ? 1.07 : article ? 1.04 : 1.25;
-    const canvas = renderer.domElement;
+    renderer.shadowMap.enabled=true;renderer.shadowMap.autoUpdate=false;
+    renderer.shadowMap.needsUpdate=!cached || !!entry.shadowDirty;
+    entry.shadowDirty=false;
+    renderer.shadowMap.type=T.PCFSoftShadowMap;
+    renderer.toneMapping=T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=overview?1.07:1.04;
+    const shadowSize=overview && width>800?2048:1024;
+    if(key.shadow.mapSize.x!==shadowSize){
+        key.shadow.mapSize.setScalar(shadowSize);
+        key.shadow.dispose();key.shadow.map=null;renderer.shadowMap.needsUpdate=true;
+    }
+}
+
+export async function prepareGPU(renderer,scene,camera,signal,id){
+    const start=performance.now();
+    await renderer.compileAsync(scene,camera);
+    markPhase("shader.prepare",start,{id});
+    signal.throwIfAborted();
+    // Slicing uploads prevents many decoded textures from monopolizing the first draw.
+    let slice=performance.now();
+    for(const item of resources(scene))if(item.isTexture && !item.isRenderTargetTexture){
+        renderer.initTexture(item);
+        if(performance.now()-slice>8){await yieldTask(signal);slice=performance.now()}
+    }
+}
+
+async function attach(host,id,title,callback,slot,entry,signal,cached){
+    const {scene,root,bounds,center,size,key,article}=entry;
+    const renderer=slot.renderer, overview=id==="outpost", target=center.clone();
+    if(article && (scene.environment!==slot.environments.get(article.outdoor(id))?.texture))applyEnvironment(slot,scene,article,id);
+    configureRenderer(renderer,entry,overview,devicePixelRatio,host.clientWidth,cached);
+    const canvas=renderer.domElement;
+    const camera = new T.OrthographicCamera(-4,4,3,-3,.1,overview ? 160 : 80);
+    if(!cached)await prepareGPU(renderer,scene,camera,signal,id);
+    signal.throwIfAborted();
     host.replaceChildren(canvas);
     canvas.tabIndex=0;canvas.setAttribute("role","img");canvas.setAttribute("aria-label",title);
-    const scene = new T.Scene(), root = new T.Group();scene.add(root);
-    build(root,id,article);
-    const bounds = new T.Box3();
-    for (const object of root.children)
-        if (!object.userData.mapGround) bounds.union(new T.Box3().setFromObject(object));
-    const center = bounds.getCenter(new T.Vector3()), target = center.clone();
-    const size = bounds.getSize(new T.Vector3());
-    const base = new T.Mesh(new T.BoxGeometry(size.x+.8,.14,size.z+.8),
-        new T.MeshStandardMaterial({color:[ "outpost","dust-and-solar-budget","perseverance-heat-and-power","oxygen-from-martian-air"].includes(id)?0x87654f:0x3f4b53,roughness:.95}));
-    base.position.set(center.x,-.2,center.z);base.receiveShadow=true;
-    if(article) {base.geometry.dispose();base.material.dispose();article.surroundings(scene,id,bounds);}
-    else if (id !== "outpost") scene.add(base);
-    else { base.geometry.dispose(); base.material.dispose(); }
-    const reflections=article?.reflections(renderer,scene,article.outdoor(id));
-    const overview=id==="outpost";
-    if (overview) {
-        scene.background=new T.Color(0xcda58e);
-        scene.fog=new T.Fog(0xcda58e,29,80);
-    }
-    scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : article ? 1.53 : 2));
-    const key = new T.DirectionalLight(article && !article.outdoor(id)?0xfff0da:0xffe1b9,article?2.6:3.2);if(id==="outpost" || article?.outdoor(id)) key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
-    key.shadow.mapSize.setScalar(overview && host.clientWidth>800 ? 2048 : 1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
-    key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.001;scene.add(key);
-    const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : article ? .65 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
-    const camera = new T.OrthographicCamera(-4,4,3,-3,.1,overview ? 160 : 80);
     const initialPitch = id === "outpost" ? .76 : .52;
     const initialZoom = id === "outpost" ? .97 : article ? .78 : 1;
     let yaw=.42,pitch=initialPitch,zoom=initialZoom,expanded=false;
@@ -419,8 +503,20 @@ export function mount(host,id,title,callback,article=null) {
         target.x = T.MathUtils.clamp(target.x,center.x-14,center.x+14);
         target.z = T.MathUtils.clamp(target.z,center.z-14,center.z+14);
     }
-    let renderedWidth=0, renderedHeight=0;
+    const previousSize=renderer.getSize(new T.Vector2());
+    let renderedWidth=previousSize.x, renderedHeight=previousSize.y;
+    // Coalesce intermediate entrance/pointer poses while the GPU is still drawing the last one.
+    const gl=renderer.getContext();
+    let fence=null,queuedDraw=null;
     function draw(){
+        if(overview && fence){
+            if(gl.clientWaitSync(fence,0,0)===gl.TIMEOUT_EXPIRED){
+                if(queuedDraw===null)queuedDraw=requestAnimationFrame(()=>{queuedDraw=null;draw()});
+                return;
+            }
+            gl.deleteSync(fence);fence=null;
+            if(queuedDraw!==null){cancelAnimationFrame(queuedDraw);queuedDraw=null}
+        }
         const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;
         if(w !== renderedWidth || h !== renderedHeight){
             renderer.setSize(w,h,false);
@@ -454,12 +550,13 @@ export function mount(host,id,title,callback,article=null) {
         }
         camera.left=-half*w/h;camera.right=-camera.left;camera.top=half;camera.bottom=-half;
         camera.updateProjectionMatrix();renderer.render(scene,camera);
+        if(overview){fence=gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE,0);gl.flush()}
         positionLabels(w,h);
     }
     const tilt=v=>Math.max(.16,Math.min(1.25,v));
     let start=null, selectedTopic=null, disposed=false, dragged=false;
     const explorer = host.parentElement, view = explorer.parentElement;
-    if(id === "outpost") canvas.style.touchAction = "none";
+    canvas.style.touchAction=overview?"none":"";
     function trapFocus(e){
         if(!expanded || e.key !== "Tab") return;
         const nodes = [...view.querySelectorAll("button:not([tabindex='-1']),a,input,canvas[tabindex]")].filter(n=>n.getClientRects().length);
@@ -628,8 +725,22 @@ export function mount(host,id,title,callback,article=null) {
         draw();
     };
     let illustrationFrame=null;
-    const observer=new ResizeObserver(draw);observer.observe(host);draw();
-    const textures=new Set(),geometries=new Set(),materials=new Set();
+    const observer=new ResizeObserver(()=>{
+        if(host.clientWidth!==renderedWidth || host.clientHeight!==renderedHeight)draw();
+    });
+    slot.onRestore=()=>{
+        fence=null;
+        for(const state of slot.scenes.values()){
+            if(state.article)applyEnvironment(slot,state.scene,state.article,state.article.id);
+        }
+        renderer.shadowMap.needsUpdate=true;draw();
+    };
+    observer.observe(host);
+    const first=performance.now();
+    draw();
+    markPhase("first.submit",first,{id,cached});
+
+
     views.set(host,{
         selectTopic,
         illustrate(value){
@@ -657,19 +768,24 @@ export function mount(host,id,title,callback,article=null) {
         zoom(delta){stopEntry();zoom=Math.max(.45,Math.min(1.6,zoom+delta));draw()},
         dispose(){
             disposed = true;
+            if(queuedDraw!==null)cancelAnimationFrame(queuedDraw);
+            if(fence)gl.deleteSync(fence);
             cancelAnimationFrame(illustrationFrame);
             stopEntry();
             view.removeEventListener("keydown",trapFocus);
             observer.disconnect();
             for (const [object, original] of originals) object.material = original;
             highlights.forEach(material => material.dispose());
-            scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material){materials.add(o.material);for(const value of Object.values(o.material))if(value?.isTexture)textures.add(value)}});
-            textures.forEach(t=>{t.dispose();t.image?.close?.()});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
             labels.forEach(({label})=>label.remove());
-            scene.traverse(object=>{if(object.isInstancedMesh)object.dispose();if(object.isSkinnedMesh)object.skeleton.dispose()});
-            reflections?.dispose();
-            key.shadow.dispose();
-            renderer.dispose();renderer.forceContextLoss();canvas.remove();
+            if(article?.progress){
+                for(const update of article.updates)update(0);
+                article.progress=0;entry.shadowDirty=true;
+            }
+            slot.onRestore=null;
+            canvas.onpointerleave=canvas.onpointerdown=canvas.onpointermove=canvas.onpointercancel=null;
+            canvas.onpointerup=canvas.onwheel=canvas.onkeydown=null;
+            canvas.style.cursor="";canvas.remove();
+            releaseRenderer(slot);
         }
     });
     return references[id];
@@ -680,6 +796,6 @@ export function setRoutes(host,value){views.get(host)?.routes(value)}
 export function orbit(host,delta){views.get(host)?.orbit(delta)}
 export function reset(host){views.get(host)?.reset()}
 export function zoom(host,delta){views.get(host)?.zoom(delta)}
-export function unmount(host){views.get(host)?.dispose();views.delete(host)}
+export function unmount(host){pending.get(host)?.abort();views.get(host)?.dispose();views.delete(host)}
 
 export function illustrate(host,value){views.get(host)?.illustrate(value)}

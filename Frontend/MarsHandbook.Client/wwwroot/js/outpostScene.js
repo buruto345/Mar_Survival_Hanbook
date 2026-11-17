@@ -1,7 +1,8 @@
+import {yieldTask} from "./viewerScheduling.js";
 import { buildLandscape, elevation } from "./outpostTerrain.js";
 import * as T from "../lib/three/three.module.min.js";
 
-export function buildOutpost(root, primitives, C) {
+export async function buildOutpost(root, primitives, C,signal) {
     const { mesh, box, cylinder, sphere, tube, rod, ring, vessel, plaque } = primitives;
     // Stable layout and variation across visits to the same outpost.
     let seed = 41;
@@ -142,8 +143,9 @@ export function buildOutpost(root, primitives, C) {
         }
     }
 
-    buildLandscape(root,random);
+    await buildLandscape(root,random,signal);
     // Two long greenhouses occupy the foreground, as in the supplied reference.
+    await yieldTask(signal);
     topic("food", () => {
         for (const x of [-2, 1.1]) {
             const z = 3.15, radius = 1.32, length = 5.2;
@@ -183,6 +185,7 @@ export function buildOutpost(root, primitives, C) {
         }
         sign(-2, 6.05, "Greenhouses");
     });
+    await yieldTask(signal);
     topic("housing", () => {
         foundation(-4.7,-2.72,2.52,4.16);
         arch(-4.7, -2.8, 1.05, 3.5);
@@ -201,6 +204,7 @@ export function buildOutpost(root, primitives, C) {
         plaque(-4.7,.93,-.45,"HAB  /  01",.64);
         sign(-5, -.05, "Housing");
     });
+    await yieldTask(signal);
     topic("community", () => {
         foundation(-.3,-3.18,2.58,3.19);
         arch(-.3, -3.25, 1.05, 2.6);
@@ -224,6 +228,7 @@ export function buildOutpost(root, primitives, C) {
         utilityCabinet(.97,-2.0,C.fabric);
         sign(-.3, -.4, "Community");
     });
+    await yieldTask(signal);
     topic("water-and-oxygen", () => {
         foundation(3.1,-2.35,2.05,3.12);
         foundation(5.3,-2.25,2.88,2.02);
@@ -246,6 +251,7 @@ export function buildOutpost(root, primitives, C) {
         utilityCabinet(3.95,-.93,C.water);
         sign(4.8, -.8, "Water & oxygen");
     });
+    await yieldTask(signal);
     topic("energy", () => {
         foundation(5.8,-5.5,1.53,1.56);
         for(let row=0;row<3;row++) {
@@ -265,6 +271,7 @@ export function buildOutpost(root, primitives, C) {
         utilityCabinet(4.65,-4.15,C.gold);
         sign(5.7, -4.2, "Energy");
     });
+    await yieldTask(signal);
     topic("sanitation-and-waste", () => {
         foundation(5.4,2.2,2.86,2.94);
         arch(5.4, 2, .7, 1.8);

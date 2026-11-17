@@ -1,9 +1,9 @@
+import {textureCanvas} from "./viewerScheduling.js";
 import * as T from "../lib/three/three.module.min.js";
 import {mount as mountViewer} from "./livingModels.js";
 import {flightCrew} from "./articleCrew.js";
 import {makeForms,leafShape} from "./articleForms.js";
 import {loadArticleAsset,placeRover,placeLanders} from "./articleAssets.js";
-import {unmount as releaseViewer} from "./livingModels.js";
 export {zoom,reset,orbit,illustrate} from "./livingModels.js";
 
 const surfaceScenes=new Set(["dust-and-solar-budget","oxygen-from-martian-air","perseverance-heat-and-power"]);
@@ -52,7 +52,7 @@ function finishes(C) {
     return (surface,color)=>{
         if([0x839e46,0x537733,0x729140].includes(color)){
             if(!textures.has("leaf")){
-                const c=document.createElement("canvas");c.width=128;c.height=192;const ctx=c.getContext("2d");
+                const c=textureCanvas();c.width=128;c.height=192;const ctx=c.getContext("2d");
                 const base=ctx.createLinearGradient(0,0,128,0);
                 base.addColorStop(0,"#b8c887");base.addColorStop(.5,"#e5ecad");base.addColorStop(1,"#adc582");
                 ctx.fillStyle=base;ctx.fillRect(0,0,128,192);
@@ -230,7 +230,7 @@ function surroundings(scene,id,bounds){
     const w=outdoor ? 48 : size.x+.58, d=outdoor ? 48 : size.z+.58;
     const baseY=id==="dust-and-solar-budget" ? .056 : outdoor ? -.002 :
         (id==="rooms-for-four" || id==="time-off-in-isolation" ? -.061 : Math.min(.01,bounds.min.y));
-    const canvas=document.createElement("canvas");canvas.width=canvas.height=256;
+    const canvas=textureCanvas();canvas.width=canvas.height=256;
     const ctx=canvas.getContext("2d");
     let seed=71;const rand=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296);
     ctx.fillStyle=outdoor?"#b09686":"#728181";ctx.fillRect(0,0,256,256);
@@ -309,7 +309,7 @@ function batch(root){
 }
 // Low-resolution sky and softbox reflections supply light to imported metal/rough materials.
 function reflections(renderer,scene,outdoor){
-    const canvas=document.createElement("canvas");canvas.width=256;canvas.height=128;
+    const canvas=textureCanvas();canvas.width=256;canvas.height=128;
     const ctx=canvas.getContext("2d"),gradient=ctx.createLinearGradient(0,0,0,128);
     gradient.addColorStop(0,outdoor?"#ddd4ca":"#aebdc2");
     gradient.addColorStop(.47,outdoor?"#eed4bb":"#b5c6c8");
@@ -322,17 +322,11 @@ function reflections(renderer,scene,outdoor){
     tex.dispose();generator.dispose();scene.environment=target.texture;
     scene.environmentIntensity=outdoor?.83:.54;return target;
 }
-const pending=new WeakMap();
-export function unmount(host){pending.get(host)?.abort();pending.delete(host);releaseViewer(host)}
-export async function mount(host,id,title,callback){
-    unmount(host);
-    const request=new AbortController();pending.set(host,request);
-    try {
-        const asset=await loadArticleAsset(id,request.signal);
-        if(request.signal.aborted)return null;
-        const design={asset,updates:[],progress:0,reflections,makeForms,placeRover,placeLanders,finishes,flightCrew,
-            leafyCanopy,leafShape,detailing,batch,surroundings,outdoor:scene=>surfaceScenes.has(scene)};
-        return mountViewer(host,id,title,callback,design);
-    }catch(error){if(request.signal.aborted)return null;throw error}
-    finally{if(pending.get(host)===request)pending.delete(host)}
+export {unmount} from "./livingModels.js";
+export function articleDesign(id){
+    return {id,loadArticleAsset,updates:[],progress:0,reflections,makeForms,placeRover,placeLanders,finishes,flightCrew,
+        leafyCanopy,leafShape,detailing,batch,surroundings,outdoor:scene=>surfaceScenes.has(scene)};
+}
+export function mount(host,id,title,callback){
+    return mountViewer(host,id,title,callback,articleDesign(id));
 }
