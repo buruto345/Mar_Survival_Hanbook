@@ -1,5 +1,7 @@
 # Living on Mars article 3D upgrade
 
+This report records the previous procedural implementation. The subsequent [article fidelity review](living-on-mars-article-fidelity.md) documents the current assets, measurements and remaining limitations.
+
 ## Coverage and reference
 
 The approved outpost at commit `74cc712` is the visual baseline. Its fixtures meet their supporting structures, different finishes distinguish insulation from equipment, the construction bench sits within the terrain, and the camera fits the subject independently of its surroundings. Repeated geometry is instanced, shadows are cached and the renderer redraws on interaction. These principles apply to the article viewers at the scale of a crew member, a rack or a vehicle.

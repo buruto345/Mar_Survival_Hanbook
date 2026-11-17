@@ -1,43 +1,54 @@
-/** Conceptual crew flight clothing for the pressurized analog and comms interiors.
- * Local -Z faces a console. Dimensions share the chair and desk scale. */
-export function flightCrew({box,sphere,rod,cylinder},x,z,uniform,seated,deck=0) {
-    const boot=0x283237, cuffs=0x536363, tape=0xe2d3a7, skin=0xb78363;
-    const hip=seated ? .51 : .70;
-    const point=(dx,h,dz)=>[x+dx,deck+h,z+dz];
-    const oval=(dx,h,dz,a,b,c,color)=>sphere(...point(dx,h,dz),a,b,c,color);
-    const patch=(dx,h,dz,w,t,d,color)=>box(...point(dx,h,dz),w,t,d,color);
-    const seam=(a,b,r,color)=>rod(point(...a),point(...b),r,color);
-    // Soft coverall over the waist, boots and radio harness.
-    oval(0,hip,.012,.157,.136,.118,uniform);
-    oval(0,hip+.22,0,.185,.255,.121,uniform);
-    patch(0,hip+.035,-.008,.31,.049,.226,boot);
-    patch(0,hip+.041,-.124,.069,.037,.018,tape);
-    patch(-.082,hip+.21,-.106,.082,.094,.024,cuffs);
-    patch(.084,hip+.29,-.11,.073,.032,.018,tape);
-    seam([0,hip+.075,-.119],[0,hip+.38,-.092],.009,tape);
-    cylinder(...point(0,hip+.423,0),.093,.063,cuffs);
-    oval(0,hip+.55,-.01,.113,.143,.109,skin);
-    oval(0,hip+.635,.003,.116,.08,.112,uniform);
-    oval(0,hip+.54,-.113,.026,.025,.026,skin);
-    for(const side of [-1,1]){
-        oval(side*.109,hip+.56,0,.024,.055,.044,boot);
-        const knee=[side*.102,seated ? .43 : .37,seated?-.245:-.013];
-        const ankle=[side*.104,.107,seated?-.255:.018];
-        seam([side*.09,hip,0],knee,.087,uniform);
-        oval(...knee,.083,.082,.088,cuffs);
-        seam(knee,ankle,.068,uniform);
-        oval(side*.104,.075,ankle[2]-.045,.084,.076,.129,boot);
-        patch(side*.104,.023,ankle[2]-.054,.15,.035,.218,boot);
-        const shoulder=[side*.157,hip+.34,0];
-        const elbow=[side*.22,hip+.12,seated?-.08:.025];
-        const wrist=[side*.17,hip+(seated ? .29 : .01),seated?-.34:-.13];
-        oval(...shoulder,.083,.09,.08,uniform);
-        seam(shoulder,elbow,.069,uniform);
-        oval(...elbow,.064,.068,.067,cuffs);
-        seam(elbow,wrist,.052,uniform);
-        oval(...wrist,.049,.042,.056,cuffs);
-        oval(wrist[0],wrist[1]-.005,wrist[2]-.049,.042,.036,.061,skin);
+import * as T from "../lib/three/three.module.min.js";
+
+// Pose the weighted body in its authored (+Z forward) space before placing it at a station.
+export function flightCrew(root,asset,x,z,uniform,seated,deck,id){
+    const person=asset.cloneRig(asset.data.scene);
+    const bones={};
+    person.traverse(o=>{
+        if(o.isBone)bones[o.name]=o;
+        if(o.isMesh && o.material.name==="suit"){
+            o.material=o.material.clone();
+            o.material.color.setHex(id==="waiting-for-a-reply" && x>0 ? 0x50626a : uniform);
+        }
+    });
+    const position=o=>o.getWorldPosition(new T.Vector3());
+    function aim(name,child,dir){
+        const joint=bones[name];
+        const delta=new T.Quaternion().setFromUnitVectors(position(bones[child]).sub(position(joint)).normalize(),new T.Vector3(...dir).normalize());
+        const parent=joint.parent.getWorldQuaternion(new T.Quaternion());
+        joint.quaternion.premultiply(parent.clone().invert().multiply(delta).multiply(parent));
+        person.updateMatrixWorld(true);
     }
-    seam([-.11,hip+.53,-.023],[-.056,hip+.49,-.118],.009,boot);
-    patch(.145,hip+.035,.02,.07,.124,.077,cuffs);
+    for(const [side,sign] of [["l",1],["r",-1]]){
+        aim(side+"thigh",side+"shin",seated?[sign*.18,-.12,.98]:[sign*.09,-1,.04*sign]);
+        aim(side+"shin",side+"foot",[sign*.03,-1,seated?-.12:0]);
+        const reading=id==="time-off-in-isolation"&&x<0;
+        aim(side+"arm",side+"forearm",[sign*.19,-1,seated?.32:.08]);
+        aim(side+"forearm",side+"hand",[sign*(seated?-.32:.02),reading?.60:seated?.03:-.89,seated?1:.26]);
+    }
+    bones.head.rotation.y=x<0?.13:-.19;bones.head.rotation.x=seated?.12:0;
+    const headStart=bones.head.rotation.x;
+    // The chest joint is at the waist on this rig. Put the zipper and pocket on its front.
+    const trim=new T.MeshStandardMaterial({color:0x737b74,metalness:.26,roughness:.68});
+    const seam=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([
+        new T.Vector3(0,.03,.13),new T.Vector3(0,.20,.148),new T.Vector3(0,.34,.143),
+        new T.Vector3(0,.44,.115)]),16,.0045,5,false),trim);
+    bones.chest.add(seam);
+    const pocket=new T.Mesh(new T.BoxGeometry(.065,.056,.009),trim);
+    pocket.position.set(.073,.31,.143);pocket.rotation.y=.19;bones.chest.add(pocket);
+    const wrapper=new T.Group();wrapper.add(person);wrapper.rotation.y=Math.PI+(seated?0:x<1?.48:-.42);
+    wrapper.scale.setScalar(.87);
+    person.updateMatrixWorld(true);
+    wrapper.position.set(x,deck+(seated?.53-.87*position(bones.hips).y:0),z);
+    if(!seated)wrapper.position.y-=.87*(Math.min(position(bones.lfoot).y,position(bones.rfoot).y)-.075);
+    if(id==="waiting-for-a-reply"){
+        const band=new T.Mesh(new T.TorusGeometry(.093,.009,6,28,Math.PI),new T.MeshStandardMaterial({color:0x27353c}));
+        band.position.set(0,.149,.048);bones.head.add(band);
+        const boom=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([new T.Vector3(-.088,.13,.05),new T.Vector3(-.091,.081,.116),new T.Vector3(-.040,.075,.146)]),12,.006,6,false),band.material);
+        bones.head.add(boom);
+    }
+    root.add(wrapper);
+    const elbow=bones.lforearm.quaternion.clone();
+    const reach=elbow.clone().multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),seated?.24:.38));
+    return t=>{bones.lforearm.quaternion.slerpQuaternions(elbow,reach,t);bones.head.rotation.x=headStart+.12*t;bones.head.rotation.y=(x<0?.13:-.19)+.19*t;};
 }

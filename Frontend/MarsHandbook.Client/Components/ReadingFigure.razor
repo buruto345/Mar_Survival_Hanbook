@@ -3,6 +3,18 @@
     <HabitatModel @key="Slug" Scene="@Slug" Label="@Guide.Figure" />
     <details><summary>Model notes</summary>
         <ul>@foreach (var step in Guide.Steps) { <li><strong>@step.Label</strong> — @step.Detail</li> }</ul>
+        @if (Slug is "oxygen-from-martian-air" or "perseverance-heat-and-power")
+        {
+            <p>Rover model courtesy of <a href="https://science.nasa.gov/3d-resources/mars-2020-perseverance-rover/">NASA/JPL</a>. The enlarged MOXIE section, where shown, illustrates the process inside the rover.</p>
+        }
+        else if (Slug == "dust-and-solar-budget")
+        {
+            <p>Lander model courtesy of <a href="https://science.nasa.gov/resource/insight-3d-model/">NASA Visualization Technology Applications and Development</a>. Dust coverage illustrates the comparison.</p>
+        }
+        else if (Slug is "rooms-for-four" or "time-off-in-isolation" or "waiting-for-a-reply")
+        {
+            <p>Crew anatomy adapted from the <a href="https://github.com/makehumancommunity/makehuman/blob/master/LICENSE.md">MakeHuman CC0 base mesh</a>. Clothing and activity are illustrative.</p>
+        }
     </details>
 </figure>
 @code {

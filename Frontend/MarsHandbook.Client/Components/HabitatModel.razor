@@ -63,6 +63,10 @@
             }
             <button type="button" aria-label="Zoom in" @onclick="() => Zoom(-.15)">+</button>
             <button type="button" aria-label="Zoom out" @onclick="() => Zoom(.15)">−</button>
+            @if (IllustrationLabel is not null)
+            {
+                <button type="button" aria-pressed="@(_illustrated ? "true" : "false")" @onclick="ToggleIllustration">@IllustrationLabel</button>
+            }
             <button type="button" @onclick="Reset">Reset view</button>
         </div>
         @if (!_expanded && _reference is { Length: 3 })
@@ -161,10 +165,28 @@
         if (_module is not null) await _module.InvokeVoidAsync("zoom", _host, amount);
     }
 
+    bool _illustrated;
+    string? IllustrationLabel => Scene switch
+    {
+        "expandable-room" => "Compress illustrative shell",
+        "water-to-breathing-oxygen" => "Explode illustrative stack",
+        "trash-storage-tiles" => "Lower compactor ram",
+        "staging-water-loop" => "Trace water transfer",
+        "rooms-for-four" or "time-off-in-isolation" or "waiting-for-a-reply" => "Shift crew gaze",
+        _ => null
+    };
+
+    async Task ToggleIllustration()
+    {
+        _illustrated = !_illustrated;
+        if (_module is not null) await _module.InvokeVoidAsync("illustrate", _host, _illustrated);
+    }
+
     async Task Reset()
     {
         if (_topic is not null) await CloseTopic();
         if (_module is not null) await _module.InvokeVoidAsync("reset", _host);
+        if (_illustrated) await ToggleIllustration();
     }
 
     public async ValueTask DisposeAsync()

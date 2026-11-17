@@ -101,7 +101,7 @@ function build(root, id, article) {
         ctx.textAlign = "center"; ctx.fillText(text,256,60,480);
         const map = new T.CanvasTexture(canvas); map.colorSpace = T.SRGBColorSpace;
         const object = new T.Mesh(new T.PlaneGeometry(width,width*96/512),
-            new T.MeshBasicMaterial({map,side:T.DoubleSide}));
+            new T.MeshBasicMaterial({map,side:T.DoubleSide,toneMapped:!article}));
         object.position.set(x,y,z);root.add(object);
         return object;
     }
@@ -113,12 +113,21 @@ function build(root, id, article) {
         box(x,y,z,w+.07,h+.07,.08,C.dark);
         const display = box(x,y,z+.045,w,h,.015,C.water);
         display.material = material(0x244c59);display.material.emissive.setHex(0x327d88);display.material.emissiveIntensity=.4;
-        for (let i=0;i<3;i++) box(x-w*.28,y-h*.27+i*h*.23,z+.058,w*(.6-i*.12),.012,.005,C.white);
+        if(id==="waiting-for-a-reply"){
+            const canvas=document.createElement("canvas");canvas.width=320;canvas.height=160;
+            const ctx=canvas.getContext("2d");ctx.fillStyle=x<0?"#17343a":"#1a2a38";ctx.fillRect(0,0,320,160);
+            ctx.fillStyle="#daece6";ctx.font="19px monospace";ctx.fillText(x<0?"HAB / OUTBOX":"EARTH / INBOX",13,26);
+            ctx.strokeStyle="#487075";for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(i*44,47);ctx.lineTo(i*44,140);ctx.stroke()}
+            ctx.strokeStyle="#9ce2ca";ctx.lineWidth=3;ctx.beginPath();
+            for(let i=0;i<295;i++)ctx.lineTo(12+i,95+19*Math.sin(i*.07+x)+7*Math.cos(i*.29));ctx.stroke();
+            const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
+            const panel=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture}));panel.position.set(x,y,z+.056);root.add(panel);
+        }else for (let i=0;i<3;i++) box(x-w*.28,y-h*.27+i*h*.23,z+.058,w*(.6-i*.12),.012,.005,C.white);
     }
     function rack(x,name) {
         for (const dx of [-.69,.69]) for (const z of [-.48,.48])
             box(x+dx,1.34,z,.08,2.6,.08,C.silver);
-        for (const y of [.08,1.2,2.6]) {
+        for (const y of [.08,2.6]) {
             box(x,y,0,1.46,.07,1.03,C.silver);
             bolts(x,y,.53,1.3,.03);
         }
@@ -135,16 +144,17 @@ function build(root, id, article) {
         for (const dy of [-h*.3,h*.3])ring(x,y+dy,z,r+.012,C.dark,Math.PI/2);
         rod([x,y+h/2,z],[x,y+h/2+.18,z],.045,C.gold);
     }
+    const tools={mesh,box,cylinder,rod,sphere,ring,plaque,tube};
+    const forms=article?.makeForms(tools,C);
     function crew(x,z,color,seated=false,deck=0) {
-        article.flightCrew({box,sphere,rod,cylinder},x,z,color,seated,deck);
+        article.updates.push(article.flightCrew(root,article.asset,x,z,color,seated,deck,id));
     }
-    function chair(x,z) {
-        box(x,.42,z,.5,.1,.5,C.blue);box(x,.75,z+.23,.5,.62,.06,C.blue);
-        for(const dx of [-.2,.2])for(const dz of [-.2,.2])rod([x+dx,.4,z+dz],[x+dx,.04,z+dz],.025,C.silver);
-    }
+    function chair(x,z){forms.chair(x,z)}
     function habitatInterior(privateRooms) {
         box(0,.02,0,6.6,.16,3.65,C.fabric);
         // Exposed courses recall the layered walls visible in CHAPEA construction photographs.
+        box(0,.88,-1.84,6.62,1.58,.10,C.fabric);
+        box(-3.29,.88,0,.10,1.58,3.61,C.fabric);
         for(let i=0;i<24;i++) {
             box(0,.16+i*.064,-1.8,6.6,.045,.16,C.fabric);
             box(-3.25,.16+i*.064,0,.16,.045,3.6,C.fabric);
@@ -154,8 +164,7 @@ function build(root, id, article) {
         for(let i=0;i<count;i++) {
             const x=-2.45+i*1.55;
             box(x,.34,-.85,1.18,.4,1.45,C.white);
-            box(x,.58,-.6,1.1,.12,.9,C.blue);
-            box(x,.6,-1.35,.85,.13,.32,C.white);
+            forms.berth(x);
             if(i<count-1)box(x+.72,.83,-.95,.09,1.5,1.65,C.fabric);
             box(x,.89,-1.69,.6,.42,.06,C.dark);screen(x,.89,-1.64,.48,.3);
         }
@@ -170,88 +179,6 @@ function build(root, id, article) {
             chair(-2.2,.82);crew(-2.2,.82,C.red,true,.10);
         } else {crew(.2,.89,C.red,false,.10);crew(2,1.04,C.blue,false,.10)}
     }
-    function rover() {
-        box(0,.99,0,2.45,.62,1.45,C.white);
-        box(0,1.32,0,2.6,.07,1.65,C.silver);
-        for(const side of [-1,1]) {
-            for(const x of [-1.05,0,1.05]) {
-                const z=side*1.05;
-                cylinder(x,.43,z,.43,.28,C.dark).rotation.x=Math.PI/2;
-                cylinder(x,.43,z+side*.15,.2,.028,C.silver).rotation.x=Math.PI/2;
-                for(let i=0;i<18;i++) {
-                    const a=i*Math.PI/9;
-                    const tread=box(x+.423*Math.cos(a),.43+.423*Math.sin(a),z,.05,.05,.3,C.silver);
-                    tread.rotation.z=a;
-                }
-                rod([x,.44,z],[x*.68,.95,side*.72],.045,C.silver);
-            }
-            rod([-1.05,.74,side*.86],[.5,1.12,side*.8],.06,C.dark);
-        }
-        box(.75,1.95,-.25,.18,1.2,.18,C.white);
-        box(.75,2.56,-.25,.74,.28,.33,C.white);
-        for(const x of [.52,.96]) {
-            cylinder(x,2.56,-.055,.095,.09,C.dark).rotation.x=Math.PI/2;
-            cylinder(x,2.56,0,.055,.02,C.blue).rotation.x=Math.PI/2;
-        }
-        rod([.3,1.2,.85],[1.5,.67,1.25],.09,C.white);
-        rod([1.5,.67,1.25],[1.95,.35,.75],.07,C.silver);
-        cylinder(1.95,.3,.75,.18,.2,C.dark);
-        cylinder(-.6,1.6,-.35,.3,.04,C.white);
-        // Rear MMRTG fin stack and gold thermal housing.
-        cylinder(-1.5,1.25,0,.3,.8,C.gold).rotation.z=Math.PI/2;
-        for(let i=0;i<10;i++)box(-1.9+i*.08,1.25,0,.025,.88,.9,C.silver);
-        for(let i=0;i<3;i++)tube([[-.8+i*.15,1.37,.65],[0,1.4,.65],[.4,1.35,.4]],C.gold,.016);
-    }
-    let cellSector;
-    const cellArcs=new Map();
-    function array(x,dust) {
-        cylinder(x,.7,0,1.03,.05,C.dark);
-        for(let sector=0;sector<10;sector++) {
-            const angle=sector*Math.PI/5;
-            // Wedge-shaped cell sectors match InSight's fan-like circular arrays.
-            if(!cellSector){
-                const shape=new T.Shape();shape.moveTo(.12,0);
-                for(let j=0;j<=8;j++){
-                    const a=.025+j*(Math.PI/5-.05)/8;shape.lineTo(Math.cos(a),Math.sin(a));
-                }
-                shape.lineTo(.12*Math.cos(Math.PI/5),.12*Math.sin(Math.PI/5));shape.closePath();
-                cellSector=new T.ShapeGeometry(shape);
-            }
-            const wedge=mesh(cellSector,dust?0x9e8060:0x253951,x,.735,0);
-            wedge.rotation.x=-Math.PI/2;wedge.rotation.z=angle;
-            const edgeX=x+Math.cos(angle),edgeZ=-Math.sin(angle);
-            rod([x,.75,0],[edgeX,.75,edgeZ],.012,C.silver);
-            for(let r=.25;r<1;r+=.16) {
-                if(!cellArcs.has(r)){
-                    const curve=new T.CurvePath();
-                    const points=Array.from({length:9},(_,j)=>new T.Vector3(r*Math.cos(j*Math.PI/40),0,-r*Math.sin(j*Math.PI/40)));
-                    for(let j=1;j<points.length;j++)curve.add(new T.LineCurve3(points[j-1],points[j]));
-                    cellArcs.set(r,new T.TubeGeometry(curve,8,.006,4,false));
-                }
-                mesh(cellArcs.get(r),dust?0xb39473:0x52738d,x,.75,0).rotation.y=angle;
-            }
-        }
-        cylinder(x,.46,0,.12,.5,C.silver);
-    }
-    function lander(x,dust) {
-        box(x,.6,0,.8,.36,.85,C.gold);
-        sphere(x,.91,0,.37,.22,.36,C.white);
-        for(const a of [0,2.1,4.2]) {
-            const dx=Math.cos(a),dz=Math.sin(a);
-            rod([x+dx*.3,.55,dz*.3],[x+dx*.8,.1,dz*.8],.035,C.silver);
-            cylinder(x+dx*.8,.08,dz*.8,.15,.05,C.dark);
-        }
-        for(const sign of [-1,1]){rod([x,.65,0],[x+sign*1.2,.72,0],.04,C.silver);array(x+sign*1.24,dust)}
-        rod([x,.9,0],[x,1.45,0],.035,C.white);
-    }
-    function pouch(x,y,z,index) {
-        box(x,y,z,.4,.53,.09,index%3?C.fabric:C.silver);
-        box(x,y+.24,z,.4,.035,.11,C.dark);
-        box(x,y,z+.052,.28,.2,.01,C.white);
-        for(let i=0;i<3;i++)box(x,y-.05+i*.045,z+.062,.21,.012,.005,C.dark);
-        cylinder(x+.12,y+.3,z,.033,.12,C.white);
-    }
-
     switch(id) {
     case "rooms-for-four": habitatInterior(true);break;
     case "time-off-in-isolation": habitatInterior(false);break;
@@ -261,39 +188,70 @@ function build(root, id, article) {
     }
     case "expandable-room":
         for(const [x,length,r] of [[-1.9,.6,.6],[.9,2.2,1]]) {
-            const body=cylinder(x,1.1,0,r,length,C.white);body.rotation.z=Math.PI/2;
-            for(const sign of [-1,1]) {
-                sphere(x+sign*length/2,1.1,0,.3,r,r,C.white);
-                cylinder(x+sign*(length/2+.22),1.1,0,r*.48,.12,C.silver).rotation.z=Math.PI/2;
+            const shell=forms.shell(x,length+.52,r,length<1);
+            const collars=[],supports=[];
+            const left=x-(length+.52)/2, radius=.31;
+            for(const sign of [-1,1]){
+                const cx=x+sign*(length+.52)/2;
+                const collar=cylinder(cx,1.12,0,radius,.12,C.silver);
+                collar.rotation.z=Math.PI/2;
+                const hatch=cylinder(cx+sign*.067,1.12,0,.243,.045,C.dark);
+                hatch.rotation.z=Math.PI/2;
+                const trim=ring(cx+sign*.093,1.12,0,.186,C.silver);
+                trim.rotation.y=Math.PI/2;
+                const foot=box(cx,.10,0,.19,.14,.76,C.dark);
+                const post=rod([cx,.15,0],[cx,.86,0],.075,C.silver);
+                for(const o of [collar,hatch,trim,foot,post])o.userData.movable=true;
+                collars.push([collar,hatch,trim]);supports.push([foot,post]);
             }
-            for(let i=0;i<7;i++){
-                const band=ring(x+(i/6-.5)*length,1.1,0,r+.018,C.fabric);
-                band.rotation.y=Math.PI/2;
-            }
-            for(let i=0;i<10;i++){
-                const a=i*Math.PI/5;rod([x-length/2,1.1+r*Math.cos(a),r*Math.sin(a)],[x+length/2,1.1+r*Math.cos(a),r*Math.sin(a)],.014,C.fabric);
-            }
+            for(const z of [-.26,.26])box(x,.035,z,length+.82,.07,.09,C.silver);
+            if(length>1)article.updates.push(t=>{
+                const span=(length+.52)*(1-.62*t);
+                shell.position.x=left+span/2;
+                shell.scale.set(span,r*(1-.38*t),r*(1-.38*t));
+                const end=left+span;
+                collars[1].forEach((o,i)=>o.position.x=end+[0,.067,.093][i]);
+                supports[1].forEach(o=>o.position.x=end);
+            });
         }break;
     case "staging-water-loop":
         for(const [x,name] of [[-1.8,"CONDENSATE"],[0,"PROCESSOR"],[1.8,"CLEAN WATER"]]){
             rack(x,name);
-            for(let i=0;i<3;i++)vessel(x-.4+i*.4,.95,0,.16,.95);
+            if(x<0){
+                forms.vessel(x,.94,0,.47,1.14,C.silver,true);
+                for(let j=0;j<12;j++)forms.plate(x,.51+j*.064,0,.62,.022,.54,C.blue);
+            }else if(x>0)forms.vessel(x,1.10,0,.46,1.56,C.silver);
+            else for(let j=-1;j<=1;j++)forms.vessel(x+j*.39,1.09,0,.177,1.28,j===0?C.blue:C.white);
             for(let i=0;i<3;i++)tube([[x-.45+i*.4,1.65,0],[x-.45+i*.4,1.85,.2],[x+.45,1.85-i*.12,.35],[x+.45,.45,.35]],i===1?C.water:C.silver,.025);
             for(let i=0;i<3;i++)box(x-.42+i*.4,1.95,.48,.2,.07,.08,C.gold);
         }
-        tube([[-1.8,.35,.55],[-1,.35,.7],[0,.4,.7],[1.8,.35,.55]],C.water,.055);break;
+        {
+            const curve=new T.CatmullRomCurve3([[-1.8,.35,.55],[-1,.35,.7],[0,.40,.7],[1.8,.35,.55]].map(p=>new T.Vector3(...p)));
+            mesh(new T.TubeGeometry(curve,36,.055,10,false),C.water,0,0,0);
+            const indicator=sphere(-1.8,.35,.55,.084,.084,.084,C.white);
+            indicator.userData.movable=true;
+            article.updates.push(t=>indicator.position.copy(curve.getPointAt(t)));
+        }break;
     case "water-to-breathing-oxygen":
         rack(-1.3,"OXYGEN GENERATOR");rack(1.2,"GAS PROCESSING");
-        for(let i=0;i<13;i++)box(-1.3,.65+i*.07,.05,.9,.035,.65,i%2?C.silver:C.dark);
+        for(let i=0;i<15;i++){
+            const plate=forms.plate(-1.3,.64+i*.061,.05,.95,.039,.66,i%2?C.silver:C.dark);
+            plate.userData.movable=true;article.updates.push(t=>plate.position.y=.64+i*(.061+.033*t));
+        }
         for(const x of [-1.72,-.88])rod([x,.56,.39],[x,1.56,.39],.025,C.gold);
         vessel(1,1.1,0,.21,1.1);vessel(1.5,1.1,0,.14,.9);
         tube([[-2.25,.2,.1],[-2.25,.5,.6],[-1.3,.5,.6]],C.water,.05);
         for(const [i,c] of [[0,C.green],[1,C.gold]])tube([[-1.3,1.55,.3],[-.6,1.8+i*.2,.3],[1+i*.5,1.8+i*.2,.3],[1+i*.5,1.5,0]],c);
         plaque(-1.3,1.75,.5,"ELECTROLYSIS",.85);plaque(1.2,1.78,.5,"O2 / H2",.7);break;
     case "oxygen-from-martian-air":
-        rover();
+        article.placeRover(root,article.asset,id,tools);
         // Enlarged, detached instrument shows the triangular wall reinforcement in NASA's installation photo.
-        box(-2.45,1.08,1,1.05,1.12,.8,C.gold);
+        box(-2.45,1.08,.64,1.05,1.12,.08,C.gold);
+        for(const dx of [-.49,.49])box(-2.45+dx,1.08,1,.07,1.12,.8,C.gold);
+        for(const h of [.55,1.61])box(-2.45,h,1,1.04,.06,.80,C.gold);
+        for(let j=0;j<8;j++)forms.plate(-2.60,.78+j*.063,1,.42,.036,.46,C.silver);
+        forms.vessel(-2.15,1.03,1,.15,.56,C.dark);
+        tube([[-2.15,1.36,1],[-2.18,1.47,1],[-2.60,1.44,1],[-2.6,1.25,1]],C.silver,.035);
         for(const z of [.59,1.41]) {
             for(let j=0;j<3;j++){
                 const x=-2.92+j*.31;
@@ -304,30 +262,33 @@ function build(root, id, article) {
         }
         for(const x of [-2.76,-2.15])box(x,1.72,1,.13,.18,.13,C.silver);
         plaque(-2.45,.38,1.42,"MOXIE / ENLARGED",1.4);break;
-    case "perseverance-heat-and-power": rover();plaque(-1.7,2.05,0,"MMRTG",.9);break;
+    case "perseverance-heat-and-power": article.placeRover(root,article.asset,id,tools);break;
     case "dust-and-solar-budget":
-        lander(-2.5,false);lander(2.5,true);
-        plaque(-2.5,1.9,.4,"5,000 Wh/sol",1.6);plaque(2.5,1.9,.4,"500 Wh/sol",1.6);break;
+        article.placeLanders(root,article.asset,tools);
+        break;
     case "packing-the-last-meal":
         for(let i=0;i<3;i++){
             const x=(i-1)*1.7;
             box(x,.12,0,1.5,.15,1.25,C.white);
             for(const dx of [-.7,.7])box(x+dx,1,0,.055,1.9,1.2,C.silver);
             for(const y of [.15,1.05,1.95])box(x,y,0,1.48,.055,1.2,C.silver);
-            for(let j=0;j<5;j++)pouch(x-.46+(j%3)*.46,.445+Math.floor(j/3)*.90,.25,j+i);
+            for(const y of [.47,1.37])tube([[x-.65,y,.50],[x-.4,y-.045,.43],[x+.4,y-.045,.43],[x+.65,y,.50]],0x776b59,.022);
+            for(let j=0;j<5;j++)forms.pouch(x-.46+(j%3)*.46,.445+Math.floor(j/3)*.90,.25,j+i);
             plaque(x,2.2,.65,["EARLY","MID-MISSION","LATE"][i],1.3);
         }break;
     case "veggie-salad": {
         const leafGeometry=article.leafShape();
         box(0,.24,0,3.3,.35,1.9,C.white);
         for(const x of [-1,0,1])for(const z of [-.43,.43]){
-            sphere(x,.52,z,.4,.13,.35,C.fabric);
+            forms.soft(x,.53,z,.80,.70,.23,C.fabric,1).rotation.x=-Math.PI/2;
             cylinder(x,.65,z,.08,.18,C.silver);
             article.leafyCanopy({mesh},x,z,leafGeometry);
         }
         for(const x of [-1.65,1.65])for(const z of [-.9,.9])box(x,1.15,z,.055,1.9,.055,C.silver);
         for(let i=0;i<10;i++)box(0,.5+i*.14,-.93,3.3,.04,.07,C.white);
-        box(0,2.13,0,3.5,.22,2,C.white);
+        for(const z of [-.91,.91])box(0,2.13,z,3.5,.20,.18,C.white);
+        for(const x of [-1.64,1.64])box(x,2.13,0,.18,.20,1.72,C.white);
+        for(const x of [-1.2,-.6,0,.6,1.2])box(x,2.08,0,.19,.12,1.68,C.silver);
         for(const x of [-1.2,-.6,0,.6,1.2])for(const z of [-.6,0,.6]){
             const led=cylinder(x,1.999,z,.06,.015,C.white);
             led.material=material(0xffa3ca);led.material.emissive.setHex(0xff68a1);led.material.emissiveIntensity=.8;
@@ -335,7 +296,10 @@ function build(root, id, article) {
         plaque(0,2.14,1.01,"VEGGIE",1);break;
     }
     case "separating-toilet-waste": {
-        box(-1.1,.62,0,1.15,1.1,1.1,C.white);
+        const casing=forms.vessel(-1.1,.64,0,.54,1.15,C.white,true);
+        casing.rotation.y=.22;
+        forms.vessel(-1.1,.56,0,.29,.78,C.fabric);
+        tube([[-1.1,1.15,.02],[-1.03,.94,.02],[-.94,.54,.08],[-.76,.35,.18]],C.gold,.085);
         cylinder(-1.1,1.2,0,.41,.1,C.silver);
         ring(-1.1,1.27,0,.29,C.dark,Math.PI/2);
         cylinder(-1.1,1.21,0,.24,.04,C.dark);
@@ -350,12 +314,15 @@ function build(root, id, article) {
     }
     case "trash-storage-tiles":
         rack(0,"HEAT MELT COMPACTOR");
-        box(0,1.1,0,1.1,1.3,.85,C.silver);
-        box(0,1.1,.46,.88,.9,.08,C.white);bolts(0,1.1,.52,.97,1.1);
-        box(0,1.1,.52,.65,.57,.04,C.dark);
-        for(const x of [-.46,.46])box(x,1.1,.57,.09,.4,.1,C.silver);
+        const chamber=forms.vessel(0,1.03,0,.53,1.51,C.silver,true);
+        chamber.rotation.y=.22;
+        const ram=cylinder(0,1.56,0,.084,.70,C.silver);
+        const piston=cylinder(0,1.24,0,.37,.13,C.dark);
+        for(let j=0;j<5;j++)ring(0,.62+j*.095,0,.40,C.gold,Math.PI/2);
+        ram.userData.movable=piston.userData.movable=true;
+        article.updates.push(t=>{ram.position.y=1.56-.42*t;piston.position.y=1.24-.42*t});
         for(let i=0;i<4;i++)tube([[.5,.4+i*.22,.2],[.92,.4+i*.22,.2],[.92,1.8,.1],[.2,2,.1]],i%2?C.silver:C.gold,.017);
-        for(let i=0;i<7;i++)pouch(-2+(i%3)*.3,.3+Math.floor(i/3)*.17,.1+(i%2)*.2,i);
+        for(let i=0;i<7;i++)forms.pouch(-2+(i%3)*.3,.3+Math.floor(i/3)*.17,.1+(i%2)*.2,i);
         for(let i=0;i<3;i++) {
             cylinder(2,.14+i*.14,0,.52,.12,C.fabric);
             for(let j=0;j<7;j++)box(2+Math.cos(j)*.28,.205+i*.14,Math.sin(j)*.28,.12,.01,.09,j%2?C.silver:C.gold);
@@ -367,15 +334,17 @@ function build(root, id, article) {
             for(const dx of [-.45,.45]){
                 screen(x+dx,1.23,-.25,.7,.44);
                 box(x+dx,.84,.15,.66,.04,.23,C.dark);
+                for(let row=0;row<4;row++)for(let col=0;col<12;col++)
+                    box(x+dx+(col-5.5)*.049,.865,.15+(row-1.5)*.048,.039,.01,.036,C.silver);
             }
             chair(x,.65);crew(x,.65,x<0?C.red:C.blue,true);
-            plaque(x,1.82,-.22,x<0?"HABITAT":"MISSION CONTROL",1.7);
+            plaque(x,1.82,-.211,x<0?"HABITAT":"MISSION CONTROL",1.7);
         }
         break;
     default: throw new Error("Unknown handbook model");
     }
     if(article) {
-        article.detailing(root,id,{box,cylinder,rod,sphere,ring,plaque},C);
+        article.detailing(root,id,tools,C);
         article.batch(root);
     }
 }
@@ -407,13 +376,14 @@ export function mount(host,id,title,callback,article=null) {
     if(article) {base.geometry.dispose();base.material.dispose();article.surroundings(scene,id,bounds);}
     else if (id !== "outpost") scene.add(base);
     else { base.geometry.dispose(); base.material.dispose(); }
+    const reflections=article?.reflections(renderer,scene,article.outdoor(id));
     const overview=id==="outpost";
     if (overview) {
         scene.background=new T.Color(0xcda58e);
         scene.fog=new T.Fog(0xcda58e,29,80);
     }
     scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : article ? 1.53 : 2));
-    const key = new T.DirectionalLight(0xffe1b9,3.2);if(id==="outpost" || article?.outdoor(id)) key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
+    const key = new T.DirectionalLight(article && !article.outdoor(id)?0xfff0da:0xffe1b9,article?2.6:3.2);if(id==="outpost" || article?.outdoor(id)) key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
     key.shadow.mapSize.setScalar(overview && host.clientWidth>800 ? 2048 : 1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
     key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.001;scene.add(key);
     const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : article ? .65 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
@@ -657,10 +627,25 @@ export function mount(host,id,title,callback,article=null) {
         }
         draw();
     };
+    let illustrationFrame=null;
     const observer=new ResizeObserver(draw);observer.observe(host);draw();
     const textures=new Set(),geometries=new Set(),materials=new Set();
     views.set(host,{
         selectTopic,
+        illustrate(value){
+            if(!article)return;
+            cancelAnimationFrame(illustrationFrame);
+            const begin=performance.now(),from=article.progress,to=value?1:0;
+            const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+            function frame(now){
+                const t=reduce?1:Math.min(1,(now-begin)/560);
+                article.progress=T.MathUtils.lerp(from,to,t*t*(3-2*t));
+                for(const update of article.updates)update(article.progress);
+                renderer.shadowMap.needsUpdate=true;draw();
+                illustrationFrame=t<1?requestAnimationFrame(frame):null;
+            }
+            frame(begin);
+        },
         routes(value){showRoutes=value;updateMaterials();draw()},
         orbit(delta){stopEntry(); yaw+=delta; draw()},
         setExpanded(value){
@@ -672,15 +657,17 @@ export function mount(host,id,title,callback,article=null) {
         zoom(delta){stopEntry();zoom=Math.max(.45,Math.min(1.6,zoom+delta));draw()},
         dispose(){
             disposed = true;
+            cancelAnimationFrame(illustrationFrame);
             stopEntry();
             view.removeEventListener("keydown",trapFocus);
             observer.disconnect();
             for (const [object, original] of originals) object.material = original;
             highlights.forEach(material => material.dispose());
             scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material){materials.add(o.material);for(const value of Object.values(o.material))if(value?.isTexture)textures.add(value)}});
-            textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
+            textures.forEach(t=>{t.dispose();t.image?.close?.()});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
             labels.forEach(({label})=>label.remove());
-            scene.traverse(object=>{if(object.isInstancedMesh)object.dispose()});
+            scene.traverse(object=>{if(object.isInstancedMesh)object.dispose();if(object.isSkinnedMesh)object.skeleton.dispose()});
+            reflections?.dispose();
             key.shadow.dispose();
             renderer.dispose();renderer.forceContextLoss();canvas.remove();
         }
@@ -694,3 +681,5 @@ export function orbit(host,delta){views.get(host)?.orbit(delta)}
 export function reset(host){views.get(host)?.reset()}
 export function zoom(host,delta){views.get(host)?.zoom(delta)}
 export function unmount(host){views.get(host)?.dispose();views.delete(host)}
+
+export function illustrate(host,value){views.get(host)?.illustrate(value)}
