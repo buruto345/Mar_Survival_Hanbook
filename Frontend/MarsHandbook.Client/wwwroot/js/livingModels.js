@@ -17,7 +17,7 @@ const references = {
     "staging-water-loop": [eclss, "NASA life-support hardware", "Rack frames, process vessels, plumbing and control panels. Flow arrangement is simplified."],
     "water-to-breathing-oxygen": [eclss, "NASA life-support hardware", "Rack-mounted electrolysis equipment with illustrative water and gas lines."],
     "oxygen-from-martian-air": [nasa + "solar-system/nasas-oxygen-generating-experiment-moxie-completes-mars-mission/", "MOXIE installation photograph", "Gold instrument enclosure and triangular stiffening ribs, shown enlarged beside the rover."],
-    "packing-the-last-meal": [nasa + "directæ€ªorates/esdmd/hhp/space-food-systems/", "NASA space food photographs", "Sealed pouches, drink fittings and labelled storage bags."],
+    "packing-the-last-meal": [nasa + "directorates/esdmd/hhp/space-food-systems/", "NASA space food photographs", "Sealed pouches, drink fittings and labelled storage bags."],
     "veggie-salad": [nasa + "exploration-research-and-technology/growing-plants-in-space/", "Veggie hardware photographs", "Six plant pillows, LED canopy and flexible chamber enclosure."],
     "dust-and-solar-budget": ["https://science.nasa.gov/resource/insights-power-generation-after-landing-and-spring-2022/", "InSight comparison photographs", "Two circular, ribbed arrays in clean and dusty states."],
     "perseverance-heat-and-power": ["https://science.nasa.gov/mission/mars-2020-perseverance/rover-components/", "Perseverance hardware photographs", "Six treaded wheels, suspension links, camera mast and finned generator."],
@@ -25,15 +25,16 @@ const references = {
     "trash-storage-tiles": [nasa + "ames/space-biosciences/what-is-nasas-heat-melt-compactor/", "Heat Melt Compactor photographs", "Metal process chamber, instrumentation and compressed trash tiles."]
 };
 
-function build(root, id) {
+function build(root, id, article) {
     const materials = new Map();
+    const finish=article?.finishes(C);
     function material(color) {
         if (!materials.has(color)) {
             const surface = new T.MeshStandardMaterial({
                 color, roughness: color === C.silver ? .34 : .77,
                 metalness: [C.silver, C.gold].includes(color) ? .65 : .08
             });
-            if (id === "outpost") {
+            if (id === "outpost" || article) {
                 if (color===C.blue || color===0x183c55) {
                     surface.roughness=.28; surface.metalness=.33;
                 } else if (color===C.fabric) {
@@ -42,6 +43,7 @@ function build(root, id) {
                     surface.roughness=.68; surface.metalness=.24;
                 }
             }
+            finish?.(surface,color);
             materials.set(color,surface);
         }
         return materials.get(color);
@@ -54,7 +56,7 @@ function build(root, id) {
         root.add(object);
         return object;
     }
-    const shared = id === "outpost" ? {
+    const shared = id === "outpost" || article ? {
         box: new T.BoxGeometry(), cylinder: new T.CylinderGeometry(1,1,1,16),
         sphere: new T.SphereGeometry(1,14,10)
     } : null;
@@ -110,7 +112,7 @@ function build(root, id) {
     function screen(x,y,z,w=.38,h=.22) {
         box(x,y,z,w+.07,h+.07,.08,C.dark);
         const display = box(x,y,z+.045,w,h,.015,C.water);
-        display.material = new T.MeshStandardMaterial({color:0x244c59,emissive:0x327d88,emissiveIntensity:.4});
+        display.material = material(0x244c59);display.material.emissive.setHex(0x327d88);display.material.emissiveIntensity=.4;
         for (let i=0;i<3;i++) box(x-w*.28,y-h*.27+i*h*.23,z+.058,w*(.6-i*.12),.012,.005,C.white);
     }
     function rack(x,name) {
@@ -133,20 +135,11 @@ function build(root, id) {
         for (const dy of [-h*.3,h*.3])ring(x,y+dy,z,r+.012,C.dark,Math.PI/2);
         rod([x,y+h/2,z],[x,y+h/2+.18,z],.045,C.gold);
     }
-    function person(x,z,color,seated=false) {
-        const y = seated ? -.23 : 0;
-        sphere(x,1.12+y,z,.13,.16,.13,0xbc977d);
-        sphere(x,1.23+y,z-.03,.13,.08,.12,C.dark);
-        box(x,.8+y,z,.32,.4,.22,color);
-        for(const dx of [-.105,.105]) {
-            rod([x+dx,.61+y,z],[x+dx,.35,z+(seated?.24:0)],.07,C.blue);
-            rod([x+dx,.35,z+(seated?.24:0)],[x+dx,.08,z+(seated?.24:0)],.065,C.blue);
-            box(x+dx,.055,z+.07+(seated?.24:0),.14,.1,.25,C.dark);
-            rod([x+dx*1.9,.95+y,z],[x+dx*2,.66+y,z+.15],.055,color);
-        }
+    function crew(x,z,color,seated=false,deck=0) {
+        article.flightCrew({box,sphere,rod,cylinder},x,z,color,seated,deck);
     }
     function chair(x,z) {
-        box(x,.42,z,.5,.1,.5,C.blue);box(x,.75,z-.23,.5,.62,.06,C.blue);
+        box(x,.42,z,.5,.1,.5,C.blue);box(x,.75,z+.23,.5,.62,.06,C.blue);
         for(const dx of [-.2,.2])for(const dz of [-.2,.2])rod([x+dx,.4,z+dz],[x+dx,.04,z+dz],.025,C.silver);
     }
     function habitatInterior(privateRooms) {
@@ -168,14 +161,14 @@ function build(root, id) {
         }
         if(!privateRooms) {
             box(1.7,.77,.5,1.9,.12,.85,C.white);
-            for(const x of [1.2,2.2]){chair(x,.99);person(x,.99,C.blue,true)}
+            for(const x of [1.2,2.2]){chair(x,1.13);crew(x,1.13,C.blue,true,.10)}
             box(2.68,.48,-.8,.8,.8,1,C.white);
             box(2.68,.93,-.8,.9,.08,1.1,C.dark);
             cylinder(2.68,1.02,-.8,.2,.1,C.silver);
             for(let i=0;i<4;i++)for(let j=0;j<4;j++)
                 box(1.7+i*.07,.846,.35+j*.07,.065,.01,.065,(i+j)%2?C.dark:C.white);
-            chair(-2.2,.82);person(-2.2,.82,C.red,true);
-        } else {person(.2,1.04,C.red);person(2,1.04,C.blue)}
+            chair(-2.2,.82);crew(-2.2,.82,C.red,true,.10);
+        } else {crew(.2,.89,C.red,false,.10);crew(2,1.04,C.blue,false,.10)}
     }
     function rover() {
         box(0,.99,0,2.45,.62,1.45,C.white);
@@ -209,23 +202,33 @@ function build(root, id) {
         for(let i=0;i<10;i++)box(-1.9+i*.08,1.25,0,.025,.88,.9,C.silver);
         for(let i=0;i<3;i++)tube([[-.8+i*.15,1.37,.65],[0,1.4,.65],[.4,1.35,.4]],C.gold,.016);
     }
+    let cellSector;
+    const cellArcs=new Map();
     function array(x,dust) {
         cylinder(x,.7,0,1.03,.05,C.dark);
         for(let sector=0;sector<10;sector++) {
             const angle=sector*Math.PI/5;
             // Wedge-shaped cell sectors match InSight's fan-like circular arrays.
-            const shape=new T.Shape();
-            shape.moveTo(.12,0);
-            for(let j=0;j<=8;j++){const a=.025+j*(Math.PI/5-.05)/8;shape.lineTo(Math.cos(a),Math.sin(a))}
-            shape.lineTo(.12*Math.cos(Math.PI/5),.12*Math.sin(Math.PI/5));shape.closePath();
-            const wedge=mesh(new T.ShapeGeometry(shape),dust?0x9e8060:0x253951,x,.735,0);
+            if(!cellSector){
+                const shape=new T.Shape();shape.moveTo(.12,0);
+                for(let j=0;j<=8;j++){
+                    const a=.025+j*(Math.PI/5-.05)/8;shape.lineTo(Math.cos(a),Math.sin(a));
+                }
+                shape.lineTo(.12*Math.cos(Math.PI/5),.12*Math.sin(Math.PI/5));shape.closePath();
+                cellSector=new T.ShapeGeometry(shape);
+            }
+            const wedge=mesh(cellSector,dust?0x9e8060:0x253951,x,.735,0);
             wedge.rotation.x=-Math.PI/2;wedge.rotation.z=angle;
             const edgeX=x+Math.cos(angle),edgeZ=-Math.sin(angle);
             rod([x,.75,0],[edgeX,.75,edgeZ],.012,C.silver);
             for(let r=.25;r<1;r+=.16) {
-                const arc=[];
-                for(let j=0;j<=8;j++){const a=angle+j*Math.PI/40;arc.push([x+r*Math.cos(a),.75,-r*Math.sin(a)])}
-                tube(arc,dust?0xb39473:0x52738d,.004);
+                if(!cellArcs.has(r)){
+                    const curve=new T.CurvePath();
+                    const points=Array.from({length:9},(_,j)=>new T.Vector3(r*Math.cos(j*Math.PI/40),0,-r*Math.sin(j*Math.PI/40)));
+                    for(let j=1;j<points.length;j++)curve.add(new T.LineCurve3(points[j-1],points[j]));
+                    cellArcs.set(r,new T.TubeGeometry(curve,8,.006,4,false));
+                }
+                mesh(cellArcs.get(r),dust?0xb39473:0x52738d,x,.75,0).rotation.y=angle;
             }
         }
         cylinder(x,.46,0,.12,.5,C.silver);
@@ -300,7 +303,7 @@ function build(root, id) {
             bolts(-2.45,1.08,z,1.02,1.08);
         }
         for(const x of [-2.76,-2.15])box(x,1.72,1,.13,.18,.13,C.silver);
-        plaque(-2.45,.38,1.42,"MOXIE Â· ENLARGED",1.4);break;
+        plaque(-2.45,.38,1.42,"MOXIE / ENLARGED",1.4);break;
     case "perseverance-heat-and-power": rover();plaque(-1.7,2.05,0,"MMRTG",.9);break;
     case "dust-and-solar-budget":
         lander(-2.5,false);lander(2.5,true);
@@ -311,29 +314,26 @@ function build(root, id) {
             box(x,.12,0,1.5,.15,1.25,C.white);
             for(const dx of [-.7,.7])box(x+dx,1,0,.055,1.9,1.2,C.silver);
             for(const y of [.15,1.05,1.95])box(x,y,0,1.48,.055,1.2,C.silver);
-            for(let j=0;j<5;j++)pouch(x-.46+(j%3)*.46,.47+Math.floor(j/3)*.91,.25,j+i);
+            for(let j=0;j<5;j++)pouch(x-.46+(j%3)*.46,.445+Math.floor(j/3)*.90,.25,j+i);
             plaque(x,2.2,.65,["EARLY","MID-MISSION","LATE"][i],1.3);
         }break;
-    case "veggie-salad":
+    case "veggie-salad": {
+        const leafGeometry=article.leafShape();
         box(0,.24,0,3.3,.35,1.9,C.white);
         for(const x of [-1,0,1])for(const z of [-.43,.43]){
             sphere(x,.52,z,.4,.13,.35,C.fabric);
             cylinder(x,.65,z,.08,.18,C.silver);
-            for(let i=0;i<7;i++){
-                const a=i*Math.PI*2/7;
-                const leaf=sphere(x+.18*Math.cos(a),.78+(i%2)*.12,z+.18*Math.sin(a),.34,.06,.17,i%2?0x748f43:C.green);
-                leaf.rotation.y=-a;leaf.rotation.z=.3*Math.cos(a);
-                tube([[x,.7,z],[x+.25*Math.cos(a),.81,z+.25*Math.sin(a)],[x+.45*Math.cos(a),.82,z+.45*Math.sin(a)]],0x9da763,.008);
-            }
+            article.leafyCanopy({mesh},x,z,leafGeometry);
         }
         for(const x of [-1.65,1.65])for(const z of [-.9,.9])box(x,1.15,z,.055,1.9,.055,C.silver);
         for(let i=0;i<10;i++)box(0,.5+i*.14,-.93,3.3,.04,.07,C.white);
         box(0,2.13,0,3.5,.22,2,C.white);
         for(const x of [-1.2,-.6,0,.6,1.2])for(const z of [-.6,0,.6]){
             const led=cylinder(x,1.999,z,.06,.015,C.white);
-            led.material=new T.MeshStandardMaterial({color:0xff9fda,emissive:0xff56b8,emissiveIntensity:1.4});
+            led.material=material(0xffa3ca);led.material.emissive.setHex(0xff68a1);led.material.emissiveIntensity=.8;
         }
         plaque(0,2.14,1.01,"VEGGIE",1);break;
+    }
     case "separating-toilet-waste": {
         box(-1.1,.62,0,1.15,1.1,1.1,C.white);
         cylinder(-1.1,1.2,0,.41,.1,C.silver);
@@ -368,15 +368,19 @@ function build(root, id) {
                 screen(x+dx,1.23,-.25,.7,.44);
                 box(x+dx,.84,.15,.66,.04,.23,C.dark);
             }
-            chair(x,.65);person(x,.65,x<0?C.red:C.blue,true);
+            chair(x,.65);crew(x,.65,x<0?C.red:C.blue,true);
             plaque(x,1.82,-.22,x<0?"HABITAT":"MISSION CONTROL",1.7);
         }
-        tube([[-.6,.8,-.45],[0,1.35,-.45],[.6,.8,-.45]],C.water,.025);break;
+        break;
     default: throw new Error("Unknown handbook model");
+    }
+    if(article) {
+        article.detailing(root,id,{box,cylinder,rod,sphere,ring,plaque},C);
+        article.batch(root);
     }
 }
 
-export function mount(host,id,title,callback) {
+export function mount(host,id,title,callback,article=null) {
     unmount(host);
     const renderer = new T.WebGLRenderer({antialias:true});
     renderer.setPixelRatio(Math.min(devicePixelRatio,id === "outpost" ? 1.5 : 2));
@@ -386,12 +390,12 @@ export function mount(host,id,title,callback) {
     renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = T.PCFSoftShadowMap;
     renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = id === "outpost" ? 1.07 : 1.25;
+    renderer.toneMappingExposure = id === "outpost" ? 1.07 : article ? 1.04 : 1.25;
     const canvas = renderer.domElement;
     host.replaceChildren(canvas);
     canvas.tabIndex=0;canvas.setAttribute("role","img");canvas.setAttribute("aria-label",title);
     const scene = new T.Scene(), root = new T.Group();scene.add(root);
-    build(root,id);
+    build(root,id,article);
     const bounds = new T.Box3();
     for (const object of root.children)
         if (!object.userData.mapGround) bounds.union(new T.Box3().setFromObject(object));
@@ -400,21 +404,22 @@ export function mount(host,id,title,callback) {
     const base = new T.Mesh(new T.BoxGeometry(size.x+.8,.14,size.z+.8),
         new T.MeshStandardMaterial({color:[ "outpost","dust-and-solar-budget","perseverance-heat-and-power","oxygen-from-martian-air"].includes(id)?0x87654f:0x3f4b53,roughness:.95}));
     base.position.set(center.x,-.2,center.z);base.receiveShadow=true;
-    if (id !== "outpost") scene.add(base);
+    if(article) {base.geometry.dispose();base.material.dispose();article.surroundings(scene,id,bounds);}
+    else if (id !== "outpost") scene.add(base);
     else { base.geometry.dispose(); base.material.dispose(); }
     const overview=id==="outpost";
     if (overview) {
         scene.background=new T.Color(0xcda58e);
         scene.fog=new T.Fog(0xcda58e,29,80);
     }
-    scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : 2));
-    const key = new T.DirectionalLight(0xffe1b9,3.2);if(id==="outpost") key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
+    scene.add(new T.HemisphereLight(0xdaeafa,0x7b6d5f,overview ? 1.38 : article ? 1.53 : 2));
+    const key = new T.DirectionalLight(0xffe1b9,3.2);if(id==="outpost" || article?.outdoor(id)) key.position.set(-9,10,5); else key.position.set(-4,8,6);key.castShadow=true;
     key.shadow.mapSize.setScalar(overview && host.clientWidth>800 ? 2048 : 1024);key.shadow.camera.left=-8;key.shadow.camera.right=8;
     key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.001;scene.add(key);
-    const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
+    const fill=new T.DirectionalLight(0xa9d5ff,overview ? .48 : article ? .65 : 1.2);fill.position.set(5,3,-5);scene.add(fill);
     const camera = new T.OrthographicCamera(-4,4,3,-3,.1,overview ? 160 : 80);
     const initialPitch = id === "outpost" ? .76 : .52;
-    const initialZoom = id === "outpost" ? .97 : 1;
+    const initialZoom = id === "outpost" ? .97 : article ? .78 : 1;
     let yaw=.42,pitch=initialPitch,zoom=initialZoom,expanded=false;
     let entryFrame = null;
     function stopEntry() {

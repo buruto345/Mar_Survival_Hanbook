@@ -106,7 +106,7 @@
         if (!first) return;
         try
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/livingModels.js");
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", Scene == "outpost" ? "./js/livingModels.js" : "./js/articleModels.js");
             if (_disposed) { await _module.DisposeAsync(); return; }
             _self = DotNetObjectReference.Create(this);
             _reference = await _module.InvokeAsync<string[]>("mount", _host, Scene, Label, _self);
