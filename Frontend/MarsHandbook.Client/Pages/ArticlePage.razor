@@ -18,7 +18,12 @@
         var evid = facts.Select(f => f.S("evidenceType")).Concat(claims.Select(c => c.S("evidenceType"))).Append(profile.S("evidenceType"))
                         .Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
         <h1 class="art-t">@_title</h1>
-        @if (!string.IsNullOrEmpty(summary)) { <p class="lead">@summary</p> }
+        @if (ModuleSlug == "living-on-mars" && LivingReadingGuides.BySlug.TryGetValue(Slug, out var opening))
+        {
+            <p class="reading-opening">@opening.Opening</p>
+            <ReadingFigure Guide="opening" Slug="@Slug" />
+        }
+        else if (!string.IsNullOrEmpty(summary)) { <p class="lead">@summary</p> }
         <div class="meta mono">
             @foreach (var e in evid) { <span class="ev ev-@(e!.ToLowerInvariant())">@EvLabel(e)</span> }
             @if (!string.IsNullOrEmpty(_a.S("reviewedAt"))) { <span>REVIEWED @(_a.S("reviewedAt")!.Split('T')[0])</span> }
@@ -117,6 +122,13 @@
                     </section>
                 }
 
+                @if (ModuleSlug == "living-on-mars" && LivingReadingGuides.BySlug.TryGetValue(Slug, out var guide))
+                {
+                    <ReadingDecision @key="Slug" Guide="guide" />
+                    <a class="reading-next" href="@($"handbook/{ModuleSlug}/{guide.NextSlug}")">
+                        <small>Read next</small><span>@guide.NextQuestion</span><b aria-hidden="true">→</b>
+                    </a>
+                }
                 @if (related.Count > 0)
                 {
                     <section class="sec-b"><h2>Related</h2>
@@ -149,22 +161,29 @@
         _key = key; await Load();
     }
 
+    int _request;
     async Task Load()
     {
-        _loading = true; _error = null; _a = default;
+        var request = ++_request;
+        var module = ModuleSlug; var slug = Slug;
+        _loading = true; _error = null; _a = default; _saved = false;
         try
         {
-            _a = await Hb.DetailAsync(ModuleSlug, Slug);
-            var bms = await Hb.BookmarksAsync();
-            _saved = bms.Any(b => b.M == ModuleSlug && b.S == Slug);
+            var bookmarks = Hb.BookmarksAsync();
+            var detail = await Hb.DetailAsync(module, slug);
+            if (request != _request) return;
+            _a = detail;
+            var bms = await bookmarks;
+            if (request != _request) return;
+            _saved = bms.Any(b => b.M == module && b.S == slug);
         }
-        catch (Exception ex) { _error = ex.Message; }
+        catch (Exception ex) { if (request != _request) return; _error = ex.Message; }
         _loading = false;
     }
 
     async Task ToggleSave() => _saved = await Hb.ToggleAsync(ModuleSlug, Slug, _title);
     async Task Go(string id) { try { await JS.InvokeVoidAsync("mhui.scrollTo", id); } catch { } }
-    static string EvLabel(string e) => e.ToLowerInvariant() switch { "observed" => "Mars observed", "tested" => "Tested · Earth analog", _ => e };
+    static string EvLabel(string e) => e.ToLowerInvariant() switch { "observed" => "Mars observed", "tested" => "Tested", _ => e };
     static int Mins(List<JsonElement> secs) => (int)Math.Ceiling(secs.Sum(x => (x.S("body") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Length) / 200.0);
     static string Nice(string s) => System.Text.RegularExpressions.Regex.Replace(s, "(?<!^)([A-Z])", " $1");
 }

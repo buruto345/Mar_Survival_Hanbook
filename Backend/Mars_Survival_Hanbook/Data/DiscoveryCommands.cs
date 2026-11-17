@@ -25,6 +25,12 @@ public static class DiscoveryCommands
             await Science.ScienceImport.RunAsync(services, args.Length == 3 ? args[2] : null);
             return true;
         }
+        if (args.FirstOrDefault() == "publish-living-handbook")
+        {
+            if (args.Length != 1) throw ApiException.Invalid("Usage: publish-living-handbook");
+            await Living.LivingHandbook.PublishAsync(services, default);
+            return true;
+        }
         if (args.FirstOrDefault() == "export-living-review")
         {
             if (args.Length != 3 || !Guid.TryParse(args[1], out var id))

@@ -1,7 +1,15 @@
 @page "/handbook/{ModuleSlug}"
 @inject HandbookService Hb
 
-<PageTitle>@(_mod?.Name ?? "Module") · Mars Survival Handbook</PageTitle>
+<PageTitle>@(ModuleSlug == "living-on-mars" ? "Living on Mars" : _mod?.Name ?? "Module") · Mars Survival Handbook</PageTitle>
+@if (ModuleSlug == "living-on-mars")
+{
+    <HabitatModel Scene="outpost" MapPage="true" Label="Six habitats on the Martian surface"
+                  Articles="_arts" Categories="@(_mod?.Cats ?? new List<Cat>())" ContentLoading="_loading"
+                  ContentError="@_error" Retry="Load" />
+}
+else
+{
 <div class="page"><div class="wrap">
     <div class="crumbs mono"><a href="handbook">HANDBOOK</a> / @((_mod?.Name ?? HandbookService.Label(ModuleSlug)).ToUpperInvariant())</div>
     @if (_loading) { <p class="hint mono">CONNECTING TO MISSION DATABASE…</p> }
@@ -46,6 +54,8 @@
     }
 </div></div>
 
+}
+
 @code {
     [Parameter] public string ModuleSlug { get; set; } = "";
     [SupplyParameterFromQuery(Name = "c")] public string? C { get; set; }
@@ -62,17 +72,23 @@
         await Load();
     }
 
+    int _request;
     async Task Load()
     {
-        _loading = true; _error = null; _mod = null;
+        var request = ++_request;
+        var module = ModuleSlug;
+        _loading = true; _error = null; _mod = null; _arts = new();
         try
         {
             if (!HandbookService.Known(ModuleSlug)) { _error = "Unknown module."; _loading = false; return; }
-            var mods = await Hb.ModulesAsync();
-            _mod = mods.FirstOrDefault(m => m.Slug == ModuleSlug);
-            _arts = await Hb.ArticlesAsync(ModuleSlug);
+            var metadata = Hb.ModuleAsync(module);
+            var articles = Hb.ArticlesAsync(module);
+            await Task.WhenAll(metadata, articles);
+            if (request != _request) return;
+            _mod = await metadata;
+            _arts = await articles;
         }
-        catch (Exception ex) { _error = ex.Message; }
+        catch (Exception ex) { if (request != _request) return; _error = ex.Message; }
         _loading = false;
     }
 }

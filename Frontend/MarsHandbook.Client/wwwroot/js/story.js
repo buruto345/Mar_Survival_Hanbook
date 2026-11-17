@@ -1,9 +1,6 @@
+import * as THREE from "../lib/three/three.module.min.js";
 // Scroll-driven Mars story: procedural 3D planet (Three.js) + per-section colour/pose morphing.
 let raf = 0, renderer, cleanup = [];
-const loadScript = src => new Promise((res, rej) => {
-  if (window.THREE) return res();
-  const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s);
-});
 const lerp = (a, b, t) => a + (b - a) * t, sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 
@@ -41,9 +38,6 @@ export async function initStory(root, canvas) {
   if (typeof canvas === 'string') canvas = document.querySelector(canvas);
   if (!root || !canvas) return;
   const secs = [...root.querySelectorAll('[data-sec]')];
-  let ok = true;
-  try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'); } catch { ok = false; }
-  if (!window.THREE) ok = false;
   const reveal = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); count(e.target); } }), { root, threshold: .35 });
   secs.forEach(s => reveal.observe(s)); cleanup.push(() => reveal.disconnect());
   function count(sec) {
@@ -63,12 +57,12 @@ export async function initStory(root, canvas) {
     const i = Math.min(secs.length - 2, Math.floor(prog)), f = prog - i, t = sm(.55, 1, f), a = SEC[i], b = SEC[i + 1];
     return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), s: lerp(a.s, b.s, t), dim: lerp(a.dim, b.dim, t), c: a.c.map((v, k) => lerp(v, b.c[k], t)) };
   }
-  if (!ok) { // no WebGL / CDN: still do the colour story
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
+  catch { // The scroll story also works on devices without WebGL.
     const loop = () => { const g = target(); root.style.background = `rgb(${g.c.map(Math.round)})`; raf = requestAnimationFrame(loop); };
     root.classList.add('no3d'); loop(); return;
   }
-  const THREE = window.THREE;
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  root.classList.remove('no3d');
   renderer.setPixelRatio(Math.min(2, devicePixelRatio));
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(38, 1, .1, 100); cam.position.z = 5;
   const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms: { uLight: { value: new THREE.Vector3(-.7, .45, .8) }, uDim: { value: 1 } } });
@@ -79,6 +73,7 @@ export async function initStory(root, canvas) {
   const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
   const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xffffff, size: .035, transparent: true, opacity: .8 })); scene.add(stars);
   const resize = () => { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+  cleanup.push(() => scene.traverse(o => {o.geometry?.dispose();o.material?.dispose()}));
   resize(); window.addEventListener('resize', resize); cleanup.push(() => window.removeEventListener('resize', resize));
   const t0 = performance.now(); let lastP = prog;
   const frame = now => {

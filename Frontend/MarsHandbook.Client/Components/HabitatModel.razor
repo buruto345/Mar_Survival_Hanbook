@@ -1,0 +1,207 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<div class="habitat-view @(_expanded ? "habitat-fullscreen" : "")" role="@(_expanded ? "dialog" : null)"
+     aria-modal="@(_expanded ? "true" : null)" aria-label="@(_expanded ? "Living on Mars map" : null)" @onkeydown="HandleKey">
+    @if (_expanded)
+    {
+        <header class="map-heading">
+            <div><a class="map-exit" href="handbook">← Handbook</a>
+                <h1>Living on Mars</h1></div>
+            <p>Explore six systems in a conceptual surface outpost.</p>
+        </header>
+        <nav class="facility-index" aria-label="Outpost systems">
+            @foreach (var facility in Facilities)
+            {
+                <button type="button" aria-pressed="@(_topic == facility.Slug ? "true" : "false")"
+                        @onclick="() => SelectTopic(facility.Slug)">@facility.Name</button>
+            }
+        </nav>
+    }
+    <div class="model-explorer">
+        <div class="model-stage" aria-busy="@(!_ready && !_failed ? "true" : "false")" @ref="_host"></div>
+        @if (!_ready && !_failed) { <p class="model-loading" role="status">Preparing 3D view…</p> }
+        @if (_failed) { <p class="model-unavailable" role="status">3D view unavailable on this device. @(_expanded ? "Choose a system to browse its articles." : "")</p> }
+        @if (_topic is not null)
+        {
+            var facility = Facilities.First(f => f.Slug == _topic);
+            var category = Categories.FirstOrDefault(c => c.Slug == _topic);
+            var related = Articles.Where(a => a.Cat == _topic).ToList();
+            <section class="model-articles" aria-label="Selected system" aria-live="polite">
+                <header><h2>@(category?.Name ?? facility.Name)</h2>
+                    <button type="button" aria-label="Close system details" @onclick="CloseTopic">×</button>
+                </header>
+                <p>@(string.IsNullOrWhiteSpace(category?.Desc) ? facility.Role : category.Desc)</p>
+                <h3>In the model</h3><p>@facility.Equipment</p>
+                @if (!_failed)
+                {
+                    <label class="route-toggle"><input type="checkbox" checked="@_routes" @onchange="ToggleRoutes" /> Highlight model connections</label>
+                    @if (_routes) { <p class="route-note">Illustrative routes in this model.</p> }
+                }
+                <h3>Related articles @if (!ContentLoading && ContentError is null) { <span>(@related.Count)</span> }</h3>
+                @if (ContentLoading) { <p role="status">Loading articles…</p> }
+                else if (ContentError is not null) { <p role="alert">Articles could not be loaded.</p><button @onclick="Retry">Retry</button> }
+                else if (related.Count == 0) { <p>No published articles in this system yet.</p> }
+                else
+                {
+                    @foreach (var article in related)
+                    {
+                        <a href="@($"handbook/{article.Module}/{article.Slug}")"><strong>@article.Title ↗</strong><span>@article.Summary</span></a>
+                    }
+                }
+            </section>
+        }
+    </div>
+    @if (!_failed)
+    {
+        <div class="model-controls">
+            <small>@(Scene == "outpost" ? "Drag to pan · Shift-drag to orbit · Scroll or pinch to zoom" : "Drag to rotate · Arrow keys to orbit")</small>
+            @if (_expanded)
+            {
+                <button type="button" aria-label="Orbit left" title="Orbit left" @onclick="() => Orbit(-.25)">↶</button>
+                <button type="button" aria-label="Orbit right" title="Orbit right" @onclick="() => Orbit(.25)">↷</button>
+            }
+            <button type="button" aria-label="Zoom in" @onclick="() => Zoom(-.15)">+</button>
+            <button type="button" aria-label="Zoom out" @onclick="() => Zoom(.15)">−</button>
+            @if (IllustrationLabel is not null)
+            {
+                <button type="button" aria-pressed="@(_illustrated ? "true" : "false")" @onclick="ToggleIllustration">@IllustrationLabel</button>
+            }
+            <button type="button" @onclick="Reset">Reset view</button>
+        </div>
+        @if (!_expanded && _reference is { Length: 3 })
+        {
+            <p class="model-reference"><a href="@_reference[0]" target="_blank" rel="noopener noreferrer">@_reference[1] ↗</a>
+                <span>@_reference[2] Approximate educational reconstruction.</span>
+            </p>
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Scene { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public bool MapPage { get; set; }
+    [Parameter] public bool ContentLoading { get; set; }
+    [Parameter] public EventCallback<string> OnTopic { get; set; }
+    [Parameter] public IReadOnlyList<Art> Articles { get; set; } = Array.Empty<Art>();
+    [Parameter] public IReadOnlyList<Cat> Categories { get; set; } = Array.Empty<Cat>();
+    ElementReference _host;
+    IJSObjectReference? _module;
+    DotNetObjectReference<HabitatModel>? _self;
+    readonly string _viewerId = Guid.NewGuid().ToString("N");
+    bool _ready;
+    bool _failed, _disposed, _routes;
+    bool _expanded => MapPage;
+    string[]? _reference;
+    string? _topic;
+    [Parameter] public string? ContentError { get; set; }
+    [Parameter] public EventCallback Retry { get; set; }
+    static readonly (string Slug, string Name, string Role, string Equipment)[] Facilities =
+    {
+        ("housing","Housing","Private quarters give the crew space to rest.","Insulated shell, pressure door and transfer tunnel."),
+        ("community","Community","Shared spaces bring crew activities together.","Observation windows, airlock and service cabinet."),
+        ("food","Food","Growing spaces support food production.","Hydroponic beds, irrigation lines and grow lights."),
+        ("energy","Energy","Solar arrays supply power to the outpost.","Photovoltaic cells, panel mounts and distribution cabinet."),
+        ("water-and-oxygen","Water & oxygen","Processing and storage support water and breathing-gas supplies.","Storage vessels, pressure gauges and distribution lines."),
+        ("sanitation-and-waste","Waste","Collection and processing keep waste separate from living spaces.","Collection drums, recovery unit and inspection cabinet.")
+    };
+
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        if (!first) return;
+        try
+        {
+            var module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/livingViewer.js");
+            if (_disposed) { await module.DisposeAsync(); return; }
+            _module = module;
+            _self = DotNetObjectReference.Create(this);
+            _reference = await _module.InvokeAsync<string[]>("mount", _host, Scene, Label, _self, _viewerId);
+            if (!_disposed)
+            {
+                _ready = true;
+                if (MapPage) {
+                    await _module.InvokeVoidAsync("command", _viewerId, "setExpanded", true);
+                    if (_topic is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", _topic);
+                }
+                StateHasChanged();
+            }
+        }
+        catch (JSException) { if (!_disposed) { _failed = true; StateHasChanged(); } }
+    }
+
+    async Task HandleKey(KeyboardEventArgs e)
+    {
+        if (e.Key != "Escape" || !_expanded) return;
+        if (_topic is not null) await CloseTopic();
+        else Navigation.NavigateTo("handbook");
+    }
+
+    [JSInvokable] public async Task SelectTopic(string slug)
+    {
+        if (_disposed || !Facilities.Any(f => f.Slug == slug)) return;
+        _routes = false;
+        _topic = slug;
+        await InvokeAsync(StateHasChanged);
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", slug);
+        await OnTopic.InvokeAsync(slug);
+    }
+
+    async Task CloseTopic()
+    {
+        _topic = null;
+        if (!_failed && _module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setTopic", (string?)null);
+    }
+
+    async Task ToggleRoutes(ChangeEventArgs e)
+    {
+        _routes = e.Value is true;
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "setRoutes", _routes);
+    }
+
+    async Task Orbit(double delta)
+    {
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "orbit", delta);
+    }
+
+    async Task Zoom(double amount)
+    {
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "zoom", amount);
+    }
+
+    bool _illustrated;
+    string? IllustrationLabel => Scene switch
+    {
+        "expandable-room" => "Compress illustrative shell",
+        "water-to-breathing-oxygen" => "Explode illustrative stack",
+        "trash-storage-tiles" => "Lower compactor ram",
+        "staging-water-loop" => "Trace water transfer",
+        "rooms-for-four" or "time-off-in-isolation" or "waiting-for-a-reply" => "Shift crew gaze",
+        _ => null
+    };
+
+    async Task ToggleIllustration()
+    {
+        _illustrated = !_illustrated;
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "illustrate", _illustrated);
+    }
+
+    async Task Reset()
+    {
+        if (_topic is not null) await CloseTopic();
+        if (_module is not null) await _module.InvokeVoidAsync("command", _viewerId, "reset");
+        if (_illustrated) await ToggleIllustration();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _disposed = true;
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("unmount", _viewerId);
+            await _module.DisposeAsync();
+        }
+        _self?.Dispose();
+    }
+}
